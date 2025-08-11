@@ -22,7 +22,7 @@ const Home = () => {
               Welcome to the Home Page
             </h1>
             <p className="text-lg text-gray-300">
-              This is the home page content.
+              This is the home page contenta.
             </p>
 
             <div className="flex items-center">
