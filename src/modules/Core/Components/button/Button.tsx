@@ -11,7 +11,7 @@ const Button: React.FC<ButtonProps> = ({ children, variant, onClick }) => {
   const baseClasses = 'px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg';
 
   const variants = {
-    primary: 'bg-purple-900 text-white hover:bg-purple-800 border-1 border-purple-400',
+    primary: 'bg-[#350136] text-white hover:bg-purple-800 border-1 border-purple-400 text-[16.5]',
     secondary: 'bg-transparent border-2 border-white text-white hover:bg-white/10',
   };
 

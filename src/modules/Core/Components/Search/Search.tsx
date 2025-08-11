@@ -1,9 +1,9 @@
 const Search: React.FC = () => {
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex items-center justify-center ">
       <input
         type="text"
-        className="px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
+        className="px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg border-1 border-[#350136] shadow-[0_35px_35px_rgba(0,0,0,0.25)] text-[16.5px]"
         placeholder="Search..."
       />
     </div>
