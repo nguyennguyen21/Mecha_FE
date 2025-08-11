@@ -1,18 +1,12 @@
 import Header from "../../modules/User/components/Header/Headerr";
 import Title from "../../modules/Core/Components/Titile/Titile";
 import Content from "../../modules/Core/Components/Content/content";
-import Button from "../../modules/Core/Components/button/Button";
+import  Button from "../../modules/Core/Components/button/Button";
 import Search from "../../modules/Core/Components/Search/Search";
-
-import profile from "../../../src/assets/imgs/undraw_github-profile_abde (1).svg";
-
+import profile from "../../../src/assets/imgs/undraw_github-profile_abde (1).svg"
 const Home = () => {
-  const handleClaimClick = () => {
-    alert("Primary Button Clicked!");
-  };
- 
   return (
-    <div className="font-inte min-h-screen">
+    <div className="">
       <Header />
 
       <div className="p-25 mt-10">
@@ -22,7 +16,7 @@ const Home = () => {
               Welcome to the Home Page
             </h1>
             <p className="text-lg text-gray-300">
-              This is the home page contenta.
+              This is the home page content.
             </p>
 
             <div className="flex items-center">
@@ -46,6 +40,6 @@ const Home = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Home;
