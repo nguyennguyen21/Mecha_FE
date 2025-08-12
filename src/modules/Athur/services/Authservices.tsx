@@ -41,7 +41,7 @@ export const registerUser = async (userData: RegisterData): Promise<{ message: s
 };
 
 // === Interface ===
-export interface LoginData {
+interface LoginCredentials {
   username: string;
   password: string;
 }
@@ -54,35 +54,34 @@ export interface User {
   roles: string;
 }
 
-export interface LoginResponse {
+interface LoginResponse {
   token: string;
   user: User;
 }
 
-// === Đăng nhập ===
-export const loginUser = async (userData: LoginData): Promise<LoginResponse> => {
+// Hàm đăng nhập
+export const login = async (credentials: LoginCredentials): Promise<LoginResponse> => {
   const url = `${API_CONFIG.BASE_URL}/auth/login`;
 
   try {
     const response = await fetch(url, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(userData),
+      body: JSON.stringify(credentials),
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(errorText || "Login failed");
+      const error = await response.json().catch(() => ({ message: 'Login failed' }));
+      throw new Error(error.message || 'Login failed');
     }
 
     const data: LoginResponse = await response.json();
+    console.log('Login successful:', data);
     return data;
-  } catch (error: any) {
-    if (error.message.includes("Failed to fetch")) {
-      throw new Error("Unable to connect to server. Is the backend running?");
-    }
-    throw new Error(error.message || "An unexpected error occurred during login.");
+  } catch (error) {
+    console.error('Authentication error:', error);
+    throw error;
   }
 };
