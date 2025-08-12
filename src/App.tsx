@@ -1,13 +1,14 @@
 import Background from './modules/Core/Components/Background/Background'
 import Home from './pages/Home/Home'
+import UserProfile from './modules/User/components/userview';
 import './App.css'
-import RegisterForm from './modules/Athur/component/registerform';
+
 
 function App() {
   return (
     <>
-    <RegisterForm/>
- 
+    
+   <UserProfile  /> 
  </>
 
 

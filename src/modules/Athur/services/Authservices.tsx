@@ -1,37 +1,38 @@
-// src/services/authService.ts
+import { API_CONFIG } from '../../../configs/ApiConfig';
 
-import { API_CONFIG } from "../../../configs/ApiConfig";
-
-// Interface cho dữ liệu đăng ký
-interface RegisterData {
+export interface UserProfile {
+  styleId: string;
+  profileAvatar: string;
+  background: string;
+  audio: string;
+  customCursor: string;
+  description: string;
   username: string;
-  email: string;
-  phone: string;
-  password: string;
+  effectUsername: string;
+  location: string;
 }
 
-// Hàm đăng ký người dùng
-export const registerUser = async (userData: RegisterData): Promise<{ message: string }> => {
-  const url = `${API_CONFIG.BASE_URL}/auth/register`;
+const getUserProfile = async (username: string): Promise<UserProfile> => {
+  const url = `${API_CONFIG.BASE_URL}/${username}`;
 
   try {
     const response = await fetch(url, {
-      method: "POST",
+      method: 'GET',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(userData),
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(errorText || "Registration failed");
+      throw new Error('Không tìm thấy người dùng');
     }
 
-    const data: { message: string } = await response.json();
-    return data; // { message: "User registered successfully" }
-  } catch (error: any) {
-    // Xử lý lỗi 400 hoặc lỗi mạng
-    throw new Error(error.message || "An unexpected error occurred");
+    const  UserProfile = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Lỗi khi gọi API:', error);
+    throw error;
   }
 };
+
+export default getUserProfile;
