@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "../pages/Home/Home";
 import LoginForm from "../pages/Auth/Login";
-import RegisterForm from "../pages/Auth/Register";
+import RegisterForm from "../pages/Auth/Register.tsx";
 import UserProfile from "../modules/User/components/userview";
 
 import PublicRoutes from "./Publicroutes";

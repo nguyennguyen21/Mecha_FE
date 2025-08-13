@@ -1,10 +1,8 @@
 import Background from "../../modules/Core/components/Background/Background";
-import Header from "../../modules/User/components/Header/Headerr";
-import Title from "../../modules/Core/components/Titile/Titile";
-import Content from "../../modules/Core/components/Content/content";
+import Header from "../../modules/Core/layout/Header";
+import Footer from "../../modules/Core/layout/Footer";
 import Button from "../../modules/Core/components/button/Button";
 import Search from "../../modules/Core/components/Search/Search";
-
 import profile from "../../../src/assets/imgs/undraw_github-profile_abde (1).svg";
 
 const Home = () => {
@@ -14,10 +12,10 @@ const Home = () => {
 
   return (
     <Background>
-      <div className="font-inte min-h-screen">
+      <div className="font-inte min-h-screen flex flex-col">
         <Header />
 
-        <div className="p-25 mt-10">
+        <div className="px-6 md:px-20 mt-10 flex-1">
           <div className="flex flex-col md:flex-row items-center text-white gap-10">
             <div className="md:w-2/5 flex flex-col items-start space-y-6">
               <h1 className="text-6xl font-bold leading-tight">
@@ -46,6 +44,9 @@ const Home = () => {
             </div>
           </div>
         </div>
+
+        {/* Footer */}
+        <Footer />
       </div>
     </Background>
   );
