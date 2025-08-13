@@ -10,12 +10,12 @@ import { API_CONFIG } from "../../../configs/ApiConfig";
 interface RegisterData {
   username: string;
   email: string;
-  phone: string;
+  // phone: string;
   password: string;
 }
 
 // Hàm đăng ký người dùng
-export const registerUser = async (userData: RegisterData): Promise<{ message: string }> => {
+export const Register = async (userData: RegisterData): Promise<{ message: string }> => {
   const url = `${API_CONFIG.BASE_URL}/auth/register`;
 
   try {
