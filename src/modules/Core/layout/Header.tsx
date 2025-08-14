@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
-import { Transition } from "@headlessui/react"; // dùng headlessui cho animation mượt
+import { Transition } from "@headlessui/react";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,26 +9,45 @@ const Header = () => {
 
   return (
     <header className="relative py-5 flex justify-center z-50">
+      {/* Container */}
       <div className="fixed top-5 left-1/2 transform -translate-x-1/2 w-4/5 max-w-4xl h-14 rounded-3xl flex items-center justify-between px-8 text-white shadow-lg backdrop-blur-md">
+        {/* Logo */}
         <div className="font-bold text-xl">Logo</div>
 
         {/* Desktop Menu */}
         <nav className="hidden md:block">
-          <ul className="flex space-x-8">
-            <li className="hover:text-gray-300 transition">
-              <Link to="/">Home</Link>
+          <ul className="flex items-center space-x-4 md:space-x-8">
+            <li>
+              <Link
+                to="/"
+                className="h-10 flex items-center px-3 hover:text-gray-300 transition"
+              >
+                Home
+              </Link>
             </li>
-            <li className="hover:text-gray-300 transition">
-              <Link to="/about">About</Link>
+            <li>
+              <Link
+                to="/faq"
+                className="h-10 flex items-center px-3 hover:text-gray-300 transition"
+              >
+                FAQ
+              </Link>
             </li>
-            <li className="hover:text-gray-300 transition">
-              <Link to="/contact">Contact</Link>
+            <li>
+              <Link
+                to="/discord"
+                className="h-10 flex items-center px-3 hover:text-gray-300 transition"
+              >
+                Discord
+              </Link>
             </li>
-            <li className="hover:text-gray-300 transition">
-              <Link to="/login">Login</Link>
-            </li>
-            <li className="hover:text-gray-300 transition">
-              <Link to="/register">Register</Link>
+            <li>
+              <Link
+                to="/login"
+                className="h-10 flex items-center px-4 bg-[#0000005d] border-2 border-[#072607] rounded-full font-medium text-[#fafafa] text-[17.5px] transition duration-200 hover:border-[#6cdf6c] cursor-pointer"
+              >
+                Start
+              </Link>
             </li>
           </ul>
         </nav>
