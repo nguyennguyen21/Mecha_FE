@@ -1,6 +1,52 @@
-import { Outlet, Navigate } from "react-router-dom";
+// src/routes/privateRoutes.tsx
 
-export default function PrivateRoutes() {
-  const isAuth = true; // kiểm tra đăng nhập
-  return isAuth ? <Outlet /> : <Navigate to="/login" replace />;
-}
+import type { JSX } from "react";
+import Dashboard from "../pages/dashboard";
+
+
+
+type Route = {
+  path: string;
+  element: JSX.Element;
+  auth: boolean;
+};
+
+const privateRoutes: Route[] = [
+  {
+    path: "/Home",
+    element: <Dashboard/>,
+    auth: true,
+  },
+  {
+    path: "/exam",
+    element:<></>,
+    auth: true,
+  },
+  {
+    path: "/profile",
+    element: <div>Profile Page</div>,
+    auth: true,
+  },
+  {
+    path: "/me",
+    element: <div>Me Page</div>,
+    auth: true,
+  },
+  {
+    path: "/user/:id",
+    element: <div>User Detail Page</div>,
+    auth: true,
+  },
+  {
+    path: "/settings",
+    element: <div>Settings Page</div>,
+    auth: true,
+  },
+  {
+    path: "/account/settings",
+    element: <div>Account Settings Page</div>,
+    auth: true,
+  },
+];
+
+export { privateRoutes };

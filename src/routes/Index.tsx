@@ -1,30 +1,32 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "../pages/Home/Home";
-import LoginForm from "../pages/Auth/Login";
-import RegisterForm from "../pages/Auth/Register.tsx";
-import UserProfile from "../modules/User/components/userview";
+// src/routes/index.tsx
 
-import PublicRoutes from "./Publicroutes";
-import PrivateRoutes from "./Privateroutes";
+
+import { Routes, Route } from "react-router-dom";
+import { privateRoutes } from "./Privateroutes";
+import { publicRoutes } from "./Publicroutes";
+import  PrivateLayout from "../modules/Layouts/PrivateLayout/PrivateLayout";
 
 export default function AppRoutes() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Public routes */}
-        <Route element={<PublicRoutes />}>
-          <Route path="/login" element={<LoginForm />} />
-          <Route path="/register" element={<RegisterForm />} />
-        </Route>
+    <Routes>
+      {/* Public Routes - không cần layout riêng */}
+      {publicRoutes.map((route) => (
+        <Route key={route.path} path={route.path} element={route.element} />
+      ))}
 
-        {/* Private routes */}
-        <Route element={<PrivateRoutes />}>
-          <Route path="/profile" element={<UserProfile />} />
-        </Route>
-
-        {/* Home page */}
-        <Route path="/" element={<Home />} />
-      </Routes>
-    </BrowserRouter>
+      {/* Private Routes - bao bọc bởi PrivateLayout */}
+      {privateRoutes.map((route) => (
+        <Route
+          key={route.path}
+          path={route.path}
+          element={
+            <PrivateLayout>
+              {route.element}
+            </PrivateLayout>
+          }
+        />
+      ))}
+     
+    </Routes>
   );
 }
