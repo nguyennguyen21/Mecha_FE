@@ -1,6 +1,7 @@
 // src/routes/privateRoutes.tsx
 
 import type { JSX } from "react";
+import Dashboard from "../pages/dashboard";
 
 
 
@@ -13,7 +14,7 @@ type Route = {
 const privateRoutes: Route[] = [
   {
     path: "/Home",
-    element: <></>,
+    element: <Dashboard/>,
     auth: true,
   },
   {
