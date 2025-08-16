@@ -2,11 +2,11 @@ import AppRoutes from './routes/index'
 
 import './App.css'
 
-
 function App() {
   return (
     <>
       <AppRoutes />
+   
     </>
   )
 }
