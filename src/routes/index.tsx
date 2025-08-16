@@ -2,8 +2,8 @@
 
 
 import { Routes, Route } from "react-router-dom";
-import { privateRoutes } from "./Privateroutes";
-import { publicRoutes } from "./Publicroutes";
+import { privateRoutes } from "./privateRoutes";
+import { publicRoutes } from "./publicRoutes";
 import  PrivateLayout from "../modules/Layouts/PrivateLayout/PrivateLayout";
 
 export default function AppRoutes() {
