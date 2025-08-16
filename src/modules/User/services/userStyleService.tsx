@@ -4,7 +4,7 @@ const fetchUserProfile = async (username: string): Promise<UserProfile> => {
   // Lấy base URL không bao gồm /api
   const baseUrl = import.meta.env.VITE_API_BASE || `http://localhost:5159`;
 
-  const url = `${baseUrl}/${username}`;
+  const url = `${baseUrl}/api/profile/${username}`;
 
   try {
     const response = await fetch(url);

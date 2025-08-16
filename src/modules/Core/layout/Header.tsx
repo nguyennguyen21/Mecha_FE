@@ -43,7 +43,7 @@ const Header = () => {
             </li>
             <li>
               <Link
-                to="/login"
+                to="/dashboard"
                 className="h-10 flex items-center px-4 bg-[#0000005d] border-2 border-[#072607] rounded-full font-medium text-[#fafafa] text-[17.5px] transition duration-200 hover:border-[#6cdf6c] cursor-pointer"
               >
                 Start

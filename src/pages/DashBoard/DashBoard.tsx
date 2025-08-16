@@ -1,13 +1,14 @@
-import SideBar from "../../modules/Admin/SideBar";
-import ProfileForm from "../ShowApi/ShowProfile";
+// import SideBar from "../../modules/Admin/SideBar";
+import ProfileForm from "../Profile/ShowProfile";
 const DasboardPage = () =>{
     return(
-        <div className="flex">
-            <SideBar/>
-            <div className="">
-                <ProfileForm/>
-            </div>
-        </div>
+     <div className="w-screen h-screen">
+    {/* <SideBar/> */}
+    <div className="w-full h-full">
+        <ProfileForm />
+    </div>
+</div>
+
     )
 }
 export default DasboardPage

@@ -2,7 +2,7 @@
 
 import type { JSX } from "react";
 import Home from "../pages/Home/Home";
-
+import UserProfilePage from "../modules/User/components/userview";
 
 type Route = {
   path: string;
@@ -38,6 +38,11 @@ const publicRoutes: Route[] = [
   {
     path: "/verify-email",
     element: <div>Xác minh email</div>,
+    auth: false,
+  },
+  {
+    path: "/profile/:username", // <-- thêm route động
+    element: <UserProfilePage />,
     auth: false,
   },
 ];

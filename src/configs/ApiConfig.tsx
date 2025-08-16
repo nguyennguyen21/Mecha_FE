@@ -4,7 +4,7 @@ const getApiUrl = (): string => {
   // Bạn có thể mở rộng để đọc từ .env sau
   const port = 5159;
   const baseUrl = import.meta.env.VITE_API_BASE || `http://localhost:${port}`;
-  return `${baseUrl}/api`;
+  return `${baseUrl}`;
 };
 
 export const API_CONFIG = {

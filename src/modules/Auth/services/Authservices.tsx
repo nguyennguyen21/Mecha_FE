@@ -16,7 +16,7 @@ interface RegisterData {
 
 // Hàm đăng ký người dùng
 export const Register = async (userData: RegisterData): Promise<{ message: string }> => {
-  const url = `${API_CONFIG.BASE_URL}/auth/register`;
+  const url = `${API_CONFIG.BASE_URL}/api/auth/register`;
 
   try {
     const response = await fetch(url, {
@@ -61,7 +61,7 @@ interface LoginResponse {
 
 // Hàm đăng nhập
 export const login = async (credentials: LoginCredentials): Promise<LoginResponse> => {
-  const url = `${API_CONFIG.BASE_URL}/auth/login`;
+  const url = `${API_CONFIG.BASE_URL}/api/auth/login`;
 
   try {
     const response = await fetch(url, {
