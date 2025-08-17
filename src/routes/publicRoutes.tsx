@@ -3,7 +3,7 @@
 import type { JSX } from "react";
 import Home from "../pages/Home/Home";
 import UserProfilePage from "../modules/User/components/userview";
-
+import Discord from "../pages/Discord/RedirectToDiscord";
 type Route = {
   path: string;
   element: JSX.Element;
@@ -41,8 +41,13 @@ const publicRoutes: Route[] = [
     auth: false,
   },
   {
-    path: "/profile/:username", // <-- thêm route động
+    path: "/profile/:username",
     element: <UserProfilePage />,
+    auth: false,
+  },
+  {
+    path: "/discord", 
+    element: <Discord />,
     auth: false,
   },
 ];
