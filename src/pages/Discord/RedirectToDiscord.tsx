@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import Background from "../../modules/Core/components/Background/Background";
+import Background from "../../modules/Core/Components/Background/Background";
 
 const RedirectToDiscord = () => {
   useEffect(() => {

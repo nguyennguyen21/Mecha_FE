@@ -1,4 +1,4 @@
-import Background from "../../modules/Core/components/Background/Background";
+import Background from "../../modules/Core/Components/Background/Background";
 import Header from "../../modules/Core/layout/Header";
 import Footer from "../../modules/Core/layout/Footer";
 import Pricing from "./Pricing";

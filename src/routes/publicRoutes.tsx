@@ -41,7 +41,7 @@ const publicRoutes: Route[] = [
     auth: false,
   },
   {
-    path: "/profile/:username",
+    path: "/:username",
     element: <UserProfilePage />,
     auth: false,
   },

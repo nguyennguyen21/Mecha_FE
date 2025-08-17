@@ -1,5 +1,5 @@
 // import SideBar from "../../modules/Admin/SideBar";
-import ProfileForm from "../Profile/ShowProfile";
+import ProfileForm from "../Profile/EditProfile";
 const DasboardPage = () =>{
     return(
      <div className="w-screen h-screen">

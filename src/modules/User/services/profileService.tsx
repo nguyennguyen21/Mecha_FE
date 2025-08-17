@@ -4,6 +4,8 @@ export interface ProfileData {
   profileAvatar: string;
   background: string;
   audio: string;
+  audioImage?: string;   
+  audioTitle?: string;  
   customCursor: string;
   description: string;
   username: string;
@@ -40,6 +42,7 @@ export const uploadFile = async (
     }
 
     const result = await response.json();
+    
     console.log("✅ Upload successful:", result);
     return result.filePath; // Trả về đường dẫn file
   } catch (error) {
@@ -102,12 +105,15 @@ export const updateProfile = async (
 ): Promise<void> => {
   const url = `${API_CONFIG.BASE_URL}/api/profile/${username}`;
 
-  const trimmedData = {
+    const trimmedData = {
     ...data,
     profileAvatar: data.profileAvatar?.trim?.() ?? "",
     background: data.background?.trim?.() ?? "",
     audio: data.audio?.trim?.() ?? "",
+    audioImage: data.audioImage?.trim?.() ?? "",
+    audioTitle: data.audioTitle?.trim?.() ?? "",
   };
+
 
   try {
     const response = await fetch(url, {

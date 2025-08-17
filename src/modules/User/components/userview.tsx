@@ -33,7 +33,15 @@ const UserProfilePage = () => {
   if (!user) return <div>User not found</div>;
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
+   <div
+      className="p-6 max-w-3xl mx-auto min-h-screen"
+      style={{
+        backgroundImage: user.background ? `url(${getMediaUrl(user.background)})` : undefined,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+
       <h1 className="text-2xl font-bold">{user.username}</h1>
       <p className="text-gray-600">{user.description}</p>
       <p className="text-black-400">{user.location}</p>
@@ -57,13 +65,33 @@ const UserProfilePage = () => {
       )}
 
       {/* Audio */}
-      {user.audio && (
-        <audio controls className="mt-4 w-full">
-          <source src={getMediaUrl(user.audio)} type="audio/mpeg" />
-          <source src={getMediaUrl(user.audio)} type="audio/wav" />
-          Your browser does not support the audio element.
-        </audio>
-      )}
+   {/* Audio */}
+{user.audio && (
+  <div className="mt-4 flex flex-col items-center">
+    <audio controls className="w-full rounded-lg border border-white p-1">
+      <source src={getMediaUrl(user.audio)} type="audio/mpeg" />
+      <source src={getMediaUrl(user.audio)} type="audio/wav" />
+      Your browser does not support the audio element.
+    </audio>
+
+    {/* Audio Cover Image */}
+    {user.audioImage && (
+      <img
+        src={getMediaUrl(user.audioImage)}
+        alt="Audio Cover"
+        className="w-32 h-32 object-cover rounded-lg mt-3 shadow-lg border border-white"
+      />
+    )}
+
+    {/* Audio Title */}
+    {user.audioTitle && (
+      <p className="mt-2 text-lg font-semibold text-white text-center">
+        {user.audioTitle}
+      </p>
+    )}
+  </div>
+)}
+
     </div>
   );
 };
