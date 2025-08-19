@@ -19,12 +19,12 @@ const PrivateLayout = ({ children }: PrivateLayoutProps) => {
   }
 
   return (
-    <div className="flex w-full min-h-screen bg-gray-100">
+    <div className="flex w-full min-h-screen">
       {/* Sidebar/Header */}
       
 
       {/* Nội dung chính */}
-      <main className="flex-1 p-4 md:p-6 lg:p-8 bg-gray-50">
+      <main className="w-full">
         {/* Nếu truyền children thì dùng children, nếu không dùng Outlet */}
         {children ? children : <Outlet />}
       </main>
