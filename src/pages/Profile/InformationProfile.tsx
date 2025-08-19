@@ -1,3 +1,4 @@
+// InformationProfile.tsx
 import React, { useRef } from "react";
 
 interface InformationProfileProps {
@@ -38,24 +39,25 @@ export const InformationProfile: React.FC<InformationProfileProps> = ({
     <div className="relative mb-8">
       {/* Background Section */}
       <div
-        className="w-full h-80 rounded-2xl overflow-hidden relative cursor-pointer group shadow-2xl"
+        className="w-full h-80 rounded-3xl overflow-hidden relative cursor-pointer group shadow-2xl 
+                   ring-1 ring-white/10 transform transition-all duration-300 hover:shadow-3xl"
         onClick={() => !uploadingFiles.background && bgInputRef.current?.click()}
       >
         {formData.background ? (
           <img
             src={getMediaUrl(formData.background)}
             alt="Background"
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
             onError={(e) => {
               e.currentTarget.src =
                 "https://via.placeholder.com/1200x400?text=Background+Failed";
             }}
           />
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-700 to-slate-800 text-slate-300">
-            <div className="w-12 h-12 mb-4 flex items-center justify-center">
+          <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-800 via-slate-900 to-black text-slate-300">
+            <div className="w-16 h-16 mb-4 bg-slate-700 rounded-2xl flex items-center justify-center shadow-lg">
               <svg
-                className="w-8 h-8"
+                className="w-8 h-8 opacity-80"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -68,7 +70,7 @@ export const InformationProfile: React.FC<InformationProfileProps> = ({
                 />
               </svg>
             </div>
-            <p className="text-lg font-medium">Click to upload Background</p>
+            <p className="text-lg font-semibold tracking-wide">Click to upload Background</p>
           </div>
         )}
         <input
@@ -78,20 +80,28 @@ export const InformationProfile: React.FC<InformationProfileProps> = ({
           className="hidden"
           onChange={(e) => handleFileChange(e, "background")}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none"></div>
+
+        {/* Uploading overlay */}
         {uploadingFiles.background && (
-          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center animate-fade-in">
+            <div className="flex flex-col items-center text-white">
+              <div className="animate-spin rounded-full h-14 w-14 border-t-4 border-white"></div>
+              <p className="text-sm mt-3 font-medium opacity-90">Uploading...</p>
+            </div>
           </div>
         )}
       </div>
 
       {/* Avatar & Username */}
-      <div className="relative flex items-center gap-6 -mt-16 px-8">
+      <div className="relative flex items-center gap-8 -mt-16 px-8 sm:px-10">
         {/* Avatar */}
-        <div className="relative">
+        <div className="relative group">
           <div
-            className="w-32 h-32 rounded-2xl border-4 border-white overflow-hidden cursor-pointer shadow-2xl group bg-white"
+            className="w-36 h-36 rounded-3xl border-4 border-white overflow-hidden cursor-pointer 
+                       shadow-2xl transition-all duration-300 transform 
+                       hover:shadow-3xl hover:scale-105 bg-white ring-2 ring-white/30"
             onClick={() =>
               !uploadingFiles.profileAvatar && avatarInputRef.current?.click()
             }
@@ -100,12 +110,12 @@ export const InformationProfile: React.FC<InformationProfileProps> = ({
               <img
                 src={getMediaUrl(formData.profileAvatar)}
                 alt="Avatar"
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-200 to-slate-300 text-slate-600">
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-200 to-slate-400 text-slate-700">
                 <svg
-                  className="w-8 h-8"
+                  className="w-10 h-10 opacity-70"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -134,27 +144,29 @@ export const InformationProfile: React.FC<InformationProfileProps> = ({
             />
           </div>
           {uploadingFiles.profileAvatar && (
-            <div className="absolute inset-0 bg-black/50 rounded-2xl flex items-center justify-center">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+            <div className="absolute inset-0 bg-black/50 rounded-3xl flex items-center justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-white"></div>
             </div>
           )}
         </div>
 
         {/* Username & Description */}
-        <div className="flex flex-col justify-center">
-          <h1 className="text-3xl font-bold text-white mb-1">
-            {formData.username || "Username"}
+        <div className="flex flex-col justify-center py-2">
+          <h1 className="text-4xl font-bold text-white drop-shadow-lg leading-tight">
+            {formData.username || "Your Name"}
           </h1>
-          <p className="text-slate-300 max-w-md">{formData.description || "No description"}</p>
+          <p className="text-slate-200 max-w-lg mt-2 text-sm sm:text-base leading-relaxed drop-shadow-md">
+            {formData.description || "Tell the world who you are."}
+          </p>
         </div>
       </div>
 
       {/* Profile Information Form */}
-      <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 mt-20 mx-8">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+      <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-xl border border-white/20 p-7 mt-20 mx-8 transition-all duration-300 hover:shadow-2xl">
+        <div className="flex items-center gap-4 mb-7">
+          <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center shadow-sm">
             <svg
-              className="w-5 h-5 text-blue-600"
+              className="w-6 h-6 text-blue-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -167,29 +179,39 @@ export const InformationProfile: React.FC<InformationProfileProps> = ({
               />
             </svg>
           </div>
-          <h2 className="text-xl font-semibold text-slate-800">Profile Information</h2>
+          <h2 className="text-2xl font-bold text-slate-800 tracking-tight">Profile Information</h2>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-7">
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Username</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2 tracking-tight">
+                Username
+              </label>
               <input
                 type="text"
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
-                className="w-full border-2 border-slate-200 rounded-xl p-3 focus:border-blue-400 focus:outline-none transition-colors"
+                className="w-full px-4 py-3 border-2 border-slate-200 rounded-2xl 
+                           focus:border-blue-500 focus:ring-4 focus:ring-blue-100 
+                           outline-none transition-all duration-200 
+                           text-slate-700 placeholder-slate-400 text-sm"
                 placeholder="Enter your username"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Username Effect</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2 tracking-tight">
+                Username Effect
+              </label>
               <select
                 name="effectUsername"
                 value={formData.effectUsername}
                 onChange={handleChange}
-                className="w-full border-2 border-slate-200 rounded-xl p-3 focus:border-blue-400 focus:outline-none transition-colors bg-white"
+                className="w-full px-4 py-3 border-2 border-slate-200 rounded-2xl 
+                           focus:border-blue-500 focus:ring-4 focus:ring-blue-100 
+                           outline-none transition-all duration-200 
+                           bg-white text-sm"
               >
                 <option value="none">None</option>
                 <option value="glow">Glow</option>
@@ -200,22 +222,29 @@ export const InformationProfile: React.FC<InformationProfileProps> = ({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">Description</label>
+            <label className="block text-sm font-semibold text-slate-700 mb-2 tracking-tight">
+              Description
+            </label>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
               rows={4}
-              className="w-full border-2 border-slate-200 rounded-xl p-3 focus:border-blue-400 focus:outline-none transition-colors resize-none"
+              className="w-full px-4 py-3 border-2 border-slate-200 rounded-2xl 
+                         focus:border-blue-500 focus:ring-4 focus:ring-blue-100 
+                         outline-none transition-all duration-200 resize-none 
+                         text-slate-700 placeholder-slate-400 text-sm"
               placeholder="Tell us about yourself..."
             />
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Location</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2 tracking-tight">
+                Location
+              </label>
               <div className="relative">
-                <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
                   <svg
                     className="w-5 h-5 text-slate-400"
                     fill="none"
@@ -241,19 +270,27 @@ export const InformationProfile: React.FC<InformationProfileProps> = ({
                   name="location"
                   value={formData.location}
                   onChange={handleChange}
-                  className="w-full border-2 border-slate-200 rounded-xl p-3 pl-11 focus:border-blue-400 focus:outline-none transition-colors"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-slate-200 rounded-2xl 
+                             focus:border-blue-500 focus:ring-4 focus:ring-blue-100 
+                             outline-none transition-all duration-200 
+                             text-slate-700 placeholder-slate-400 text-sm"
                   placeholder="Where are you from?"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Custom Cursor</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2 tracking-tight">
+                Custom Cursor
+              </label>
               <select
                 name="customCursor"
                 value={formData.customCursor}
                 onChange={handleChange}
-                className="w-full border-2 border-slate-200 rounded-xl p-3 focus:border-blue-400 focus:outline-none transition-colors bg-white"
+                className="w-full px-4 py-3 border-2 border-slate-200 rounded-2xl 
+                           focus:border-blue-500 focus:ring-4 focus:ring-blue-100 
+                           outline-none transition-all duration-200 
+                           bg-white text-sm"
               >
                 <option value="default">Default</option>
                 <option value="pointer">Pointer</option>
