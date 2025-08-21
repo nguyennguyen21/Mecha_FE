@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import type { ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface MenuItem {
   label: string;
@@ -12,8 +13,8 @@ interface MenuItem {
 const SideBar: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(window.innerWidth >= 640);
   const [openSubMenus, setOpenSubMenus] = useState<Set<number>>(new Set());
+  const navigate = useNavigate();
 
-  // Debounce resize để tránh rerender nhiều lần
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
     const handleResize = () => {
@@ -29,19 +30,24 @@ const SideBar: React.FC = () => {
     };
   }, []);
 
-const menuItems: MenuItem[] = [
-  { label: "Home", icon: <span>🌌</span>, path: "/home", active: true },
-  { label: "Account", icon: <span>👾</span>, path: "/account" },
-  { label: "Custom", icon: <span>🎨</span>, submenu: ["Theme", "Profile", "Settings"] },
-  { label: "Upgrade", icon: <span>🚀</span>, path: "/upgrade" },
-  { label: "Shop", icon: <span>🪐</span>, path: "/shop" },
-  { label: "Logout", icon: <span>🌀</span>, path: "/logout" },
-];
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userInfo");
+    navigate("/login");
+  };
 
+  const menuItems: MenuItem[] = [
+    { label: "Home", icon: <span>🌌</span>, path: "/home", active: true },
+    { label: "Account", icon: <span>👾</span>, path: "/account" },
+    { label: "Custom", icon: <span>🎨</span>, submenu: ["Theme", "Profile", "Settings"] },
+    { label: "Upgrade", icon: <span>🚀</span>, path: "/upgrade" },
+    { label: "Shop", icon: <span>🪐</span>, path: "/shop" },
+    { label: "Logout", icon: <span>🌀</span>, path: "/logout" },
+  ];
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
-    setOpenSubMenus(new Set()); // Đóng tất cả submenu khi toggle
+    setOpenSubMenus(new Set());
   };
 
   const toggleSubMenu = (index: number) => {
@@ -52,7 +58,6 @@ const menuItems: MenuItem[] = [
 
   return (
     <>
-      {/* Nút hamburger cho mobile */}
       <button
         onClick={toggleSidebar}
         className="fixed top-4 left-4 z-50 sm:hidden p-2 rounded-full bg-gray-800 text-white hover:bg-gray-700"
@@ -67,7 +72,6 @@ const menuItems: MenuItem[] = [
           overflow-hidden shadow-lg bg-gray-950 border-r border-gray-800/30`}
       >
         <ul className="p-2">
-          {/* Header */}
           <li className="flex justify-between items-center mx-3 mb-6 mt-4">
             {sidebarOpen && <span className="font-bold text-xl text-white">Mecha</span>}
             <button
@@ -79,7 +83,6 @@ const menuItems: MenuItem[] = [
             </button>
           </li>
 
-          {/* Menu Items */}
           {menuItems.map((item, index) => (
             <li key={index} className="mb-1">
               {item.submenu ? (
@@ -103,7 +106,7 @@ const menuItems: MenuItem[] = [
                         <a
                           href={`#${sub.toLowerCase()}`}
                           className="block py-2 px-3 text-sm text-gray-300 hover:bg-gray-700/50 rounded-md"
-                          onClick={() => window.innerWidth < 640 && toggleSidebar()} // auto đóng trên mobile
+                          onClick={() => window.innerWidth < 640 && toggleSidebar()}
                         >
                           {sub}
                         </a>
@@ -112,16 +115,19 @@ const menuItems: MenuItem[] = [
                   </ul>
                 </div>
               ) : (
-                <a
-                  href={item.path}
-                  className={`flex items-center gap-3 p-3 rounded-lg text-white transition-all duration-200
+                <button
+                  onClick={() => {
+                    if (item.label === "Logout") return handleLogout();
+                    if (item.path) navigate(item.path);
+                    if (window.innerWidth < 640) toggleSidebar();
+                  }}
+                  className={`w-full flex items-center gap-3 p-3 rounded-lg text-white transition-all duration-200
                     ${sidebarOpen ? "justify-start" : "justify-center"}
                     ${item.active ? "bg-gray-800/70" : "hover:bg-gray-800/50"}`}
-                  onClick={() => window.innerWidth < 640 && toggleSidebar()} // auto đóng trên mobile
                 >
                   <span>{item.icon}</span>
                   {sidebarOpen && <span className="text-sm">{item.label}</span>}
-                </a>
+                </button>
               )}
             </li>
           ))}
