@@ -11,6 +11,7 @@ type Route = {
 };
 import Register from "../pages/Auth/Register";
 import Login from "../pages/Auth/Login";
+import DiscordLogin from "../pages/Auth/DiscordLogin";
 
 const publicRoutes: Route[] = [
 
@@ -29,7 +30,11 @@ const publicRoutes: Route[] = [
     element: <Login/>,
     auth: false,
   },
-
+{
+    path: "/discord-login",
+    element: <DiscordLogin/>,
+    auth: false,
+  },
   {
     path: "/forgot-password",
     element: <div>Quên mật khẩu</div>,

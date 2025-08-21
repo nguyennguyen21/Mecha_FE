@@ -15,6 +15,13 @@ interface ProfileFormData {
   location: string;
 }
 
+interface FileState {
+  profileAvatar: string;
+  background: string;
+  audio: string;
+  audioImage: string;
+}
+
 const API_BASE_URL = "http://localhost:5159";
 
 const ProfileForm: React.FC = () => {
@@ -31,7 +38,7 @@ const ProfileForm: React.FC = () => {
     location: "",
   });
 
-  const [oldFiles, setOldFiles] = useState({
+  const [oldFiles, setOldFiles] = useState<FileState>({
     profileAvatar: "",
     background: "",
     audio: "",
@@ -45,33 +52,51 @@ const ProfileForm: React.FC = () => {
     audioImage: false,
   });
 
+  const [isProfileLoading, setIsProfileLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [userId, setUserId] = useState<number | null>(null);
 
-  const getMediaUrl = (path: string) => {
-    if (!path) return "";
-    const url = path.startsWith("blob:") || path.startsWith("http")
-      ? path
-      : `${API_BASE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
-    console.log(`🔹 Generated URL for path ${path}:`, url);
-    return url;
+  const getMediaUrl = (path: string): string => {
+    if (!path || path.startsWith("blob:") || path.startsWith("http")) return path;
+    return `${API_BASE_URL}/${path.replace(/^\//, "")}`;
   };
 
   useEffect(() => {
     const fetchProfile = async () => {
+      setIsProfileLoading(true);
       try {
-        const response = await fetch(`${API_BASE_URL}/api/profile/tuibingao`, {
+        const userInfoString = localStorage.getItem("userInfo");
+        if (!userInfoString) {
+          setMessage("You are not logged in.");
+          return;
+        }
+
+        const userInfo = JSON.parse(userInfoString);
+        console.log("UserInfo from localStorage:", userInfo); // Debug log
+        const userIdFromStorage = userInfo.idUser || userInfo.id || userInfo.userId || userInfo.IdUser;
+        console.log("Extracted userId:", userIdFromStorage); // Debug log
+        
+        if (!userIdFromStorage) {
+          setMessage("User ID not found in local storage.");
+          return;
+        }
+
+        setUserId(userIdFromStorage);
+        const token = localStorage.getItem("authToken") || "";
+
+        const response = await fetch(`${API_BASE_URL}/api/profile/${userIdFromStorage}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
         });
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+
+        if (!response.ok) throw new Error(`Failed to fetch profile: ${response.status}`);
         const data = await response.json();
-        console.log("🔹 Raw profile data:", data);
-        const profileData: ProfileFormData = {
+
+        setFormData({
           profileAvatar: data.profileAvatar ?? "",
           background: data.background ?? "",
           audio: data.audio ?? "",
@@ -82,20 +107,23 @@ const ProfileForm: React.FC = () => {
           username: data.username ?? "",
           effectUsername: data.effectUsername ?? "glow",
           location: data.location ?? "",
-        };
-        setFormData(profileData);
+        });
+
         setOldFiles({
           profileAvatar: data.profileAvatar ?? "",
           background: data.background ?? "",
           audio: data.audio ?? "",
           audioImage: data.audioImage ?? "",
         });
-        console.log("🔹 Profile loaded successfully:", profileData);
-      } catch (err) {
-        console.error("❌ Get profile failed:", err);
-        setMessage("❌ Failed to load profile.");
+
+      } catch (error) {
+        console.error(error);
+        setMessage("Failed to load profile.");
+      } finally {
+        setIsProfileLoading(false);
       }
     };
+
     fetchProfile();
   }, []);
 
@@ -104,35 +132,38 @@ const ProfileForm: React.FC = () => {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    console.log(`🔹 Field ${name} updated:`, value);
   };
 
-  const uploadFile = async (file: File, type: string) => {
+  const uploadFile = async (file: File, type: string): Promise<string> => {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("type", type);
-    const response = await fetch(`${API_BASE_URL}/api/upload`, {
-      method: "POST",
-      body: formData,
-    });
+
+    const url = new URL(`${API_BASE_URL}/api/FileUpload/upload`);
+    url.searchParams.append("type", type);
+
+    const response = await fetch(url.toString(), { method: "POST", body: formData });
+
     if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+      const errorData = await response.json();
+      throw new Error(errorData.message || `Upload failed: ${response.status}`);
     }
+
     const data = await response.json();
     return data.url;
   };
 
   const deleteFile = async (path: string) => {
     if (!path || path.startsWith("blob:") || path.startsWith("http")) return;
-    const response = await fetch(`${API_BASE_URL}/api/delete`, {
+
+    const response = await fetch(`${API_BASE_URL}/api/FileUpload/delete`, {
       method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ path }),
     });
+
     if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+      const errorData = await response.json();
+      throw new Error(errorData.message || `Delete failed: ${response.status}`);
     }
   };
 
@@ -141,83 +172,130 @@ const ProfileForm: React.FC = () => {
     field: keyof ProfileFormData
   ) => {
     const file = e.target.files?.[0];
-    if (!file) {
-      console.log("🔹 No file selected for", field);
+    if (!file) return;
+
+    const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
+    const validAudioTypes = ["audio/mpeg", "audio/wav"];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+
+    if (field === "audio" && !validAudioTypes.includes(file.type)) {
+      setMessage("Invalid audio file type.");
       return;
     }
-    const fileType = field === "audio" ? "audio" : "image";
+    if (["profileAvatar", "background", "audioImage"].includes(field) && !validImageTypes.includes(file.type)) {
+      setMessage("Invalid image file type.");
+      return;
+    }
+    if (file.size > maxSize) {
+      setMessage("File size exceeds 5MB.");
+      return;
+    }
+
     setUploadingFiles((prev) => ({ ...prev, [field]: true }));
+
     try {
-      console.log(`🔄 Uploading ${field}:`, file.name);
+      const fileType = field === "audio" ? "audio" : field === "audioImage" ? "audio_image" : "image";
       const filePath = await uploadFile(file, fileType);
-      console.log(`✅ Upload ${field} success:`, filePath);
-      const oldFilePath = oldFiles[field as keyof typeof oldFiles];
+
+      const oldFilePath = oldFiles[field as keyof FileState];
       if (oldFilePath && oldFilePath !== filePath) {
-        try {
-          await deleteFile(oldFilePath);
-          console.log(`🗑️ Deleted old ${field}:`, oldFilePath);
-        } catch (error) {
-          console.warn(`⚠️ Failed to delete old ${field}:`, error);
-        }
+        await deleteFile(oldFilePath).catch((error) => console.warn(`Failed to delete old ${field}:`, error));
       }
+
       setFormData((prev) => {
         const newData = { ...prev, [field]: filePath };
         if (field === "audio" && !prev.audioTitle) {
-          const nameWithoutExt = file.name.replace(/\.[^/.]+$/, "");
-          newData.audioTitle = nameWithoutExt;
+          newData.audioTitle = file.name.replace(/\.[^/.]+$/, "");
         }
-        console.log(`🔹 Updated formData after ${field} upload:`, newData);
         return newData;
       });
+
       setOldFiles((prev) => ({ ...prev, [field]: filePath }));
-      setMessage(`✅ ${field} uploaded successfully!`);
+      setMessage(`${field} uploaded successfully!`);
       setTimeout(() => setMessage(""), 3000);
       e.target.value = "";
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : `Failed to upload ${field}`;
-      console.error(`❌ Failed to upload ${field}:`, error);
-      setMessage(`❌ ${errorMessage}`);
+      setMessage(error instanceof Error ? error.message : `Failed to upload ${field}.`);
+      console.error(`Upload ${field} error:`, error);
+      setTimeout(() => setMessage(""), 5000);
     } finally {
       setUploadingFiles((prev) => ({ ...prev, [field]: false }));
     }
   };
 
   const handleSubmit = async () => {
+    if (!formData.username.trim()) {
+      setMessage("Username is required.");
+      setTimeout(() => setMessage(""), 5000);
+      return;
+    }
+
+    if (!userId) {
+      setMessage("User ID not found.");
+      setTimeout(() => setMessage(""), 5000);
+      return;
+    }
+
     setLoading(true);
     setMessage("");
+
     const submitData: Partial<ProfileFormData> = {};
-    Object.keys(formData).forEach((key) => {
-      const value = formData[key as keyof ProfileFormData];
-      if (value.trim() !== "") {
+    Object.entries(formData).forEach(([key, value]) => {
+      if (typeof value === "string" && value.trim()) {
         submitData[key as keyof ProfileFormData] = value.trim();
       }
     });
-    console.log("🔄 Submitting profile:", submitData);
+
     try {
-      const response = await fetch(`${API_BASE_URL}/api/profile/tuibingao`, {
+      console.log("Submitting data:", submitData);
+      const token = localStorage.getItem("authToken") || "";
+
+      const response = await fetch(`${API_BASE_URL}/api/profile/${userId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(submitData),
       });
+
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Profile update failed: ${response.status}`);
       }
-      setMessage("✅ Profile updated successfully!");
+
+      const responseData = await response.json();
+      setMessage("Profile updated successfully!");
       setTimeout(() => setMessage(""), 5000);
-    } catch (err) {
-      console.error("❌ Failed to update profile:", err);
-      setMessage("❌ Failed to update profile.");
+
+      // Update local storage if username was changed
+      if (responseData.newUsername) {
+        const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
+        userInfo.username = responseData.newUsername;
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+      }
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to update profile.";
+      setMessage(errorMessage);
+      console.error("Profile update error:", error);
+      setTimeout(() => setMessage(""), 5000);
     } finally {
       setLoading(false);
     }
   };
 
+  if (isProfileLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-950">
+        <div className="text-white">Loading profile...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-950 transition-all duration-500">
       <div className="w-full max-w-5xl rounded-3xl shadow-2xl overflow-y-auto max-h-screen">
-        {/* Message */}
         {message && (
           <div
             className={`text-center font-semibold text-lg mx-4 mb-6 rounded-xl p-4 transition-all duration-300 animate-bounce ${
@@ -230,7 +308,6 @@ const ProfileForm: React.FC = () => {
           </div>
         )}
 
-        {/* Information Profile */}
         <InformationProfile
           formData={formData}
           uploadingFiles={uploadingFiles}
@@ -239,7 +316,6 @@ const ProfileForm: React.FC = () => {
           handleFileChange={handleFileChange}
         />
 
-        {/* Audio Profile */}
         <div className="mt-8 mx-4 sm:mx-8">
           <AudioProfile
             formData={formData}
@@ -250,7 +326,6 @@ const ProfileForm: React.FC = () => {
           />
         </div>
 
-        {/* Submit Button */}
         <div className="mt-8 mx-4 sm:mx-8 pb-8 pt-6 border-t border-gray-700/20">
           <button
             onClick={handleSubmit}
@@ -273,33 +348,29 @@ const ProfileForm: React.FC = () => {
           </button>
         </div>
 
-        {/* Theme Preview */}
-            <div className="mx-4 sm:mx-8 mb-8">
-  <div className="bg-gray-900 rounded-2xl p-6 border border-gray-700 shadow-lg">
-    <h3 className="text-lg font-semibold text-gray-200 mb-4">
-      🌈 Mood Board
-    </h3>
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <div className="text-center">
-        <div className="w-12 h-12 bg-blue-500 rounded-lg mx-auto mb-2 shadow-md"></div>
-        <span className="text-xs text-gray-400">🔵 Main vibe</span>
-      </div>
-      <div className="text-center">
-        <div className="w-12 h-12 bg-purple-500 rounded-lg mx-auto mb-2 shadow-md"></div>
-        <span className="text-xs text-gray-400">💜 Sidekick</span>
-      </div>
-      <div className="text-center">
-        <div className="w-12 h-12 bg-gray-600 rounded-lg mx-auto mb-2 shadow-md"></div>
-        <span className="text-xs text-gray-400">🌌 Backdrop</span>
-      </div>
-      <div className="text-center">
-        <div className="w-12 h-12 bg-gray-200 rounded-lg mx-auto mb-2 shadow-md"></div>
-        <span className="text-xs text-gray-400">✍️ Words</span>
-      </div>
-    </div>
-  </div>
-</div>
-
+        <div className="mx-4 sm:mx-8 mb-8">
+          <div className="bg-gray-900 rounded-2xl p-6 border border-gray-700 shadow-lg">
+            <h3 className="text-lg font-semibold text-gray-200 mb-4">🌈 Mood Board</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="text-center">
+                <div className="w-12 h-12 bg-blue-500 rounded-lg mx-auto mb-2 shadow-md"></div>
+                <span className="text-xs text-gray-400">🔵 Main vibe</span>
+              </div>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-purple-500 rounded-lg mx-auto mb-2 shadow-md"></div>
+                <span className="text-xs text-gray-400">💜 Sidekick</span>
+              </div>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-gray-600 rounded-lg mx-auto mb-2 shadow-md"></div>
+                <span className="text-xs text-gray-400">🌌 Backdrop</span>
+              </div>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-gray-200 rounded-lg mx-auto mb-2 shadow-md"></div>
+                <span className="text-xs text-gray-400">✍️ Words</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

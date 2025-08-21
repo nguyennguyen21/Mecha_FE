@@ -1,22 +1,33 @@
 import React, { useRef } from "react";
 
+interface ProfileFormData {
+  profileAvatar: string;
+  background: string;
+  audio: string;
+  audioImage: string;
+  audioTitle: string;
+  customCursor: string;
+  description: string;
+  username: string;
+  effectUsername: string;
+  location: string;
+}
+
 interface AudioProfileProps {
-  formData: {
-    audio: string;
-    audioImage: string;
-    audioTitle: string;
-  };
+  formData: ProfileFormData;
   uploadingFiles: {
+    profileAvatar: boolean;
+    background: boolean;
     audio: boolean;
     audioImage: boolean;
   };
   getMediaUrl: (path: string) => string;
   handleChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => void;
   handleFileChange: (
     e: React.ChangeEvent<HTMLInputElement>,
-    field: "audio" | "audioImage"
+    field: keyof ProfileFormData
   ) => void;
 }
 
@@ -118,6 +129,7 @@ const AudioProfile: React.FC<AudioProfileProps> = ({
             <input
               type="text"
               name="audioTitle"
+              value={formData.audioTitle}
               onChange={handleChange}
               placeholder="Enter audio title..."
               className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-200 dark:focus:ring-purple-300/50 outline-none transition-all duration-200 text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-500 text-sm bg-white dark:bg-gray-800"
@@ -151,6 +163,8 @@ const AudioProfile: React.FC<AudioProfileProps> = ({
                   >
                     <source src={getMediaUrl(formData.audio)} type="audio/mpeg" />
                     <source src={getMediaUrl(formData.audio)} type="audio/wav" />
+                    <source src={getMediaUrl(formData.audio)} type="audio/ogg" />
+                    <source src={getMediaUrl(formData.audio)} type="audio/m4a" />
                     <p className="text-gray-500 text-sm">
                       Your browser does not support the audio element.
                     </p>

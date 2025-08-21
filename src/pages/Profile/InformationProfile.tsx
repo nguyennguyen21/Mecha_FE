@@ -1,5 +1,4 @@
 import React, { useRef } from "react";
-import type { RefObject } from "react"; // Type-only import for RefObject
 
 interface ProfileFormData {
   profileAvatar: string;
@@ -19,6 +18,8 @@ interface InformationProfileProps {
   uploadingFiles: {
     profileAvatar: boolean;
     background: boolean;
+    audio: boolean;
+    audioImage: boolean;
   };
   getMediaUrl: (path: string) => string;
   handleChange: (
@@ -26,7 +27,7 @@ interface InformationProfileProps {
   ) => void;
   handleFileChange: (
     e: React.ChangeEvent<HTMLInputElement>,
-    field: "profileAvatar" | "background"
+    field: keyof ProfileFormData
   ) => void;
 }
 
@@ -37,8 +38,8 @@ const InformationProfile: React.FC<InformationProfileProps> = ({
   handleChange,
   handleFileChange,
 }) => {
-const avatarInputRef = useRef<HTMLInputElement>(null);
-const bgInputRef = useRef<HTMLInputElement>(null);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const bgInputRef = useRef<HTMLInputElement>(null);
 
   return (
     <div
@@ -218,6 +219,7 @@ const bgInputRef = useRef<HTMLInputElement>(null);
               <input
                 type="text"
                 name="username"
+                value={formData.username}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border-2 border-gray-700 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-300/50 outline-none transition-all duration-200 text-gray-300 placeholder-gray-500 bg-gray-800/80"
                 placeholder="Enter your username"
@@ -247,6 +249,7 @@ const bgInputRef = useRef<HTMLInputElement>(null);
             </label>
             <textarea
               name="description"
+              value={formData.description}
               onChange={handleChange}
               rows={4}
               className="w-full px-4 py-3 border-2 border-gray-700 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-300/50 outline-none transition-all duration-200 resize-none text-gray-300 placeholder-gray-500 bg-gray-800/80"
