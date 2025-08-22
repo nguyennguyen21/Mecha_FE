@@ -1,0 +1,10 @@
+/* styles/StylePreview.css */
+.preview-container {
+  transition: all 0.3s ease-in-out;
+}
+
+.preview-container img,
+.preview-container h3,
+.preview-container p {
+  transition: all 0.3s ease-in-out;
+}

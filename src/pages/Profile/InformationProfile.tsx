@@ -56,7 +56,7 @@ const InformationProfile: React.FC<InformationProfileProps> = ({
       {/* Background Section */}
       <div
         className="w-full h-96 rounded-3xl overflow-hidden relative cursor-pointer group shadow-2xl ring-1 ring-gray-700/20 transition-all duration-500 hover:shadow-3xl hover:ring-gray-600/30"
-        onClick={() => !uploadingFiles.background && bgInputRef.current?.click()}
+
       >
         {formData.background ? (
           <img
@@ -68,7 +68,8 @@ const InformationProfile: React.FC<InformationProfileProps> = ({
             className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105"
           />
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-gray-950 to-black text-gray-300">
+<div className="w-full h-full flex flex-col items-center justify-center bg-black text-gray-300">
+
             <div className="w-16 h-16 mb-4 bg-gray-800/50 rounded-2xl flex items-center justify-center shadow-lg">
               <svg
                 className="w-8 h-8 opacity-80"

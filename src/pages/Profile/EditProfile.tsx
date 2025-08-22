@@ -1,26 +1,10 @@
 import React, { useState, useEffect } from "react";
 import InformationProfile from "./InformationProfile";
 import AudioProfile from "./AudioProfile";
-
-interface ProfileFormData {
-  profileAvatar: string;
-  background: string;
-  audio: string;
-  audioImage: string;
-  audioTitle: string;
-  customCursor: string;
-  description: string;
-  username: string;
-  effectUsername: string;
-  location: string;
-}
-
-interface FileState {
-  profileAvatar: string;
-  background: string;
-  audio: string;
-  audioImage: string;
-}
+import AdvancedStyleSettings from "./AdvancedStyleSettings";
+import QuickStylePresets from "./QuickStylePresets";
+import { useUserStyles } from "./useUserStyles";
+import { type ProfileFormData, type FileState, type CustomStyles } from "../../types"; // Add 'type' keyword
 
 const API_BASE_URL = "http://localhost:5159";
 
@@ -57,6 +41,55 @@ const ProfileForm: React.FC = () => {
   const [message, setMessage] = useState("");
   const [userId, setUserId] = useState<number | null>(null);
 
+  const { loading: stylesLoading, error: stylesError, updateUserStyles } =
+    useUserStyles();
+
+const [customStyles, setCustomStyles] = useState<CustomStyles>({
+  profileBorderStyle: "solid",
+  profileBorderWidth: "1px",
+  profileBorderColor: "rgba(139, 92, 246, 0.3)",
+  profileBorderRadius: "16px",
+  profilePadding: "24px",
+  profileBackgroundColor: "rgba(31, 41, 55, 0.8)",
+  profileOpacity: 1,
+  profileBoxShadow:
+    "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+  avatarBorderRadius: "50%",
+  avatarShowBorder: true,
+  avatarBorderStyle: "solid",
+  avatarBorderWidth: "3px",
+  avatarBorderColor: "rgba(139, 92, 246, 0.5)",
+  usernameFontSize: "24px",
+  usernameFontStyle: "normal",
+  usernameFontWeight: "600",
+  usernameColor: "#8b5cf6",
+  usernameTextShadow: "0 0 10px rgba(139, 92, 246, 0.5)",
+  usernameTextTransform: "none",
+  usernameLetterSpacing: "0.5px",
+  locationFontSize: "14px",
+  locationColor: "#9ca3af",
+  locationFontStyle: "italic",
+  cursorWidth: "20px",
+  cursorHeight: "20px",
+  cursorType: "crosshair",
+  cursorColor: "#8b5cf6",
+  cursorFontSize: "12px",
+  cursorFontWeight: "500",
+  audioTitleFontSize: "18px",
+  audioTitleFontWeight: "500",
+  audioTitleColor: "#ffffff",
+  audioTitleLetterSpacing: "0.3px",
+  coverImageWidth: "300px",
+  coverImageHeight: "300px",
+  coverImageBorderRadius: "12px",
+  coverImageObjectFit: "cover",
+  coverImageBorderStyle: "solid",
+  coverImageBorderWidth: "2px",
+  coverImageBorderColor: "rgba(139, 92, 246, 0.3)",
+  coverImageBoxShadow:
+    "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+});
+
   const getMediaUrl = (path: string): string => {
     if (!path || path.startsWith("blob:") || path.startsWith("http")) return path;
     return `${API_BASE_URL}/${path.replace(/^\//, "")}`;
@@ -73,10 +106,9 @@ const ProfileForm: React.FC = () => {
         }
 
         const userInfo = JSON.parse(userInfoString);
-        console.log("UserInfo from localStorage:", userInfo); // Debug log
-        const userIdFromStorage = userInfo.idUser || userInfo.id || userInfo.userId || userInfo.IdUser;
-        console.log("Extracted userId:", userIdFromStorage); // Debug log
-        
+        const userIdFromStorage =
+          userInfo.idUser || userInfo.id || userInfo.userId || userInfo.IdUser;
+
         if (!userIdFromStorage) {
           setMessage("User ID not found in local storage.");
           return;
@@ -115,7 +147,6 @@ const ProfileForm: React.FC = () => {
           audio: data.audio ?? "",
           audioImage: data.audioImage ?? "",
         });
-
       } catch (error) {
         console.error(error);
         setMessage("Failed to load profile.");
@@ -132,6 +163,10 @@ const ProfileForm: React.FC = () => {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleStyleChange = (styleKey: string, value: string | number | boolean) => {
+    setCustomStyles((prev) => ({ ...prev, [styleKey]: value }));
   };
 
   const uploadFile = async (file: File, type: string): Promise<string> => {
@@ -182,7 +217,10 @@ const ProfileForm: React.FC = () => {
       setMessage("Invalid audio file type.");
       return;
     }
-    if (["profileAvatar", "background", "audioImage"].includes(field) && !validImageTypes.includes(file.type)) {
+    if (
+      ["profileAvatar", "background", "audioImage"].includes(field) &&
+      !validImageTypes.includes(file.type)
+    ) {
       setMessage("Invalid image file type.");
       return;
     }
@@ -199,7 +237,9 @@ const ProfileForm: React.FC = () => {
 
       const oldFilePath = oldFiles[field as keyof FileState];
       if (oldFilePath && oldFilePath !== filePath) {
-        await deleteFile(oldFilePath).catch((error) => console.warn(`Failed to delete old ${field}:`, error));
+        await deleteFile(oldFilePath).catch((error) =>
+          console.warn(`Failed to delete old ${field}:`, error)
+        );
       }
 
       setFormData((prev) => {
@@ -247,7 +287,6 @@ const ProfileForm: React.FC = () => {
     });
 
     try {
-      console.log("Submitting data:", submitData);
       const token = localStorage.getItem("authToken") || "";
 
       const response = await fetch(`${API_BASE_URL}/api/profile/${userId}`, {
@@ -265,16 +304,22 @@ const ProfileForm: React.FC = () => {
       }
 
       const responseData = await response.json();
+
+      try {
+        await updateUserStyles(userId, customStyles);
+        console.log("User styles updated successfully");
+      } catch (styleError) {
+        console.warn("Failed to update styles:", styleError);
+      }
+
       setMessage("Profile updated successfully!");
       setTimeout(() => setMessage(""), 5000);
 
-      // Update local storage if username was changed
       if (responseData.newUsername) {
         const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
         userInfo.username = responseData.newUsername;
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
       }
-
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to update profile.";
       setMessage(errorMessage);
@@ -287,15 +332,15 @@ const ProfileForm: React.FC = () => {
 
   if (isProfileLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-950">
+      <div className="flex items-center justify-center min-h-screen">
         <div className="text-white">Loading profile...</div>
       </div>
     );
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-950 transition-all duration-500">
-      <div className="w-full max-w-5xl rounded-3xl shadow-2xl overflow-y-auto max-h-screen">
+    <div className="flex items-center justify-center min-h-screen text-white transition-all duration-500">
+      <div className="w-full max-w-6xl rounded-3xl shadow-2xl overflow-y-auto max-h-screen p-6">
         {message && (
           <div
             className={`text-center font-semibold text-lg mx-4 mb-6 rounded-xl p-4 transition-all duration-300 animate-bounce ${
@@ -308,13 +353,19 @@ const ProfileForm: React.FC = () => {
           </div>
         )}
 
-        <InformationProfile
-          formData={formData}
-          uploadingFiles={uploadingFiles}
-          getMediaUrl={getMediaUrl}
-          handleChange={handleChange}
-          handleFileChange={handleFileChange}
-        />
+        {stylesError && (
+          <div className="text-center text-yellow-300 bg-yellow-900/50 border border-yellow-700/50 rounded-xl p-4 mx-4 mb-6">
+            Styles Error: {stylesError}
+          </div>
+        )}
+
+          <InformationProfile
+  formData={formData}
+  uploadingFiles={uploadingFiles}
+  getMediaUrl={getMediaUrl}
+  handleChange={handleChange}
+  handleFileChange={handleFileChange}
+/>
 
         <div className="mt-8 mx-4 sm:mx-8">
           <AudioProfile
@@ -326,11 +377,23 @@ const ProfileForm: React.FC = () => {
           />
         </div>
 
+        <AdvancedStyleSettings
+          customStyles={customStyles}
+          handleStyleChange={handleStyleChange}
+          stylesLoading={stylesLoading}
+          userId={userId!} 
+        />
+
+        <QuickStylePresets
+          customStyles={customStyles}
+          setCustomStyles={setCustomStyles}
+        />
+
         <div className="mt-8 mx-4 sm:mx-8 pb-8 pt-6 border-t border-gray-700/20">
           <button
             onClick={handleSubmit}
-            disabled={loading || Object.values(uploadingFiles).some(Boolean)}
-            className="w-full py-4 rounded-xl font-semibold text-lg shadow-lg transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-r from-purple-700 to-blue-700 hover:from-purple-800 hover:to-blue-800 text-white shadow-purple-500/25 hover:shadow-purple-500/40"
+            disabled={loading || stylesLoading || Object.values(uploadingFiles).some(Boolean)}
+            className="w-full py-4 rounded-xl font-semibold text-lg shadow-lg transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
           >
             {loading ? (
               <div className="flex items-center justify-center gap-3">
@@ -342,34 +405,15 @@ const ProfileForm: React.FC = () => {
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                 Uploading Files...
               </div>
+            ) : stylesLoading ? (
+              <div className="flex items-center justify-center gap-3">
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                Loading Styles...
+              </div>
             ) : (
-              "Update Profile"
+              "🚀 Update Profile & Styles"
             )}
           </button>
-        </div>
-
-        <div className="mx-4 sm:mx-8 mb-8">
-          <div className="bg-gray-900 rounded-2xl p-6 border border-gray-700 shadow-lg">
-            <h3 className="text-lg font-semibold text-gray-200 mb-4">🌈 Mood Board</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="text-center">
-                <div className="w-12 h-12 bg-blue-500 rounded-lg mx-auto mb-2 shadow-md"></div>
-                <span className="text-xs text-gray-400">🔵 Main vibe</span>
-              </div>
-              <div className="text-center">
-                <div className="w-12 h-12 bg-purple-500 rounded-lg mx-auto mb-2 shadow-md"></div>
-                <span className="text-xs text-gray-400">💜 Sidekick</span>
-              </div>
-              <div className="text-center">
-                <div className="w-12 h-12 bg-gray-600 rounded-lg mx-auto mb-2 shadow-md"></div>
-                <span className="text-xs text-gray-400">🌌 Backdrop</span>
-              </div>
-              <div className="text-center">
-                <div className="w-12 h-12 bg-gray-200 rounded-lg mx-auto mb-2 shadow-md"></div>
-                <span className="text-xs text-gray-400">✍️ Words</span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
