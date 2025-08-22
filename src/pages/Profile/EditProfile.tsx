@@ -340,7 +340,7 @@ const [customStyles, setCustomStyles] = useState<CustomStyles>({
 
   return (
     <div className="flex items-center justify-center min-h-screen text-white transition-all duration-500">
-      <div className="w-full max-w-6xl rounded-3xl shadow-2xl overflow-y-auto max-h-screen p-6">
+       <div className="w-full max-w-6xl rounded-3xl shadow-2xl p-6">
         {message && (
           <div
             className={`text-center font-semibold text-lg mx-4 mb-6 rounded-xl p-4 transition-all duration-300 animate-bounce ${
@@ -383,11 +383,15 @@ const [customStyles, setCustomStyles] = useState<CustomStyles>({
           stylesLoading={stylesLoading}
           userId={userId!} 
         />
+<QuickStylePresets
+  customStyles={customStyles}
+  setCustomStyles={setCustomStyles}
+  userId={userId}
+  setMessage={setMessage}
+  setFormData={setFormData} 
+/>
 
-        <QuickStylePresets
-          customStyles={customStyles}
-          setCustomStyles={setCustomStyles}
-        />
+
 
         <div className="mt-8 mx-4 sm:mx-8 pb-8 pt-6 border-t border-gray-700/20">
           <button

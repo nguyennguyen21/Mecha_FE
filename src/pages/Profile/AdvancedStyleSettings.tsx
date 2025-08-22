@@ -2,7 +2,7 @@ import React from "react";
 import "rc-slider/assets/index.css";
 import StyleInputGroup from "./StyleInputGroup";
 import { type CustomStyles } from "../../types";
-// import StylePreview from "./StylePreview";
+import StylePreview from "./StylePreview";
 
 interface AdvancedStyleSettingsProps {
   customStyles: CustomStyles;
@@ -460,6 +460,7 @@ const AdvancedStyleSettings: React.FC<AdvancedStyleSettingsProps> = ({
           <h3 className="text-xl font-semibold mb-4 text-orange-300 border-b border-orange-500/30 pb-2">
             👁️ Preview
           </h3>
+             <StylePreview userId={userId} token={localStorage.getItem("authToken") || ""} />
 
         </div>
       </div>

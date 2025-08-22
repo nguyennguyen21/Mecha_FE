@@ -93,3 +93,27 @@ export interface UserStyleDto {
   IdUser: number;
   Styles: CustomStyles;
 }
+
+// src/types.ts
+export interface ProfileData {
+  userId: number;
+  styleId?: string;
+  profileAvatar?: string;
+  background?: string;
+  audio?: string;
+  audioImage?: string;
+  audioTitle?: string;
+  customCursor?: string;
+  description?: string;
+  username?: string;
+  effectUsername?: string;
+  location?: string;
+}
+
+export interface UserStyle {
+  idUser: number;
+  styles: {
+    theme: "light" | "dark";
+    primaryColor: string;
+  };
+}
