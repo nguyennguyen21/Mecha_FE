@@ -219,6 +219,7 @@ const bgInputRef = useRef<HTMLInputElement>(null);
                 type="text"
                 name="username"
                 onChange={handleChange}
+                value={formData.username}
                 className="w-full px-4 py-3 border-2 border-gray-700 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-300/50 outline-none transition-all duration-200 text-gray-300 placeholder-gray-500 bg-gray-800/80"
                 placeholder="Enter your username"
               />

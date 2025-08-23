@@ -17,6 +17,51 @@ type ProfileData = {
   location?: string;
 };
 
+interface UserStyle {
+  [key: string]: any;
+  profileBorderStyle?: string;
+  profileBorderWidth?: string;
+  profileBorderColor?: string;
+  profileBorderRadius?: string;
+  profilePadding?: string;
+  profileBackgroundColor?: string;
+  profileOpacity?: number;
+  profileBoxShadow?: string;
+  avatarBorderRadius?: string;
+  avatarShowBorder?: boolean;
+  avatarBorderStyle?: string;
+  avatarBorderWidth?: string;
+  avatarBorderColor?: string;
+  usernameFontSize?: string;
+  usernameFontStyle?: string;
+  usernameFontWeight?: string;
+  usernameColor?: string;
+  usernameTextShadow?: string;
+  usernameTextTransform?: string;
+  usernameLetterSpacing?: string;
+  locationFontSize?: string;
+  locationColor?: string;
+  locationFontStyle?: string;
+  cursorWidth?: string;
+  cursorHeight?: string;
+  cursorType?: string;
+  cursorColor?: string;
+  cursorFontSize?: string;
+  cursorFontWeight?: string;
+  audioTitleFontSize?: string;
+  audioTitleFontWeight?: string;
+  audioTitleColor?: string;
+  audioTitleLetterSpacing?: string;
+  coverImageWidth?: string;
+  coverImageHeight?: string;
+  coverImageBorderRadius?: string;
+  coverImageObjectFit?: string;
+  coverImageBorderStyle?: string;
+  coverImageBorderWidth?: string;
+  coverImageBorderColor?: string;
+  coverImageBoxShadow?: string;
+}
+
 const BASE_URL = "http://localhost:5159";
 
 const ProfilePage: React.FC = () => {
@@ -24,7 +69,52 @@ const ProfilePage: React.FC = () => {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [style, setStyle] = useState<UserStyle | null>(null);
 
+  // Fetch user styles
+  useEffect(() => {
+    if (!username) {
+      console.log("❌ No username provided");
+      return;
+    }
+
+    console.log("🔍 Fetching style for username:", username);
+
+    const fetchStyle = async () => {
+      try {
+        const url = `${BASE_URL}/api/UserStyles/username/${username}`;
+        console.log("📡 Making request to:", url);
+        
+        const res = await fetch(url);
+        console.log("📥 Response status:", res.status);
+        console.log("📥 Response ok:", res.ok);
+        
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.log("❌ Error response:", errorText);
+          throw new Error(`Failed to fetch style: ${res.status}`);
+        }
+
+        const data = await res.json();
+        console.log("✅ User style data:", data);
+        console.log("✅ Data type:", typeof data);
+        console.log("✅ Data keys:", Object.keys(data));
+        
+        setStyle(data); 
+      } catch (err) {
+        console.error("❌ Fetch style error:", err);
+      }
+    };
+
+    fetchStyle();
+  }, [username]);
+
+  // Log style changes
+  useEffect(() => {
+    console.log("🎨 Style state changed:", style);
+  }, [style]);
+
+  // Fetch profile data
   useEffect(() => {
     if (!username) return;
 
@@ -51,6 +141,7 @@ const ProfilePage: React.FC = () => {
   if (error) return <div>Error: {error}</div>;
   if (!profile) return <div>Profile not found</div>;
 
+  // Original static styles (not applying user styles)
   const theme = profile.username ? "light" : "light";
   const primaryColor = "#888";
 
@@ -119,6 +210,8 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div style={containerStyle}>
+
+      {/* Background image */}
       {profile.background && (
         <img
           src={`${BASE_URL}${profile.background}`}
@@ -127,6 +220,7 @@ const ProfilePage: React.FC = () => {
         />
       )}
 
+      {/* Profile avatar */}
       {profile.profileAvatar && (
         <img
           src={`${BASE_URL}${profile.profileAvatar}`}
@@ -135,13 +229,21 @@ const ProfilePage: React.FC = () => {
         />
       )}
 
+      {/* Username */}
       <h1 style={usernameStyle}>{profile.username}</h1>
 
+      {/* Description */}
       {profile.description && <p>{profile.description}</p>}
-      {profile.location && <p style={locationStyle}>Location: {profile.location}</p>}
+
+      {/* Location */}
+      {profile.location && (
+        <p style={locationStyle}>Location: {profile.location}</p>
+      )}
+
+      {/* Custom cursor info */}
       {profile.customCursor && <p>Cursor: {profile.customCursor}</p>}
 
-      {/* Audio hiển thị hình + title + auto play */}
+      {/* Audio player with image and title */}
       {profile.audio && (
         <div style={audioContainerStyle}>
           {profile.audioImage && (

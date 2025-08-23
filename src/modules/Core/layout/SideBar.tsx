@@ -91,7 +91,7 @@ const SideBar: React.FC = () => {
                     onClick={() => toggleSubMenu(index)}
                     className={`w-full flex items-center gap-3 p-3 rounded-lg text-white transition-all duration-200
                       ${sidebarOpen ? "justify-start" : "justify-center"}
-                      ${openSubMenus.has(index) ? "bg-gray-800/70" : "hover:bg-gray-800/50"}`}
+                      ${openSubMenus.has(index) ? "bg-gray-800/70" : "hover:bg-gray-800/50"} cursor-pointer`}
                   >
                     <span>{item.icon}</span>
                     {sidebarOpen && <span className="text-sm">{item.label}</span>}
@@ -123,7 +123,8 @@ const SideBar: React.FC = () => {
                   }}
                   className={`w-full flex items-center gap-3 p-3 rounded-lg text-white transition-all duration-200
                     ${sidebarOpen ? "justify-start" : "justify-center"}
-                    ${item.active ? "bg-gray-800/70" : "hover:bg-gray-800/50"}`}
+                    ${item.active ? "bg-gray-800/70" : "hover:bg-gray-800/50"}
+                    cursor-pointer`}
                 >
                   <span>{item.icon}</span>
                   {sidebarOpen && <span className="text-sm">{item.label}</span>}
