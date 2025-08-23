@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import type { RefObject } from "react"; // Type-only import for RefObject
 
 interface ProfileFormData {
   profileAvatar: string;
@@ -18,8 +19,6 @@ interface InformationProfileProps {
   uploadingFiles: {
     profileAvatar: boolean;
     background: boolean;
-    audio: boolean;
-    audioImage: boolean;
   };
   getMediaUrl: (path: string) => string;
   handleChange: (
@@ -27,7 +26,7 @@ interface InformationProfileProps {
   ) => void;
   handleFileChange: (
     e: React.ChangeEvent<HTMLInputElement>,
-    field: keyof ProfileFormData
+    field: "profileAvatar" | "background"
   ) => void;
 }
 
@@ -38,8 +37,8 @@ const InformationProfile: React.FC<InformationProfileProps> = ({
   handleChange,
   handleFileChange,
 }) => {
-  const avatarInputRef = useRef<HTMLInputElement>(null);
-  const bgInputRef = useRef<HTMLInputElement>(null);
+const avatarInputRef = useRef<HTMLInputElement>(null);
+const bgInputRef = useRef<HTMLInputElement>(null);
 
   return (
     <div
@@ -56,7 +55,7 @@ const InformationProfile: React.FC<InformationProfileProps> = ({
       {/* Background Section */}
       <div
         className="w-full h-96 rounded-3xl overflow-hidden relative cursor-pointer group shadow-2xl ring-1 ring-gray-700/20 transition-all duration-500 hover:shadow-3xl hover:ring-gray-600/30"
-
+        onClick={() => !uploadingFiles.background && bgInputRef.current?.click()}
       >
         {formData.background ? (
           <img
@@ -68,8 +67,7 @@ const InformationProfile: React.FC<InformationProfileProps> = ({
             className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105"
           />
         ) : (
-<div className="w-full h-full flex flex-col items-center justify-center bg-black text-gray-300">
-
+          <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-gray-950 to-black text-gray-300">
             <div className="w-16 h-16 mb-4 bg-gray-800/50 rounded-2xl flex items-center justify-center shadow-lg">
               <svg
                 className="w-8 h-8 opacity-80"
@@ -220,7 +218,6 @@ const InformationProfile: React.FC<InformationProfileProps> = ({
               <input
                 type="text"
                 name="username"
-                value={formData.username}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border-2 border-gray-700 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-300/50 outline-none transition-all duration-200 text-gray-300 placeholder-gray-500 bg-gray-800/80"
                 placeholder="Enter your username"
@@ -250,7 +247,6 @@ const InformationProfile: React.FC<InformationProfileProps> = ({
             </label>
             <textarea
               name="description"
-              value={formData.description}
               onChange={handleChange}
               rows={4}
               className="w-full px-4 py-3 border-2 border-gray-700 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-300/50 outline-none transition-all duration-200 resize-none text-gray-300 placeholder-gray-500 bg-gray-800/80"

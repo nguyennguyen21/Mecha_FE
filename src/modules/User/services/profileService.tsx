@@ -1,140 +1,196 @@
-import { API_CONFIG } from "../../../configs/ApiConfig";
+// ProfilePage.tsx
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
-export interface ProfileData {
-  profileAvatar: string;
-  background: string;
-  audio: string;
-  audioImage?: string;   
-  audioTitle?: string;  
-  customCursor: string;
-  description: string;
+type ProfileData = {
+  userId: number;
+  styleId?: number;
+  profileAvatar?: string;
+  background?: string;
+  audio?: string;
+  audioImage?: string;
+  audioTitle?: string;
+  customCursor?: string;
+  description?: string;
   username: string;
-  effectUsername: string;
-  location: string;
+  effectUsername?: string;
+  location?: string;
+};
+
+interface UserStyle {
+  styleId: string;
+  profileAvatar?: string;
+  background?: string;
+  audio?: string;
+  customCursor?: string;
+  description?: string;
+  effectUsername?: string;
+  location?: string;
+  audioImage?: string;
+  audioTitle?: string;
 }
 
+const BASE_URL = "http://localhost:5159";
 
-// --- Upload File Function ---
-export const uploadFile = async (
-  file: File,
-  type: "image" | "audio" = "image"
-): Promise<string> => {
-  const formData = new FormData();
-  formData.append("file", file);
+const ProfilePage: React.FC = () => {
+  const { username } = useParams<{ username: string }>();
+  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [style, setStyle] = useState<UserStyle | null>(null);
 
-  // ✅ FIX: Thêm /api/ vào URL
-  const url = `${API_CONFIG.BASE_URL}/api/FileUpload/upload?type=${type}`;
-  
-  console.log("🔍 Uploading to URL:", url);
+  useEffect(() => {
+    const fetchStyle = async () => {
+      try {
+        const res = await fetch(
+          "http://localhost:5159/api/UserStyles/username/shtudo"
+        );
+        if (!res.ok) throw new Error("Failed to fetch style");
 
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      body: formData,
-    });
+        const data = await res.json();
+        console.log("User style:", data); // <--- console ra dữ liệu
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
-    console.log("📤 Upload response status:", response.status);
+    fetchStyle();
+  }, []);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("❌ Upload error response:", errorText);
-      throw new Error(`Upload failed: ${response.status} - ${errorText}`);
-    }
+  useEffect(() => {
+    if (!username) return;
 
-    const result = await response.json();
-    
-    console.log("✅ Upload successful:", result);
-    return result.filePath; // Trả về đường dẫn file
-  } catch (error) {
-    console.error("❌ Error uploading file:", error);
-    throw error;
-  }
-};
+    const fetchProfile = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch(`${BASE_URL}/api/profile/username/${username}`);
+        if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
+        const data: ProfileData = await res.json();
+        setProfile(data);
+      } catch (err: any) {
+        console.error(err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-// --- Delete File Function ---
-export const deleteFile = async (filePath: string): Promise<void> => {
-  // ✅ FIX: Thêm /api/ vào URL
-  const url = `${API_CONFIG.BASE_URL}/api/FileUpload/delete?filePath=${encodeURIComponent(filePath)}`;
+    fetchProfile();
+  }, [username]);
 
-  try {
-    const response = await fetch(url, {
-      method: "DELETE",
-    });
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!profile) return <div>Profile not found</div>;
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Delete failed: ${response.status} - ${errorText}`);
-    }
+  const theme = profile.username ? "light" : "light";
+  const primaryColor = "#888";
 
-    console.log("✅ File deleted:", filePath);
-  } catch (error) {
-    console.error("❌ Error deleting file:", error);
-    throw error;
-  }
-};
-
-// --- GET Profile ---
-export const getProfile = async (
-  username: string
-): Promise<ProfileData | null> => {
-  const url = `${API_CONFIG.BASE_URL}/api/profile/${username}`;
-
-  try {
-    const response = await fetch(url, { method: "GET" });
-
-    if (!response.ok) {
-      if (response.status === 404) return null; 
-      const errorText = await response.text();
-      throw new Error(
-        `HTTP error! status: ${response.status}, message: ${errorText}`
-      );
-    }
-
-    const result = await response.json();
-    return result as ProfileData;
-  } catch (error) {
-    console.error("❌ Error fetching profile:", error);
-    return null;
-  }
-};
-
-// --- POST Update Profile ---
-export const updateProfile = async (
-  username: string,
-  data: ProfileData
-): Promise<void> => {
-  const url = `${API_CONFIG.BASE_URL}/api/profile/${username}`;
-
-    const trimmedData = {
-    ...data,
-    profileAvatar: data.profileAvatar?.trim?.() ?? "",
-    background: data.background?.trim?.() ?? "",
-    audio: data.audio?.trim?.() ?? "",
-    audioImage: data.audioImage?.trim?.() ?? "",
-    audioTitle: data.audioTitle?.trim?.() ?? "",
+  const containerStyle: React.CSSProperties = {
+    position: "relative",
+    width: "100%",
+    minHeight: "100vh",
+    backgroundColor: theme === "light" ? "#fff" : "#222",
+    color: theme === "light" ? "#000" : "#fff",
+    border: `2px solid ${primaryColor}`,
+    padding: "20px",
+    borderRadius: "10px",
+    fontFamily: "Arial, sans-serif",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+    overflow: "hidden",
   };
 
+  const backgroundStyle: React.CSSProperties = {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    zIndex: -1,
+    opacity: 0.3,
+  };
 
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(trimmedData),
-    });
+  const avatarStyle: React.CSSProperties = {
+    width: "120px",
+    height: "120px",
+    borderRadius: "50%",
+    border: `4px solid ${primaryColor}`,
+    objectFit: "cover",
+    boxShadow: profile.effectUsername === "glow" ? `0 0 15px ${primaryColor}` : "none",
+  };
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(
-        `HTTP error! status: ${response.status}, message: ${errorText}`
-      );
-    }
+  const usernameStyle: React.CSSProperties = {
+    color: primaryColor,
+    textShadow: profile.effectUsername === "glow" ? `0 0 10px ${primaryColor}` : "none",
+    fontSize: "clamp(20px, 5vw, 32px)",
+    fontWeight: 700,
+    margin: "10px 0",
+  };
 
-    const result = await response.json();
-    console.log("✅ Profile updated successfully:", result);
-  } catch (error) {
-    console.error("❌ Error updating profile:", error);
-    throw error;
-  }
+  const locationStyle: React.CSSProperties = {
+    fontSize: "clamp(12px, 2.5vw, 18px)",
+    color: theme === "light" ? "#555" : "#ccc",
+    fontStyle: "italic",
+    marginBottom: "10px",
+  };
+
+  const audioContainerStyle: React.CSSProperties = {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    marginTop: "15px",
+  };
+
+  const audioImageStyle: React.CSSProperties = {
+    width: "60px",
+    height: "60px",
+    borderRadius: "5px",
+    objectFit: "cover",
+  };
+
+  return (
+    <div style={containerStyle}>
+      {profile.background && (
+        <img
+          src={`${BASE_URL}${profile.background}`}
+          alt="Background"
+          style={backgroundStyle}
+        />
+      )}
+
+      {profile.profileAvatar && (
+        <img
+          src={`${BASE_URL}${profile.profileAvatar}`}
+          alt="Avatar"
+          style={avatarStyle}
+        />
+      )}
+
+      <h1 style={usernameStyle}>{profile.username}</h1>
+
+      {profile.description && <p>{profile.description}</p>}
+      {profile.location && <p style={locationStyle}>Location: {profile.location}</p>}
+      {profile.customCursor && <p>Cursor: {profile.customCursor}</p>}
+
+      {/* Audio hiển thị hình + title + auto play */}
+      {profile.audio && (
+        <div style={audioContainerStyle}>
+          {profile.audioImage && (
+            <img
+              src={`${BASE_URL}${profile.audioImage}`}
+              alt="Audio"
+              style={audioImageStyle}
+            />
+          )}
+          <div>
+            {profile.audioTitle && <p>{profile.audioTitle}</p>}
+            <audio src={`${BASE_URL}${profile.audio}`} autoPlay controls />
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
+
+export default ProfilePage;
