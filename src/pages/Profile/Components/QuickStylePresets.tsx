@@ -1,6 +1,6 @@
 import React from "react";
-import { type CustomStyles, type ProfileFormData } from "../../types";
-import { useUserStyles } from "../Profile/useUserStyles";
+import { type CustomStyles, type ProfileFormData } from "../../../types";
+import { useUserStyles } from "./useUserStyles";
 
 interface QuickStylePresetsProps {
   customStyles: CustomStyles;
