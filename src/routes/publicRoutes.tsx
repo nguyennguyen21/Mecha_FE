@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import React from "react";
 import Home from "../pages/Home/Home";
-import ProfilePage from "../modules/User/components/ProfileStyleWrapper";
+import ProfilePage from "../pages/Bio/Bio";
 import Discord from "../pages/Discord/RedirectToDiscord";
 import Register from "../pages/Auth/Register";
 import Login from "../pages/Auth/Login";
