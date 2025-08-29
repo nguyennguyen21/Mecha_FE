@@ -1,7 +1,7 @@
 // ProfilePage.tsx (Fixed)
 import React from "react";
 import { useParams } from "react-router-dom";
-
+import BackgroundWrapper from "../Bio/components/BackgroundWrapper";
 // Types
 import { type UserStyle } from "./types/profile";
 
@@ -18,7 +18,7 @@ import { useUserStyle } from "./hooks/useUserStyle";
 import { useCustomCursor } from "./hooks/useCustomCursor";
 
 // Utils
-import { createContainerStyle } from "./utils/styleUtils";
+import { createContainerStyle, subContainer } from "./utils/styleUtils";
 
 const ProfilePage: React.FC = () => {
   const { username } = useParams<{ username: string }>();
@@ -33,27 +33,43 @@ const ProfilePage: React.FC = () => {
   if (!profile) return <div>Profile not found</div>;
 
   const containerStyle = createContainerStyle(parsedStyles);
+  const Scontainer = subContainer(parsedStyles, profile);
+
 
   return (
+  <div 
+    style={{
+      backgroundImage: "url('/path/to/background.jpg')",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      minHeight: "100vh", 
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    }}
+  >
     <div style={containerStyle}>
       <ProfileBackground profile={profile} />
-        <div style={containerStyle}>
-          <ProfileBackground profile={profile} />
-          
-          <SubContainer profile={profile} parsedStyles={parsedStyles} />
-          
-          <ProfileAvatar profile={profile} parsedStyles={parsedStyles} />
-          
-          <ProfileUsername profile={profile} parsedStyles={parsedStyles} />
+      <div style={containerStyle}>
+        <ProfileBackground profile={profile} />
+        <div style={Scontainer}>
+        <ProfileAvatar profile={profile} parsedStyles={parsedStyles} />
+        
+        <ProfileUsername profile={profile} parsedStyles={parsedStyles} />
 
-          {profile.description && <p>{profile.description}</p>}
+        {profile.description && <p>{profile.description}</p>}
 
-          <ProfileLocation profile={profile} parsedStyles={parsedStyles} />
-          
-          <AudioPlayer profile={profile} parsedStyles={parsedStyles} />
+        <ProfileLocation profile={profile} parsedStyles={parsedStyles} />
+        
+        <AudioPlayer profile={profile} parsedStyles={parsedStyles} />
         </div>
+        
+
+      </div>
     </div>
-  );
+  </div>
+);
+
 };
 
 export default ProfilePage;

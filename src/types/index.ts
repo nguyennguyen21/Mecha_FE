@@ -1,6 +1,3 @@
-// src/types.ts
-
-// Form khi user nhập (không có id, dùng toàn string)
 export interface ProfileFormData {
   profileAvatar: string;
   background: string;
@@ -68,7 +65,8 @@ export interface CustomStyles {
   audioTitleFontWeight?: string;
   audioTitleColor?: string;
   audioTitleLetterSpacing?: string;
-
+  audioHeight?: string;
+  audioWidth?: string;
   cursorType?: string;
   cursorFontSize?: string;
   cursorFontWeight?: string;
@@ -153,4 +151,15 @@ export interface UserStyle {
   coverImageBorderWidth?: string;
   coverImageBorderColor?: string;
   coverImageBoxShadow?: string;
+  audioHeight?: string;
+  audioWidth?: string;
+  audioBorderRadius?: string;
+  audioBoxShadow?: string;
+  audioBackgroundColor?: string;
+  audioProgressColor?: string;
+  audioThumbColor?: string;
+  audioControlsColor?: string;
+  audioBorderStyle?: string;   
+  audioBorderWidth?: string;  
+  audioBorderColor?: string; 
 }

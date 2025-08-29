@@ -89,8 +89,8 @@ export const useProfileSubmit = (
 
       // Update styles
       try {
+        console.log("🎨 Custom styles being sent:", customStyles); 
         await updateUserStyles(userId, customStyles);
-        console.log("✅ Styles updated successfully");
       } catch (styleError) {
         console.warn("⚠️ Failed to update styles:", styleError);
       }

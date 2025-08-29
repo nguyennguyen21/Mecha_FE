@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Music Player</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: linear-gradient(135deg, #1b2a40, #243447);
+    font-family: 'Inter', sans-serif;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+  .player {
+    background: rgba(255 255 255 / 0.1);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    width: 400px;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 16px;
+    box-shadow: 0 8px 32px rgb(0 0 0 / 0.3);
+  }
+  .cover { flex-shrink: 0; width: 64px; height: 64px; border-radius: 12px; overflow: hidden; }
+  .cover img { width: 100%; height: 100%; object-fit: cover; }
+  .info { flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; }
+  .title { font-weight: 600; font-size: 1.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .artist { font-size: 0.875rem; color: #bfc7d5; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .progress-container { margin-top: 6px; display: flex; align-items: center; gap: 8px; }
+  .time { font-size: 0.75rem; width: 34px; text-align: center; color: #bfc7d5; }
+  .progress-bar { flex-grow: 1; height: 5px; background: rgba(255 255 255 / 0.15); border-radius: 3px; overflow: hidden; }
+  .progress-bar input[type="range"] {
+    -webkit-appearance: none; width: 100%; height: 5px; background: transparent; margin: 0;
+  }
+  .progress-bar input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%;
+    background: #fff; box-shadow: 0 0 6px 2px rgba(255 255 255 / 0.8); margin-top: -4px;
+  }
+  .controls { display: flex; align-items: center; gap: 12px; }
+  .btn { background: transparent; border: none; color: white; cursor: pointer; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; }
+  svg { width: 20px; height: 20px; fill: currentColor; }
+</style>
+</head>
+<body>
+<div class="player">
+  <div class="cover">
+    <img src="https://i.scdn.co/image/ab67616d0000b273f0aee40894a541f627495733" alt="cover">
+  </div>
+  <div class="info">
+    <div class="title">Soiree</div>
+    <div class="artist">sui-chan :3</div>
+    <div class="progress-container">
+      <div class="time" id="currentTime">0:00</div>
+      <div class="progress-bar">
+        <input type="range" id="progress" min="0" max="100" value="0">
+      </div>
+      <div class="time" id="duration">0:00</div>
+    </div>
+  </div>
+  <div class="controls">
+    <button class="btn" id="prevBtn">
+      <svg viewBox="0 0 24 24"><path d="M6 6v12l10.5-6z"/></svg>
+    </button>
+    <button class="btn" id="playPauseBtn">
+      <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none;"><rect x="6" y="6" width="4" height="12"/><rect x="14" y="6" width="4" height="12"/></svg>
+      <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+    <button class="btn" id="nextBtn">
+      <svg viewBox="0 0 24 24"><path d="M18 6v12l-10.5-6z"/></svg>
+    </button>
+  </div>
+  <!-- audio element -->
+  <audio id="audio" src="download.wav"></audio>
+</div>
+
+<script>
+  const audio = document.getElementById("audio");
+  const playPauseBtn = document.getElementById("playPauseBtn");
+  const playIcon = document.getElementById("playIcon");
+  const pauseIcon = document.getElementById("pauseIcon");
+  const progress = document.getElementById("progress");
+  const currentTimeEl = document.getElementById("currentTime");
+  const durationEl = document.getElementById("duration");
+
+  function secondsToTime(sec) {
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return m + ":" + (s < 10 ? "0" : "") + s;
+  }
+
+  // update duration when loaded
+  audio.addEventListener("loadedmetadata", () => {
+    durationEl.textContent = secondsToTime(audio.duration);
+    progress.max = audio.duration;
+  });
+
+  // update progress bar as song plays
+  audio.addEventListener("timeupdate", () => {
+    progress.value = audio.currentTime;
+    currentTimeEl.textContent = secondsToTime(audio.currentTime);
+  });
+
+  // scrub
+  progress.addEventListener("input", () => {
+    audio.currentTime = progress.value;
+  });
+
+  // play/pause
+  playPauseBtn.addEventListener("click", () => {
+    if (audio.paused) {
+      audio.play();
+      playIcon.style.display = "none";
+      pauseIcon.style.display = "block";
+    } else {
+      audio.pause();
+      playIcon.style.display = "block";
+      pauseIcon.style.display = "none";
+    }
+  });
+</script>
+</body>
+</html>

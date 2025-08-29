@@ -10,6 +10,31 @@ interface AudioProfileProps {
     audio: boolean;
     audioImage: boolean;
   };
+  userStyle?: {
+    // Audio title styles
+    audioTitleFontSize?: string;
+    audioTitleFontWeight?: string;
+    audioTitleColor?: string;
+    audioTitleLetterSpacing?: string;
+    // Cover image styles
+    coverImageWidth?: string;
+    coverImageHeight?: string;
+    coverImageBorderRadius?: string;
+    coverImageObjectFit?: string;
+    coverImageBorderStyle?: string;
+    coverImageBorderWidth?: string;
+    coverImageBorderColor?: string;
+    coverImageBoxShadow?: string;
+    // Audio player styles
+    audioHeight?: string;
+    audioWidth?: string;
+    audioBorderRadius?: string;
+    audioBoxShadow?: string;
+    audioBackgroundColor?: string;
+    audioProgressColor?: string;
+    audioThumbColor?: string;
+    audioControlsColor?: string;
+  };
   getMediaUrl: (path: string) => string;
   handleChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -23,6 +48,7 @@ interface AudioProfileProps {
 const AudioProfile: React.FC<AudioProfileProps> = ({
   formData,
   uploadingFiles,
+  userStyle = {},
   getMediaUrl,
   handleChange,
   handleFileChange,
@@ -38,6 +64,117 @@ const AudioProfile: React.FC<AudioProfileProps> = ({
     audio: null,
     audioImage: null,
   });
+
+  // Default styles matching the music player design - user styles take priority
+  const getStyle = (property: string, defaultValue: string) => {
+    return userStyle[property as keyof typeof userStyle] || defaultValue;
+  };
+
+  // Audio title styles (matching .title from HTML)
+  const audioTitleStyles = {
+    fontSize: getStyle('audioTitleFontSize', '1.05rem'),
+    fontWeight: getStyle('audioTitleFontWeight', '600'),
+    color: getStyle('audioTitleColor', 'white'),
+    letterSpacing: getStyle('audioTitleLetterSpacing', '0'),
+    whiteSpace: 'nowrap' as const,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  };
+
+  // Cover image styles (matching .cover img)
+  const coverImageStyles = {
+    width: getStyle('coverImageWidth', '64px'),
+    height: getStyle('coverImageHeight', '64px'),
+    borderRadius: getStyle('coverImageBorderRadius', '12px'),
+    objectFit: getStyle('coverImageObjectFit', 'cover') as 'cover' | 'contain' | 'fill' | 'none' | 'scale-down',
+    borderStyle: getStyle('coverImageBorderStyle', 'none'),
+    borderWidth: getStyle('coverImageBorderWidth', '0'),
+    borderColor: getStyle('coverImageBorderColor', 'transparent'),
+    boxShadow: getStyle('coverImageBoxShadow', ''),
+  };
+
+  // Audio player container styles (matching .player)
+  const audioPlayerContainerStyles = {
+    background: getStyle('audioBackgroundColor', 'rgba(255, 255, 255, 0.1)'),
+    backdropFilter: 'blur(12px)',
+    borderRadius: getStyle('audioBorderRadius', '16px'),
+    width: getStyle('audioWidth', '400px'),
+    display: 'flex',
+    alignItems: 'center',
+    padding: '12px 16px',
+    gap: '16px',
+    boxShadow: getStyle('audioBoxShadow', '0 8px 32px rgba(0, 0, 0, 0.3)'),
+  };
+
+  // Generate CSS for custom audio player styling
+  const audioCustomCSS = `
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+    
+    .music-player-container {
+      font-family: 'Inter', sans-serif;
+    }
+    
+      r {
+      width: 100%;
+      height: ${getStyle('audioHeight', '40px')};
+      background: transparent;
+      border: none;
+      outline: none;
+    }
+    
+    .custom-audio-player::-webkit-media-controls-panel {
+      background: transparent;
+      border-radius: ${getStyle('audioBorderRadius', '12px')};
+    }
+    
+    .custom-audio-player::-webkit-media-controls-current-time-display,
+    .custom-audio-player::-webkit-media-controls-time-remaining-display {
+      color: ${getStyle('audioControlsColor', '#bfc7d5')};
+      font-size: 0.75rem;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .custom-audio-player::-webkit-media-controls-timeline {
+      background: ${getStyle('audioProgressColor', 'rgba(255, 255, 255, 0.15)')};
+      border-radius: 3px;
+      height: 5px;
+    }
+    
+    .custom-audio-player::-webkit-media-controls-timeline::-webkit-slider-thumb {
+      background: ${getStyle('audioThumbColor', '#ffffff')};
+      border-radius: 50%;
+      width: 12px;
+      height: 12px;
+      box-shadow: 0 0 6px 2px rgba(255, 255, 255, 0.8);
+    }
+    
+    .custom-audio-player::-webkit-media-controls-play-button,
+    .custom-audio-player::-webkit-media-controls-pause-button {
+      background: transparent;
+      color: ${getStyle('audioControlsColor', '#ffffff')};
+      width: 28px;
+      height: 28px;
+    }
+    
+    .progress-time {
+      font-size: 0.75rem;
+      color: #bfc7d5;
+      font-family: 'Inter', sans-serif;
+      width: 34px;
+      text-align: center;
+    }
+    
+    .cover-placeholder {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #bfc7d5;
+    }
+  `;
 
   const handleAudioFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -61,7 +198,6 @@ const AudioProfile: React.FC<AudioProfileProps> = ({
     } as React.ChangeEvent<HTMLInputElement>;
     handleChange(event);
     
-    // Clear file input and selected file name
     if (audioInputRef.current) {
       audioInputRef.current.value = '';
     }
@@ -74,18 +210,15 @@ const AudioProfile: React.FC<AudioProfileProps> = ({
     } as React.ChangeEvent<HTMLInputElement>;
     handleChange(event);
     
-    // Clear file input and selected file name
     if (audioImageInputRef.current) {
       audioImageInputRef.current.value = '';
     }
     setSelectedFiles(prev => ({ ...prev, audioImage: null }));
   };
 
-  // Get display name for files
   const getAudioFileName = () => {
     if (selectedFiles.audio) return selectedFiles.audio;
     if (formData.audio) {
-      // Extract filename from path
       const parts = formData.audio.split('/');
       return parts[parts.length - 1] || 'Current audio file';
     }
@@ -103,6 +236,9 @@ const AudioProfile: React.FC<AudioProfileProps> = ({
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-200 dark:border-gray-700 p-8 transition-all duration-300 hover:shadow-2xl">
+      {/* Add custom CSS for music player styling */}
+      <style>{audioCustomCSS}</style>
+      
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
         <div className="w-12 h-12 bg-gradient-to-br from-purple-200 to-pink-200 dark:from-purple-700 dark:to-pink-700 rounded-2xl flex items-center justify-center shadow-md">
@@ -138,11 +274,16 @@ const AudioProfile: React.FC<AudioProfileProps> = ({
               onClick={() => !uploadingFiles.audioImage && audioImageInputRef.current?.click()}
             >
               {formData.audioImage ? (
-                <img
-                  src={getMediaUrl(formData.audioImage) || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop"}
-                  alt="Audio Cover"
-                  className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                />
+             <img
+                src={
+                  getMediaUrl(formData.audioImage) ||
+                  "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop"
+                }
+                alt="Audio Cover"
+                // style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "12px" }}
+                className="transition-transform duration-500 group-hover:scale-105"
+              />
+
               ) : (
                 <div className="text-center text-gray-400 dark:text-gray-500 space-y-3">
                   <svg
@@ -215,7 +356,14 @@ const AudioProfile: React.FC<AudioProfileProps> = ({
               value={formData.audioTitle}
               onChange={handleChange}
               placeholder="Enter audio title..."
-              className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-200 dark:focus:ring-purple-300/50 outline-none transition-all duration-200 text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-500 text-sm bg-white dark:bg-gray-800"
+              style={{
+                fontSize: getStyle('audioTitleFontSize', '1.05rem'),
+                fontWeight: getStyle('audioTitleFontWeight', '600'),
+                color: getStyle('audioTitleColor', ''),
+                letterSpacing: getStyle('audioTitleLetterSpacing', '0'),
+                fontFamily: "'Inter', sans-serif",
+              }}
+              className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-200 dark:focus:ring-purple-300/50 outline-none transition-all duration-200 placeholder-gray-400 dark:placeholder-gray-500 text-sm bg-white dark:bg-gray-800"
             />
           </div>
 
@@ -262,23 +410,143 @@ const AudioProfile: React.FC<AudioProfileProps> = ({
                 </div>
               )}
 
-              {/* Current Audio Display */}
+              {/* Music Player Preview - Design giống file HTML */}
               {formData.audio && (
-                <div className="bg-gradient-to-r from-gray-50 to-purple-50 dark:from-gray-800 dark:to-purple-900/50 rounded-2xl p-5 shadow-inner border border-gray-100 dark:border-gray-700">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-8 h-8 bg-purple-100 dark:bg-purple-800 rounded-full flex items-center justify-center">
-                      <svg className="w-4 h-4 text-purple-600 dark:text-purple-300" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-                      </svg>
+                <div className="music-player-container">
+                  {/* Music Player với styling giống HTML design */}
+                  <div style={audioPlayerContainerStyles} className="mx-auto">
+                    {/* Cover Image */}
+                    <div style={{ flexShrink: 0 }}>
+                      {formData.audioImage ? (
+                        <img
+                          src={getMediaUrl(formData.audioImage)}
+                          alt="Audio Cover"
+                          style={coverImageStyles}
+                        />
+                      ) : (
+                        <div className="cover-placeholder">
+                          <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                          </svg>
+                        </div>
+                      )}
                     </div>
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Audio Preview</span>
+
+                    {/* Info Section */}
+                    <div style={{ flexGrow: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                      {/* Title */}
+                      <div style={audioTitleStyles}>
+                        {formData.audioTitle || 'Untitled Audio'}
+                      </div>
+                      
+                      {/* Artist placeholder */}
+                      <div style={{
+                        fontSize: '0.875rem',
+                        color: '#bfc7d5',
+                        marginTop: '2px',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      }}>
+                        Unknown Artist
+                      </div>
+
+                      {/* Progress Container */}
+                      <div style={{
+                        marginTop: '6px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px'
+                      }}>
+                        <div className="progress-time">0:00</div>
+                        <div style={{
+                          flexGrow: 1,
+                          height: '5px',
+                          background: getStyle('audioProgressColor', 'rgba(255, 255, 255, 0.15)'),
+                          borderRadius: '3px',
+                          overflow: 'hidden'
+                        }}>
+                          <audio
+                            controls
+                            className="custom-audio-player"
+                            style={{
+                              width: getStyle('audioWidth', '100%'),
+                              height: getStyle('audioHeight', '5px'),
+                              background: 'transparent',
+                            }}
+                          >
+                            <source src={getMediaUrl(formData.audio)} type="audio/mpeg" />
+                            <source src={getMediaUrl(formData.audio)} type="audio/wav" />
+                            <source src={getMediaUrl(formData.audio)} type="audio/mp3" />
+                            <source src={getMediaUrl(formData.audio)} type="audio/ogg" />
+                          </audio>
+                        </div>
+                        <div className="progress-time">0:00</div>
+                      </div>
+                    </div>
+
+                    {/* Controls */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <button style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: getStyle('audioControlsColor', 'white'),
+                        cursor: 'pointer',
+                        width: '28px',
+                        height: '28px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M6 6v12l10.5-6z"/>
+                        </svg>
+                      </button>
+                      
+                      <button style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: getStyle('audioControlsColor', 'white'),
+                        cursor: 'pointer',
+                        width: '28px',
+                        height: '28px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z"/>
+                        </svg>
+                      </button>
+                      
+                      <button style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: getStyle('audioControlsColor', 'white'),
+                        cursor: 'pointer',
+                        width: '28px',
+                        height: '28px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M18 6v12l-10.5-6z"/>
+                        </svg>
+                      </button>
+                    </div>
                   </div>
-                  
-                  <div className="bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm">
+
+                  {/* Alternative: Standard Audio Player */}
+                  <div className="mt-4 bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm">
                     <audio
                       controls
                       className="w-full"
-                      style={{ height: "40px", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))" }}
+                      style={{
+                        height: getStyle('audioHeight', '40px'),
+                        borderRadius: getStyle('audioBorderRadius', '12px'),
+                        boxShadow: getStyle('audioBoxShadow', '0 2px 4px rgba(0,0,0,0.1)'),
+                      }}
                     >
                       <source src={getMediaUrl(formData.audio)} type="audio/mpeg" />
                       <source src={getMediaUrl(formData.audio)} type="audio/wav" />
@@ -289,16 +557,6 @@ const AudioProfile: React.FC<AudioProfileProps> = ({
                       </p>
                     </audio>
                   </div>
-                  
-                  {/* Audio Info */}
-                  {formData.audioTitle && (
-                    <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Title:</p>
-                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate">
-                        {formData.audioTitle}
-                      </p>
-                    </div>
-                  )}
                 </div>
               )}
 

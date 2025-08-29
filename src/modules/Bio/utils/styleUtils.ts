@@ -26,11 +26,11 @@ export const createContainerStyle = (parsedStyles: UserStyle): React.CSSProperti
   width: "100%",
   height: "100vh",
   // backgroundColor: parsedStyles?.profileBackgroundColor ?? "transparent",
-  color: "#000",
-  padding: parsedStyles?.profilePadding || "20px",
+  // color: "#000",
+  // padding: parsedStyles?.profilePadding || "20px",
   // borderRadius: parsedStyles?.profileBorderRadius || "10px",
-  fontFamily: "Arial, sans-serif",
-  opacity: 1,
+  // fontFamily: "Arial, sans-serif",
+  // opacity: 1,
   overflow: "hidden",
   display: "flex",
   justifyContent: "center",
@@ -40,11 +40,13 @@ export const createContainerStyle = (parsedStyles: UserStyle): React.CSSProperti
 export const subContainer = (parsedStyles: UserStyle, profile: ProfileData): React.CSSProperties => ({
   display: "flex",
   flexDirection: "column",
+  backgroundColor: parsedStyles?.profileBackgroundColor ?? "transparent",
   alignItems: "center",
   justifyContent: "center",
   textAlign: "center",
-  maxWidth: "50",
-  width: "100%",
+  maxWidth: "500px",
+  width: "500px",
+  height: "500px",
 });
 
 export const createAvatarStyle = (parsedStyles: UserStyle, profile: ProfileData): React.CSSProperties => ({
