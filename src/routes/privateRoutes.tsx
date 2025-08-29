@@ -1,7 +1,7 @@
 // src/routes/privateRoutes.tsx
 
 import type { JSX } from "react";
-import Dashboard from "../pages/DashBoard/DashBoard";
+import Dashboard from "../modules/DashBoard/DashBoard";
 
 
 type Route = {

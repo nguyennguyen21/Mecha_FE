@@ -1,11 +1,11 @@
 import type { JSX } from "react";
 import React from "react";
-import Home from "../pages/Home/Home";
-import ProfilePage from "../pages/Bio/Bio";
-import Discord from "../pages/Discord/RedirectToDiscord";
-import Register from "../pages/Auth/Register";
-import Login from "../pages/Auth/Login";
-import DiscordLogin from "../pages/Auth/DiscordLogin";
+import Home from "../modules/Home/Home";
+import ProfilePage from "../modules/Bio/Bio";
+import Discord from "../modules/Discord/RedirectToDiscord";
+import Register from "../modules/Auth/Register";
+import Login from "../modules/Auth/Login";
+import DiscordLogin from "../modules/Auth/DiscordLogin";
 
 type Route = {
   path: string;

@@ -10,24 +10,20 @@ interface ProfileBackgroundProps {
 const ProfileBackground: React.FC<ProfileBackgroundProps> = ({ profile }) => {
   if (!profile.background) return null;
 
-  const backgroundStyle: React.CSSProperties = {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    objectFit: "cover",
-    zIndex: -1,
-    opacity: 0.3,
-  };
+const backgroundStyle: React.CSSProperties = {
+  position: "absolute",
+  top: 0,
+  left: 0,
+  width: "100%",
+  height: "100%", 
+  backgroundImage: `url(${apiService.getAssetUrl(profile.background)})`,
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  backgroundRepeat: "no-repeat",
+  zIndex: -1,
+};
 
-  return (
-    <img
-      src={apiService.getAssetUrl(profile.background)}
-      alt="Background"
-      style={backgroundStyle}
-    />
-  );
+ return <div style={backgroundStyle}></div>;
 };
 
 export default ProfileBackground;

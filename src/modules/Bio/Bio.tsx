@@ -11,7 +11,7 @@ import ProfileAvatar from "./components/ProfileAvatar";
 import ProfileUsername from "./components/ProfileUsername";
 import ProfileLocation from "./components/ProfileLocation";
 import AudioPlayer from "./components/AudioPlayer";
-
+import SubContainer from "./components/SubContainer";
 // Hooks
 import { useProfileData } from "./hooks/useProfileData";
 import { useUserStyle } from "./hooks/useUserStyle";
@@ -37,21 +37,21 @@ const ProfilePage: React.FC = () => {
   return (
     <div style={containerStyle}>
       <ProfileBackground profile={profile} />
-      
-      {/* No more type casting needed */}
-      <ProfileAvatar profile={profile} parsedStyles={parsedStyles} />
-      
-      <ProfileUsername profile={profile} parsedStyles={parsedStyles} />
+        <div style={containerStyle}>
+          <ProfileBackground profile={profile} />
+          
+          <SubContainer profile={profile} parsedStyles={parsedStyles} />
+          
+          <ProfileAvatar profile={profile} parsedStyles={parsedStyles} />
+          
+          <ProfileUsername profile={profile} parsedStyles={parsedStyles} />
 
-      {/* Description */}
-      {profile.description && <p>{profile.description}</p>}
+          {profile.description && <p>{profile.description}</p>}
 
-      <ProfileLocation profile={profile} parsedStyles={parsedStyles} />
-
-      {/* Custom cursor info */}
-      {profile.customCursor && <p>Cursor: {profile.customCursor}</p>}
-
-      <AudioPlayer profile={profile} parsedStyles={parsedStyles} />
+          <ProfileLocation profile={profile} parsedStyles={parsedStyles} />
+          
+          <AudioPlayer profile={profile} parsedStyles={parsedStyles} />
+        </div>
     </div>
   );
 };

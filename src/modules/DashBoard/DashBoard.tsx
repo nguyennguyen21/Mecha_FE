@@ -1,7 +1,7 @@
 import React from "react";
 import { ThemeProvider } from "../../modules/Core/layout/ThemeContext";
 import SideBar from "../../modules/Core/layout/SideBar";
-import ProfileForm from "../../pages/Profile/EditProfile";
+import ProfileForm from "../Profile/EditProfile";
 
 const DashboardPage: React.FC = () => {
   return (

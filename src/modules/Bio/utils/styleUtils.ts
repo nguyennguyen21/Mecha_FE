@@ -1,5 +1,5 @@
 // utils/styleUtils.ts
-import { type UserStyle,type  ProfileData } from '../types/profile';
+import { type UserStyle, type ProfileData } from '../types/profile';
 
 export const parseStyles = (data: any): UserStyle => {
   if (!data) return {};
@@ -24,23 +24,32 @@ export const parseStyles = (data: any): UserStyle => {
 export const createContainerStyle = (parsedStyles: UserStyle): React.CSSProperties => ({
   position: "relative",
   width: "100%",
-  minHeight: "100vh",
-  backgroundColor: parsedStyles?.profileBackgroundColor || "#fff",
+  height: "100vh",
+  // backgroundColor: parsedStyles?.profileBackgroundColor ?? "transparent",
   color: "#000",
-  border: parsedStyles?.profileBorderStyle && parsedStyles?.profileBorderWidth && parsedStyles?.profileBorderColor 
-    ? `${parsedStyles.profileBorderWidth} ${parsedStyles.profileBorderStyle} ${parsedStyles.profileBorderColor}` 
-    : "2px solid #888",
   padding: parsedStyles?.profilePadding || "20px",
-  borderRadius: parsedStyles?.profileBorderRadius || "10px",
+  // borderRadius: parsedStyles?.profileBorderRadius || "10px",
   fontFamily: "Arial, sans-serif",
-  boxShadow: parsedStyles?.profileBoxShadow || "0 4px 12px rgba(0,0,0,0.2)",
-  opacity: parsedStyles?.profileOpacity ?? 1,
+  opacity: 1,
   overflow: "hidden",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+});
+
+export const subContainer = (parsedStyles: UserStyle, profile: ProfileData): React.CSSProperties => ({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  textAlign: "center",
+  maxWidth: "50",
+  width: "100%",
 });
 
 export const createAvatarStyle = (parsedStyles: UserStyle, profile: ProfileData): React.CSSProperties => ({
-  width: "120px",
-  height: "120px",
+  width: "80px",
+  height: "80px",
   borderRadius: parsedStyles?.avatarBorderRadius || "50%",
   border: parsedStyles?.avatarShowBorder && parsedStyles?.avatarBorderWidth && parsedStyles?.avatarBorderStyle && parsedStyles?.avatarBorderColor
     ? `${parsedStyles.avatarBorderWidth} ${parsedStyles.avatarBorderStyle} ${parsedStyles.avatarBorderColor}`

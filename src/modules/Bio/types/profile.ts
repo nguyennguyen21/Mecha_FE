@@ -69,7 +69,11 @@ export interface UserStyle {
   coverImageBorderWidth?: string;
   coverImageBorderColor?: string;
   coverImageBoxShadow?: string;
-  
+  SubContainerBackgroundColor?: string;
+  SubContainerBorder?: string;
+  SubContainerBorderradius?: string;
+  SubContainerWidth?: string;
+  SubContainerMaxWidth?: string; 
   // Allow any additional properties
   [key: string]: any;
 }
