@@ -10,20 +10,63 @@ interface ProfileBackgroundProps {
 const ProfileBackground: React.FC<ProfileBackgroundProps> = ({ profile }) => {
   if (!profile.background) return null;
 
-const backgroundStyle: React.CSSProperties = {
-  position: "absolute",
-  top: 0,
-  left: 0,
-  width: "100%",
-  height: "100%", 
-  backgroundImage: `url(${apiService.getAssetUrl(profile.background)})`,
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-  backgroundRepeat: "no-repeat",
-  zIndex: -1,
-};
+  const backgroundUrl = apiService.getAssetUrl(profile.background);
+  
+  // Check if it's a video file
+  const isVideo = /\.(mp4|webm|ogg|mov|avi)(\?|$)/i.test(profile.background);
 
- return <div style={backgroundStyle}></div>;
+  if (isVideo) {
+    return (
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          zIndex: -1,
+        }}
+      >
+        <source src={backgroundUrl} type="video/mp4" />
+        {/* Fallback to image if video fails */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%", 
+            backgroundImage: `url(${backgroundUrl})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            zIndex: -1,
+          }}
+        />
+      </video>
+    );
+  }
+
+  // For image backgrounds
+  const backgroundStyle: React.CSSProperties = {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%", 
+    backgroundImage: `url(${backgroundUrl})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    zIndex: -1,
+  };
+
+  return <div style={backgroundStyle}></div>;
 };
 
 export default ProfileBackground;

@@ -40,6 +40,14 @@ const InformationProfile: React.FC<InformationProfileProps> = ({
 const avatarInputRef = useRef<HTMLInputElement>(null);
 const bgInputRef = useRef<HTMLInputElement>(null);
 
+// Helper function để kiểm tra xem file có phải video không
+const isVideoFile = (url: string): boolean => {
+  if (!url) return false;
+  const videoExtensions = ['.mp4', '.webm', '.ogg'];
+  const lowerUrl = url.toLowerCase();
+  return videoExtensions.some(ext => lowerUrl.includes(ext));
+};
+
   return (
     <div
       className={`relative mb-12 ${
@@ -58,14 +66,29 @@ const bgInputRef = useRef<HTMLInputElement>(null);
         onClick={() => !uploadingFiles.background && bgInputRef.current?.click()}
       >
         {formData.background ? (
-          <img
-            src={
-              getMediaUrl(formData.background) ||
-              "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=400&fit=crop"
-            }
-            alt="Background"
-            className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105"
-          />
+          isVideoFile(formData.background) ? (
+            // Video background
+            <video
+              src={getMediaUrl(formData.background)}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105"
+            >
+              Your browser does not support the video tag.
+            </video>
+          ) : (
+            // Image background
+            <img
+              src={
+                getMediaUrl(formData.background) ||
+                "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=400&fit=crop"
+              }
+              alt="Background"
+              className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105"
+            />
+          )
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-gray-950 to-black text-gray-300">
             <div className="w-16 h-16 mb-4 bg-gray-800/50 rounded-2xl flex items-center justify-center shadow-lg">
@@ -84,14 +107,17 @@ const bgInputRef = useRef<HTMLInputElement>(null);
               </svg>
             </div>
             <p className="text-lg font-semibold tracking-wide">
-              Upload Background Image
+              Upload Background Image/Video
+            </p>
+            <p className="text-sm text-gray-400 mt-1">
+              Supports JPG, PNG, GIF, MP4, WebM
             </p>
           </div>
         )}
         <input
           ref={bgInputRef}
           type="file"
-          accept="image/*"
+          accept="image/*,video/mp4,video/webm,video/ogg"
           className="hidden"
           onChange={(e) => handleFileChange(e, "background")}
         />
@@ -104,6 +130,15 @@ const bgInputRef = useRef<HTMLInputElement>(null);
                 Uploading Background...
               </p>
             </div>
+          </div>
+        )}
+        
+        {/* Video Controls Indicator */}
+        {formData.background && isVideoFile(formData.background) && (
+          <div className="absolute top-4 right-4 bg-black/50 rounded-full p-2 backdrop-blur-sm">
+            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
           </div>
         )}
       </div>
