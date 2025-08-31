@@ -53,7 +53,7 @@ const ProfilePage: React.FC = () => {
       <div style={containerStyle}>
         <ProfileBackground profile={profile} />
         <div style={Scontainer}>
-        <ProfileAvatar profile={profile} parsedStyles={parsedStyles} />
+                  <ProfileAvatar profile={profile} parsedStyles={parsedStyles} />
         
         <ProfileUsername profile={profile} parsedStyles={parsedStyles} />
 

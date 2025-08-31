@@ -40,13 +40,18 @@ export const createContainerStyle = (parsedStyles: UserStyle): React.CSSProperti
 export const subContainer = (parsedStyles: UserStyle, profile: ProfileData): React.CSSProperties => ({
   display: "flex",
   flexDirection: "column",
-  backgroundColor: parsedStyles?.profileBackgroundColor ?? "transparent",
   alignItems: "center",
   justifyContent: "center",
   textAlign: "center",
   maxWidth: "500px",
   width: "500px",
   height: "500px",
+  backgroundColor: parsedStyles?.profileBackgroundColor ?? "transparent",
+  border: `${parsedStyles?.profileBorderWidth ?? '1px'} ${parsedStyles?.profileBorderStyle ?? 'solid'} ${parsedStyles?.profileBorderColor ?? '#8b5cf6'}`,
+  borderRadius: parsedStyles?.profileBorderRadius ?? '16px',
+  padding: parsedStyles?.profilePadding ?? '16px',
+  opacity: parsedStyles?.profileOpacity ?? 1,
+  boxShadow: parsedStyles?.profileBoxShadow ?? '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
 });
 
 export const createAvatarStyle = (parsedStyles: UserStyle, profile: ProfileData): React.CSSProperties => ({
