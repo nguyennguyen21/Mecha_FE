@@ -376,7 +376,7 @@ const AudioProfile: React.FC<AudioProfileProps> = ({
                 <input
                   ref={audioInputRef}
                   type="file"
-                  accept="audio/*"
+                  accept=".mp3,audio/mpeg"
                   className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-2xl file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-none file:bg-gradient-to-r file:from-purple-100 file:to-violet-100 dark:file:from-purple-800 dark:file:to-violet-800 file:text-purple-700 dark:file:text-purple-300 file:font-medium hover:file:from-purple-200 hover:file:to-violet-200 dark:hover:file:from-purple-700 dark:hover:file:to-violet-700 focus:border-purple-500 focus:ring-4 focus:ring-purple-200 dark:focus:ring-purple-300/50 outline-none transition-all duration-200 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300"
                   onChange={handleAudioFileChange}
                 />

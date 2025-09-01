@@ -1,8 +1,6 @@
-// src/routes/privateRoutes.tsx
-
 import type { JSX } from "react";
 import Dashboard from "../modules/DashBoard/DashBoard";
-
+import SocialLinksPage from "../modules/SocialLinks/SocialLinksPage"; // <- import mới
 
 type Route = {
   path: string;
@@ -13,12 +11,12 @@ type Route = {
 const privateRoutes: Route[] = [
   {
     path: "/dashboard",
-    element: <Dashboard/>,
+    element: <Dashboard />,
     auth: true,
   },
   {
     path: "/exam",
-    element:<></>,
+    element: <></>,
     auth: true,
   },
   {
@@ -41,7 +39,11 @@ const privateRoutes: Route[] = [
     element: <div>Settings Page</div>,
     auth: true,
   },
-
+  {
+    path: "/links",               // <- route mới
+    element: <SocialLinksPage />, // hiển thị SocialEditor
+    auth: true,
+  },
 ];
 
 export { privateRoutes };

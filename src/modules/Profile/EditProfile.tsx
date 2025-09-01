@@ -12,6 +12,7 @@ import { useFileUpload } from "./hooks/useFileUpload";
 import { useProfileStyles } from "./hooks/useProfileStyles";
 import { useProfileSubmit } from "./hooks/useProfileSubmit";
 import Toast from "./Components/Toast";
+import SocialEditor from "../SocialLinks/Components/SocialEditor";
 
 const ProfileForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -113,6 +114,7 @@ const ProfileForm: React.FC = () => {
     { id: 'profile', label: 'Profile Settings', icon: '👤' },
     { id: 'styles', label: 'Style Settings', icon: '🎨' },
     { id: 'layout', label: 'Layout Manager', icon: '📐' },
+    { id: 'social', label: 'Social Links', icon: '🔗' },
   ];
 
   return (
@@ -161,6 +163,11 @@ const ProfileForm: React.FC = () => {
             </div>
           </div>
         )}
+
+        {activeTab === 'social' && (
+        <SocialEditor userId={userId ? userId.toString() : ""} />
+      )}
+
 
         {activeTab === 'styles' && (
           <div className="space-y-8">
