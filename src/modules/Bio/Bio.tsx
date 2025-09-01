@@ -1,4 +1,4 @@
-// ProfilePage.tsx (Cleaned)
+// ProfilePage.tsx (Fixed with proper SocialLinks component)
 import React from "react";
 import { useParams } from "react-router-dom";
 
@@ -10,7 +10,9 @@ import ProfileUsername from "./components/ProfileUsername";
 import ProfileLocation from "./components/ProfileLocation";
 import AudioPlayer from "./components/AudioPlayer";
 import Loading from "./components/Loading";
-import ProfileDescription from "./components/ProfileDescription"
+import ProfileDescription from "./components/ProfileDescription";
+import SocialLinks from "./components/SocialLinks"; // Import the proper component
+
 // Hooks
 import { useProfileData } from "./hooks/useProfileData";
 import { useUserStyle } from "./hooks/useUserStyle";
@@ -18,9 +20,6 @@ import { useCustomCursor } from "./hooks/useCustomCursor";
 
 // Utils
 import { createContainerStyle, subContainer } from "./utils/styleUtils";
-
-// Types
-import { type UserStyle } from "./types/profile";
 
 const ProfilePage: React.FC = () => {
   const { username } = useParams<{ username: string }>();
@@ -51,24 +50,29 @@ const ProfilePage: React.FC = () => {
     >
       <div style={containerStyle}>
         <ProfileBackground profile={profile} />
-       <div style={subContainerStyle}>
-  <div style={{ order: parsedStyles.avatarOrder }}>
-    <ProfileAvatar profile={profile} parsedStyles={parsedStyles} />
-  </div>
-  <div style={{ order: parsedStyles.usernameOrder }}>
-    <ProfileUsername profile={profile} parsedStyles={parsedStyles} />
-  </div>
-  <div style={{ order: parsedStyles.descriptionOrder }}>
-    <ProfileDescription profile={profile} parsedStyles={parsedStyles} />
-  </div>
-  <div style={{ order: parsedStyles.locationOrder }}>
-    <ProfileLocation profile={profile} parsedStyles={parsedStyles} />
-  </div>
-  <div style={{ order: parsedStyles.audioOrder }}>
-    <AudioPlayer profile={profile} parsedStyles={parsedStyles} />
-  </div>
-</div>
+        <div style={subContainerStyle}>
+          <div style={{ order: parsedStyles.avatarOrder }}>
+            <ProfileAvatar profile={profile} parsedStyles={parsedStyles} />
+          </div>
+          <div style={{ order: parsedStyles.usernameOrder }}>
+            <ProfileUsername profile={profile} parsedStyles={parsedStyles} />
+          </div>
+          <div style={{ order: parsedStyles.descriptionOrder }}>
+            <ProfileDescription profile={profile} parsedStyles={parsedStyles} />
+          </div>
 
+          {/* Social Links - Use the proper component */}
+          <div style={{ order: parsedStyles.descriptionOrder + 1, marginTop: 10 }}>
+            <SocialLinks userId={profile.userId} />
+          </div>
+
+          <div style={{ order: parsedStyles.locationOrder }}>
+            <ProfileLocation profile={profile} parsedStyles={parsedStyles} />
+          </div>
+          <div style={{ order: parsedStyles.audioOrder }}>
+            <AudioPlayer profile={profile} parsedStyles={parsedStyles} />
+          </div>
+        </div>
       </div>
     </div>
   );
