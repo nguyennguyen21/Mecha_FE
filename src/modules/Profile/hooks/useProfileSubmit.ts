@@ -24,12 +24,6 @@ export const useProfileSubmit = (
     console.log("🖼️ Audio image path:", formData.audioImage);
     console.log("📝 Audio title:", formData.audioTitle);
 
-    if (!formData.username.trim()) {
-      setMessage("Username is required.");
-      setTimeout(() => setMessage(""), 5000);
-      return;
-    }
-
     if (!userId) {
       setMessage("User ID not found.");
       setTimeout(() => setMessage(""), 5000);
@@ -46,14 +40,18 @@ export const useProfileSubmit = (
     setLoading(true);
     setMessage("");
 
-    // Prepare submit data - ALWAYS include all fields, even empty ones
+    // Get current username từ localStorage (nếu trống)
+    const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
+    const currentUsername = userInfo.username || "";
+
+    // Prepare submit data
     const submitData: ProfileFormData = {
-      username: formData.username.trim(),
+      username: formData.username.trim() || currentUsername, // giữ tên cũ nếu không nhập
       description: formData.description?.trim() || "",
       location: formData.location?.trim() || "",
       profileAvatar: formData.profileAvatar?.trim() || "",
       background: formData.background?.trim() || "",
-      audio: formData.audio?.trim() || "", // Always include audio field
+      audio: formData.audio?.trim() || "",
       audioImage: formData.audioImage?.trim() || "",
       audioTitle: formData.audioTitle?.trim() || "",
       customCursor: formData.customCursor?.trim() || "",
@@ -61,7 +59,6 @@ export const useProfileSubmit = (
     };
 
     console.log("📤 Submit data being sent:", submitData);
-    console.log("🎵 Audio in submit data:", submitData.audio);
 
     try {
       const token = localStorage.getItem("authToken") || "";
@@ -98,10 +95,10 @@ export const useProfileSubmit = (
       setMessage("Profile updated successfully!");
       setTimeout(() => setMessage(""), 5000);
 
+      // Cập nhật lại username trong localStorage nếu server trả về username mới
       if (responseData.newUsername) {
-        const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
-        userInfo.username = responseData.newUsername;
-        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+        const updatedUserInfo = { ...userInfo, username: responseData.newUsername };
+        localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to update profile.";

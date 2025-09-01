@@ -1,5 +1,4 @@
 import React, { useRef } from "react";
-import type { RefObject } from "react"; // Type-only import for RefObject
 
 interface ProfileFormData {
   profileAvatar: string;
@@ -7,7 +6,6 @@ interface ProfileFormData {
   audio: string;
   audioImage: string;
   audioTitle: string;
-  customCursor: string;
   description: string;
   username: string;
   effectUsername: string;
@@ -49,17 +47,7 @@ const isVideoFile = (url: string): boolean => {
 };
 
   return (
-    <div
-      className={`relative mb-12 ${
-        formData.customCursor === "crosshair"
-          ? "cursor-crosshair"
-          : formData.customCursor === "pointer"
-          ? "cursor-pointer"
-          : formData.customCursor === "help"
-          ? "cursor-help"
-          : "cursor-default"
-      }`}
-    >
+    <div>
       {/* Background Section */}
       <div
         className="w-full h-96 rounded-3xl overflow-hidden relative cursor-pointer group shadow-2xl ring-1 ring-gray-700/20 transition-all duration-500 hover:shadow-3xl hover:ring-gray-600/30"
@@ -201,17 +189,7 @@ const isVideoFile = (url: string): boolean => {
 
         <div className="flex flex-col justify-center py-4">
           <h1
-            className={`text-4xl sm:text-5xl font-extrabold bg-gradient-to-r 
-                        ${
-                          formData.effectUsername === "glow"
-                            ? "from-blue-400 via-purple-400 to-pink-400 animate-pulse"
-                            : formData.effectUsername === "rainbow"
-                            ? "from-red-400 via-yellow-400 to-blue-400"
-                            : formData.effectUsername === "pulse"
-                            ? "from-purple-500 to-purple-500 animate-pulse"
-                            : "from-gray-300 to-gray-100"
-                        } 
-                        bg-clip-text text-transparent drop-shadow-lg transition-transform duration-300 hover:scale-105`}
+            className={`text-4xl sm:text-5xl font-extrabold bg-gradient-to-r text-white bg-clip-text text-transparent drop-shadow-lg transition-transform duration-300 hover:scale-105`}
           >
             {formData.username || "Your Name"}
           </h1>
@@ -247,44 +225,33 @@ const isVideoFile = (url: string): boolean => {
         <div className="space-y-8">
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-semibold text-gray-300 mb-2 tracking-tight">
-                Username
-              </label>
+            <label className="block text-sm font-semibold text-gray-300 mb-2 tracking-tight">
+              Username <span className="text-gray-500 text-xs">(max 20)</span>
+            </label>
               <input
                 type="text"
                 name="username"
                 onChange={handleChange}
                 value={formData.username}
+                maxLength={20}
                 className="w-full px-4 py-3 border-2 border-gray-700 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-300/50 outline-none transition-all duration-200 text-gray-300 placeholder-gray-500 bg-gray-800/80"
                 placeholder="Enter your username"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-300 mb-2 tracking-tight">
-                Username Effect
-              </label>
-              <select
-                name="effectUsername"
-                value={formData.effectUsername}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border-2 border-gray-700 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-300/50 outline-none transition-all duration-200 bg-gray-800/80 text-sm text-gray-300"
-              >
-                <option value="none">None</option>
-                <option value="glow">Glow</option>
-                <option value="rainbow">Rainbow</option>
-                <option value="pulse">Pulse</option>
-              </select>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-300 mb-2 tracking-tight">
-              Description
-            </label>
+           <label className="block text-sm font-semibold text-gray-300 mb-2 tracking-tight">
+              Description <span className="text-gray-500 text-xs font-normal">(max 100 characters)</span>
+          </label>
+
             <textarea
               name="description"
               onChange={handleChange}
               rows={4}
+              maxLength={100}
               className="w-full px-4 py-3 border-2 border-gray-700 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-300/50 outline-none transition-all duration-200 resize-none text-gray-300 placeholder-gray-500 bg-gray-800/80"
               placeholder="Tell us about yourself..."
             />
@@ -326,23 +293,6 @@ const isVideoFile = (url: string): boolean => {
                   placeholder="Where are you from?"
                 />
               </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-300 mb-2 tracking-tight">
-                Custom Cursor
-              </label>
-              <select
-                name="customCursor"
-                value={formData.customCursor}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border-2 border-gray-700 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-300/50 outline-none transition-all duration-200 bg-gray-800/80 text-sm text-gray-300"
-              >
-                <option value="default">Default</option>
-                <option value="pointer">Pointer</option>
-                <option value="crosshair">Crosshair</option>
-                <option value="help">Help</option>
-              </select>
             </div>
           </div>
         </div>

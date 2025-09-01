@@ -84,3 +84,7 @@ export const createLocationStyle = (parsedStyles: UserStyle): React.CSSPropertie
   fontStyle: parsedStyles?.locationFontStyle || "italic",
   marginBottom: "10px",
 });
+
+export const getCursorType = (parsedStyles: UserStyle): string => {
+  return parsedStyles?.cursorType || "default";
+};

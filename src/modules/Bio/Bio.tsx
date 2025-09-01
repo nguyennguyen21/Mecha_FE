@@ -1,9 +1,6 @@
-// ProfilePage.tsx (Fixed)
 import React from "react";
 import { useParams } from "react-router-dom";
-import BackgroundWrapper from "../Bio/components/BackgroundWrapper";
 // Types
-import { type UserStyle } from "./types/profile";
 
 // Components
 import ProfileBackground from "./components/ProfileBackground";
@@ -11,7 +8,6 @@ import ProfileAvatar from "./components/ProfileAvatar";
 import ProfileUsername from "./components/ProfileUsername";
 import ProfileLocation from "./components/ProfileLocation";
 import AudioPlayer from "./components/AudioPlayer";
-import SubContainer from "./components/SubContainer";
 // Hooks
 import { useProfileData } from "./hooks/useProfileData";
 import { useUserStyle } from "./hooks/useUserStyle";
@@ -26,6 +22,8 @@ const ProfilePage: React.FC = () => {
   // Custom hooks
   const { profile, loading, error } = useProfileData(username);
   const { style, parsedStyles } = useUserStyle(profile?.userId);
+
+  // Apply custom cursor
   useCustomCursor(style);
 
   if (loading) return <div>Loading...</div>;
@@ -35,41 +33,32 @@ const ProfilePage: React.FC = () => {
   const containerStyle = createContainerStyle(parsedStyles);
   const Scontainer = subContainer(parsedStyles, profile);
 
-
   return (
-  <div 
-    style={{
-      backgroundImage: "url('/path/to/background.jpg')",
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      minHeight: "100vh", 
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-    }}
-  >
-    <div style={containerStyle}>
-      <ProfileBackground profile={profile} />
+    <div 
+      style={{
+        backgroundImage: "url('/path/to/background.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        minHeight: "100vh", 
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <div style={containerStyle}>
         <ProfileBackground profile={profile} />
         <div style={Scontainer}>
-                  <ProfileAvatar profile={profile} parsedStyles={parsedStyles} />
-        
-        <ProfileUsername profile={profile} parsedStyles={parsedStyles} />
-
-        {profile.description && <p>{profile.description}</p>}
-
-        <ProfileLocation profile={profile} parsedStyles={parsedStyles} />
-        
-        <AudioPlayer profile={profile} parsedStyles={parsedStyles} />
+          <ProfileAvatar profile={profile} parsedStyles={parsedStyles} />
+          <ProfileUsername profile={profile} parsedStyles={parsedStyles} />
+          
+          {profile.description && <p>{profile.description}</p>}
+          
+          <ProfileLocation profile={profile} parsedStyles={parsedStyles} />
+          <AudioPlayer profile={profile} parsedStyles={parsedStyles} />
         </div>
-        
-
       </div>
     </div>
-  </div>
-);
-
+  );
 };
 
 export default ProfilePage;

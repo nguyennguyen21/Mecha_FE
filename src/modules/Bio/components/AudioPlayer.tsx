@@ -249,25 +249,30 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ profile, parsedStyles }) => {
       {/* Controls */}
       <div style={controlsStyle}>
         {/* Previous Button */}
-        <button style={buttonStyle} title="Previous">
-         <button id="prev"><i className="fas fa-step-backward"></i></button>
+        <button style={buttonStyle} title="Previous" id="prev">
+          <i className="fas fa-step-backward"></i>
         </button>
         
         {/* Play/Pause Button */}
-        <button style={buttonStyle} onClick={togglePlayPause} title={isPlaying ? 'Pause' : 'Play'}>
+       <button
+          style={buttonStyle}
+          onClick={togglePlayPause}
+          title={isPlaying ? 'Pause' : 'Play'}
+          id="playPause"
+        >
           {isPlaying ? (
             <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
               <rect x="6" y="6" width="4" height="12"/>
               <rect x="14" y="6" width="4" height="12"/>
             </svg>
           ) : (
-           <button id="playPause"><i className="fas fa-play"></i></button>
+            <i className="fas fa-play"></i>
           )}
         </button>
         
         {/* Next Button */}
-        <button style={buttonStyle} title="Next">
-          <button id="next"><i className="fas fa-step-forward"></i></button>
+        <button style={buttonStyle} title="Next" id="next">
+          <i className="fas fa-step-forward"></i>
         </button>
       </div>
 
