@@ -163,3 +163,10 @@ export interface UserStyle {
   audioBorderWidth?: string;  
   audioBorderColor?: string; 
 }
+
+export interface AdvancedStyleSettingsProps {
+  customStyles: CustomStyles;
+  handleStyleChange: (styleKey: string, value: string | number | boolean) => void;
+  stylesLoading: boolean;
+  userId: number; 
+}

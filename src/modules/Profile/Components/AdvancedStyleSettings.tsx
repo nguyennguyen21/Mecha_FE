@@ -1,88 +1,20 @@
 import React, { useEffect, useState } from "react";
 import "rc-slider/assets/index.css";
 import StyleInputGroup from "./StyleInputGroup";
-import { type CustomStyles } from "../../../types";
-
-interface AdvancedStyleSettingsProps {
-  customStyles: CustomStyles;
-  handleStyleChange: (styleKey: string, value: string | number | boolean) => void;
-  stylesLoading: boolean;
-  userId: number; 
-}
-
-// API service để fetch user styles
-const fetchUserStyles = async (userId: number): Promise<CustomStyles> => {
-  try {
-    const response = await fetch(`http://localhost:5159/api/UserStyles/${userId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    
-    // Giả sử API trả về dạng { idUser: number, styles: CustomStyles }
-    return data.styles || {};
-  } catch (error) {
-    console.error('Error fetching user styles:', error);
-    // Trả về default styles nếu có lỗi
-    return getDefaultStyles();
-  }
-};
-
-// Default styles fallback
-const getDefaultStyles = (): CustomStyles => ({
-  profileBorderWidth: "1px",
-  profileBorderStyle: "solid",
-  profileBorderColor: "#8b5cf6",
-  profileBorderRadius: "16px",
-  profilePadding: "16px",
-  profileBackgroundColor: "#1f2937",
-  profileOpacity: 1,
-  profileBoxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
-
-  avatarBorderRadius: "50%",
-  avatarShowBorder: false,
-  avatarBorderWidth: "0px",
-  avatarBorderStyle: "solid",
-  avatarBorderColor: "#ffffff",
-
-  usernameFontSize: "16px",
-  usernameFontStyle: "normal",
-  usernameFontWeight: "600",
-  usernameColor: "#ffffff",
-  usernameTextShadow: "0 0 10px rgba(139, 92, 246, 0.5)",
-  usernameTextTransform: "none",
-  usernameLetterSpacing: "0px",
-
-  locationFontSize: "14px",
-  locationColor: "#9ca3af",
-  locationFontStyle: "normal",
-
-  cursorType: "pointer",
-  cursorColor: "#ffffff",
-  cursorFontSize: "12px",
-  cursorFontWeight: "400",
-
-  audioTitleFontSize: "16px",
-  audioTitleFontWeight: "400",
-  audioTitleColor: "#ffffff",
-  audioTitleLetterSpacing: "0px",
-
-  coverImageWidth: "45px",
-  coverImageHeight: "45px",
-  coverImageBorderRadius: "8px",
-  coverImageBorderWidth: "0px",
-  coverImageBorderStyle: "solid",
-  coverImageBorderColor: "#ffffff",
-  coverImageObjectFit: "cover",
-  coverImageBoxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
-});
+import StylePreview from "./StylePreview";
+import { type AdvancedStyleSettingsProps } from "../../../types";
+import { fetchUserStyles, getDefaultStyles } from "../services/styleService";
+import {
+  BORDER_STYLE_OPTIONS,
+  BASIC_BORDER_STYLE_OPTIONS,
+  AVATAR_SHAPE_OPTIONS,
+  FONT_STYLE_OPTIONS,
+  FONT_WEIGHT_OPTIONS,
+  BASIC_FONT_WEIGHT_OPTIONS,
+  TEXT_TRANSFORM_OPTIONS,
+  CURSOR_TYPE_OPTIONS,
+  OBJECT_FIT_OPTIONS,
+} from "../constants/styleOptions";
 
 const AdvancedStyleSettings: React.FC<AdvancedStyleSettingsProps> = ({
   customStyles,
@@ -117,67 +49,6 @@ const AdvancedStyleSettings: React.FC<AdvancedStyleSettingsProps> = ({
     loadUserStyles();
   }, [userId, handleStyleChange, isInitialized]);
 
-  // Hàm tạo preview style object
-  const getPreviewStyles = () => {
-    return {
-      border: `${customStyles.profileBorderWidth} ${customStyles.profileBorderStyle} ${customStyles.profileBorderColor}`,
-      borderRadius: customStyles.profileBorderRadius,
-      padding: customStyles.profilePadding,
-      backgroundColor: customStyles.profileBackgroundColor,
-      opacity: customStyles.profileOpacity,
-      boxShadow: customStyles.profileBoxShadow,
-    };
-  };
-
-  const getAvatarPreviewStyles = () => {
-    return {
-      borderRadius: customStyles.avatarBorderRadius,
-      border: customStyles.avatarShowBorder 
-        ? `${customStyles.avatarBorderWidth} ${customStyles.avatarBorderStyle} ${customStyles.avatarBorderColor}`
-        : 'none',
-    };
-  };
-
-  const getUsernamePreviewStyles = () => {
-    return {
-      fontSize: customStyles.usernameFontSize,
-      fontStyle: customStyles.usernameFontStyle,
-      fontWeight: customStyles.usernameFontWeight,
-      color: customStyles.usernameColor,
-      textShadow: customStyles.usernameTextShadow,
-      textTransform: customStyles.usernameTextTransform as any,
-      letterSpacing: customStyles.usernameLetterSpacing,
-    };
-  };
-
-  const getLocationPreviewStyles = () => {
-    return {
-      fontSize: customStyles.locationFontSize,
-      color: customStyles.locationColor,
-      fontStyle: customStyles.locationFontStyle,
-    };
-  };
-
-  const getAudioTitlePreviewStyles = () => {
-    return {
-      fontSize: customStyles.audioTitleFontSize,
-      fontWeight: customStyles.audioTitleFontWeight,
-      color: customStyles.audioTitleColor,
-      letterSpacing: customStyles.audioTitleLetterSpacing,
-    };
-  };
-
-  const getCoverImagePreviewStyles = () => {
-    return {
-      width: customStyles.coverImageWidth,
-      height: customStyles.coverImageHeight,
-      borderRadius: customStyles.coverImageBorderRadius,
-      border: `${customStyles.coverImageBorderWidth} ${customStyles.coverImageBorderStyle} ${customStyles.coverImageBorderColor}`,
-      objectFit: customStyles.coverImageObjectFit as any,
-      boxShadow: customStyles.coverImageBoxShadow,
-    };
-  };
-
   return (
     <div className="mt-8 mx-4 sm:mx-8">
       <div className="bg-gray-900/60 rounded-2xl p-6 border border-purple-500/30 shadow-lg">
@@ -205,16 +76,7 @@ const AdvancedStyleSettings: React.FC<AdvancedStyleSettingsProps> = ({
               value={customStyles.profileBorderStyle || "solid"}
               onChange={(value) => handleStyleChange("profileBorderStyle", value)}
               type="select"
-              options={[
-                { value: "solid", label: "Solid" },
-                { value: "dashed", label: "Dashed" },
-                { value: "dotted", label: "Dotted" },
-                { value: "double", label: "Double" },
-                { value: "groove", label: "Groove" },
-                { value: "ridge", label: "Ridge" },
-                { value: "inset", label: "Inset" },
-                { value: "outset", label: "Outset" },
-              ]}
+              options={BORDER_STYLE_OPTIONS}
             />
             <StyleInputGroup
               label="Border Color"
@@ -278,10 +140,7 @@ const AdvancedStyleSettings: React.FC<AdvancedStyleSettingsProps> = ({
                 handleStyleChange("avatarBorderRadius", value === "circle" ? "50%" : "8px")
               }
               type="select"
-              options={[
-                { value: "circle", label: "Circle (Tròn)" },
-                { value: "square", label: "Square (Vuông)" },
-              ]}
+              options={AVATAR_SHAPE_OPTIONS}
             />
             <StyleInputGroup
               label="Show Border"
@@ -304,12 +163,7 @@ const AdvancedStyleSettings: React.FC<AdvancedStyleSettingsProps> = ({
               value={customStyles.avatarBorderStyle || "solid"}
               onChange={(value) => handleStyleChange("avatarBorderStyle", value)}
               type="select"
-              options={[
-                { value: "solid", label: "Solid" },
-                { value: "dashed", label: "Dashed" },
-                { value: "dotted", label: "Dotted" },
-                { value: "double", label: "Double" },
-              ]}
+              options={BASIC_BORDER_STYLE_OPTIONS}
               disabled={!customStyles.avatarShowBorder}
             />
             <StyleInputGroup
@@ -342,25 +196,14 @@ const AdvancedStyleSettings: React.FC<AdvancedStyleSettingsProps> = ({
               value={customStyles.usernameFontStyle || "normal"}
               onChange={(value) => handleStyleChange("usernameFontStyle", value)}
               type="select"
-              options={[
-                { value: "normal", label: "Normal" },
-                { value: "italic", label: "Italic" },
-                { value: "oblique", label: "Oblique" },
-              ]}
+              options={FONT_STYLE_OPTIONS}
             />
             <StyleInputGroup
               label="Font Weight"
               value={customStyles.usernameFontWeight || "600"}
               onChange={(value) => handleStyleChange("usernameFontWeight", value)}
               type="select"
-              options={[
-                { value: "300", label: "Light" },
-                { value: "400", label: "Normal" },
-                { value: "500", label: "Medium" },
-                { value: "600", label: "Semi Bold" },
-                { value: "700", label: "Bold" },
-                { value: "800", label: "Extra Bold" },
-              ]}
+              options={FONT_WEIGHT_OPTIONS}
             />
             <StyleInputGroup
               label="Color"
@@ -380,12 +223,7 @@ const AdvancedStyleSettings: React.FC<AdvancedStyleSettingsProps> = ({
               value={customStyles.usernameTextTransform || "none"}
               onChange={(value) => handleStyleChange("usernameTextTransform", value)}
               type="select"
-              options={[
-                { value: "none", label: "None" },
-                { value: "uppercase", label: "UPPERCASE" },
-                { value: "lowercase", label: "lowercase" },
-                { value: "capitalize", label: "Capitalize" },
-              ]}
+              options={TEXT_TRANSFORM_OPTIONS}
             />
             <StyleInputGroup
               label="Letter Spacing"
@@ -425,11 +263,7 @@ const AdvancedStyleSettings: React.FC<AdvancedStyleSettingsProps> = ({
               value={customStyles.locationFontStyle || "normal"}
               onChange={(value) => handleStyleChange("locationFontStyle", value)}
               type="select"
-              options={[
-                { value: "normal", label: "Normal" },
-                { value: "italic", label: "Italic" },
-                { value: "oblique", label: "Oblique" },
-              ]}
+              options={FONT_STYLE_OPTIONS}
             />
           </div>
         </div>
@@ -445,15 +279,7 @@ const AdvancedStyleSettings: React.FC<AdvancedStyleSettingsProps> = ({
               value={customStyles.cursorType || "pointer"}
               onChange={(value) => handleStyleChange("cursorType", value)}
               type="select"
-              options={[
-                { value: "crosshair", label: "Crosshair" },
-                { value: "pointer", label: "Pointer" },
-                { value: "move", label: "Move" },
-                { value: "text", label: "Text" },
-                { value: "wait", label: "Wait" },
-                { value: "help", label: "Help" },
-                { value: "grab", label: "Grab" },
-              ]}
+              options={CURSOR_TYPE_OPTIONS}
             />
             <StyleInputGroup
               label="Color"
@@ -475,13 +301,7 @@ const AdvancedStyleSettings: React.FC<AdvancedStyleSettingsProps> = ({
               value={customStyles.cursorFontWeight || "400"}
               onChange={(value) => handleStyleChange("cursorFontWeight", value)}
               type="select"
-              options={[
-                { value: "300", label: "Light" },
-                { value: "400", label: "Normal" },
-                { value: "500", label: "Medium" },
-                { value: "600", label: "Semi Bold" },
-                { value: "700", label: "Bold" },
-              ]}
+              options={BASIC_FONT_WEIGHT_OPTIONS}
             />
           </div>
         </div>
@@ -506,14 +326,7 @@ const AdvancedStyleSettings: React.FC<AdvancedStyleSettingsProps> = ({
               value={customStyles.audioTitleFontWeight || "400"}
               onChange={(value) => handleStyleChange("audioTitleFontWeight", value)}
               type="select"
-              options={[
-                { value: "300", label: "Light" },
-                { value: "400", label: "Normal" },
-                { value: "500", label: "Medium" },
-                { value: "600", label: "Semi Bold" },
-                { value: "700", label: "Bold" },
-                { value: "800", label: "Extra Bold" },
-              ]}
+              options={FONT_WEIGHT_OPTIONS}
             />
             <StyleInputGroup
               label="Color"
@@ -580,12 +393,7 @@ const AdvancedStyleSettings: React.FC<AdvancedStyleSettingsProps> = ({
               value={customStyles.coverImageBorderStyle || "solid"}
               onChange={(value) => handleStyleChange("coverImageBorderStyle", value)}
               type="select"
-              options={[
-                { value: "solid", label: "Solid" },
-                { value: "dashed", label: "Dashed" },
-                { value: "dotted", label: "Dotted" },
-                { value: "double", label: "Double" },
-              ]}
+              options={BASIC_BORDER_STYLE_OPTIONS}
             />
             <StyleInputGroup
               label="Border Color"
@@ -598,13 +406,7 @@ const AdvancedStyleSettings: React.FC<AdvancedStyleSettingsProps> = ({
               value={customStyles.coverImageObjectFit || "cover"}
               onChange={(value) => handleStyleChange("coverImageObjectFit", value)}
               type="select"
-              options={[
-                { value: "cover", label: "Cover" },
-                { value: "contain", label: "Contain" },
-                { value: "fill", label: "Fill" },
-                { value: "scale-down", label: "Scale Down" },
-                { value: "none", label: "None" },
-              ]}
+              options={OBJECT_FIT_OPTIONS}
             />
             <StyleInputGroup
               label="Box Shadow"
@@ -617,56 +419,7 @@ const AdvancedStyleSettings: React.FC<AdvancedStyleSettingsProps> = ({
         </div>
 
         {/* Style Preview */}
-        <div className="mt-8">
-          <h3 className="text-xl font-semibold mb-4 text-orange-300 border-b border-orange-500/30 pb-2">
-            👁️ Preview
-          </h3>
-          
-          {/* Preview Container */}
-          <div className="bg-gray-800/50 rounded-xl p-6">
-            <div style={getPreviewStyles()} className="max-w-md mx-auto">
-              <div className="flex items-center gap-4 mb-4">
-                {/* Avatar Preview */}
-                <div 
-                  className="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white font-bold text-xl"
-                  style={getAvatarPreviewStyles()}
-                >
-                  U
-                </div>
-                
-                <div>
-                  {/* Username Preview */}
-                  <div style={getUsernamePreviewStyles()}>
-                    Sample Username
-                  </div>
-                  {/* Location Preview */}
-                  <div style={getLocationPreviewStyles()}>
-                    📍 Ho Chi Minh City
-                  </div>
-                </div>
-              </div>
-              
-              {/* Audio Section Preview */}
-              <div className="flex items-center gap-3 bg-black/20 rounded-lg p-3">
-                {/* Cover Image Preview */}
-                <div 
-                  className="bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center text-white font-bold"
-                  style={getCoverImagePreviewStyles()}
-                >
-                  🎵
-                </div>
-                
-                <div>
-                  {/* Audio Title Preview */}
-                  <div style={getAudioTitlePreviewStyles()}>
-                    Sample Audio Title
-                  </div>
-                  <div className="text-gray-400 text-sm">Artist Name</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <StylePreview customStyles={customStyles} />
       </div>
     </div>
   );
