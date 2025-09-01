@@ -3,6 +3,7 @@ import InformationProfile from "./Components/InformationProfile";
 import AudioProfile from "./Components/AudioProfile";
 import AdvancedStyleSettings from "./Components/AdvancedStyleSettings";
 import QuickStylePresets from "./Components/QuickStylePresets";
+import LayoutManager from "./Components/LayoutManager"; // New import
 import MessageHandler from "./Components/MessageHandler";
 import SubmitButton from "./Components/SubmitButtonProps";
 import { useUserStyles } from "./Components/useUserStyles";
@@ -15,6 +16,7 @@ import Toast from "./Components/Toast";
 const ProfileForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [activeTab, setActiveTab] = useState("profile"); // New state for tabs
 
   // Custom hooks
   const {
@@ -57,6 +59,35 @@ const ProfileForm: React.FC = () => {
     setMessage
   );
 
+  // New function to handle layout application
+  const handleApplyLayout = async (layoutData: any) => {
+    try {
+      const response = await fetch(`http://localhost:5159/api/UserStyles/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(layoutData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to apply layout');
+      }
+
+      // Update local styles
+      setCustomStyles({ ...customStyles, ...layoutData.styles });
+      setMessage("Layout applied successfully!");
+      
+      // Auto-hide message after 3 seconds
+      setTimeout(() => setMessage(""), 3000);
+      
+    } catch (error) {
+      console.error('Error applying layout:', error);
+      setMessage("Failed to apply layout. Please try again.");
+      setTimeout(() => setMessage(""), 3000);
+    }
+  };
+
   // Debug logs
   useEffect(() => {
     console.log("🔄 formData changed:", {
@@ -78,55 +109,100 @@ const ProfileForm: React.FC = () => {
     );
   }
 
+  const tabs = [
+    { id: 'profile', label: 'Profile Settings', icon: '👤' },
+    { id: 'styles', label: 'Style Settings', icon: '🎨' },
+    { id: 'layout', label: 'Layout Manager', icon: '📐' },
+  ];
+
   return (
     <div className="flex items-center justify-center min-h-screen text-white transition-all duration-500">
       <div className="w-full max-w-6xl rounded-3xl shadow-2xl p-6">
-        {/* vẫn có thể giữ MessageHandler nếu cần */}
-        {/* <MessageHandler message={message} stylesError={stylesError} /> */}
+        {/* Tab Navigation */}
+        <div className="flex space-x-1 bg-gray-900/50 backdrop-blur-sm rounded-xl p-2 mb-6">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`
+                flex-1 flex items-center justify-center space-x-2 px-4 py-3 rounded-lg
+                transition-all duration-200 text-sm font-medium
+                ${activeTab === tab.id
+                  ? 'bg-blue-600 text-white shadow-lg'
+                  : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
+                }
+              `}
+            >
+              <span>{tab.icon}</span>
+              <span className="hidden sm:inline">{tab.label}</span>
+            </button>
+          ))}
+        </div>
 
-        <InformationProfile
-          formData={formData}
-          uploadingFiles={uploadingFiles}
-          getMediaUrl={getMediaUrl}
-          handleChange={handleChange}
-          handleFileChange={handleFileChange}
-        />
+        {/* Tab Content */}
+        {activeTab === 'profile' && (
+          <div className="space-y-8">
+            <InformationProfile
+              formData={formData}
+              uploadingFiles={uploadingFiles}
+              getMediaUrl={getMediaUrl}
+              handleChange={handleChange}
+              handleFileChange={handleFileChange}
+            />
+            
+            <div className="mx-4 sm:mx-8">
+              <AudioProfile
+                formData={formData}
+                uploadingFiles={uploadingFiles}
+                getMediaUrl={getMediaUrl}
+                handleChange={handleChange}
+                handleFileChange={handleFileChange}
+              />
+            </div>
+          </div>
+        )}
 
-        <div className="mt-8 mx-4 sm:mx-8">
-          <AudioProfile
-            formData={formData}
+        {activeTab === 'styles' && (
+          <div className="space-y-8">
+            <AdvancedStyleSettings
+              customStyles={customStyles}
+              handleStyleChange={handleStyleChange}
+              stylesLoading={stylesLoading}
+              userId={userId!}
+            />
+
+            <QuickStylePresets
+              customStyles={customStyles}
+              setCustomStyles={setCustomStyles}
+              userId={userId}
+              setMessage={setMessage}
+              setFormData={setFormData}
+            />
+          </div>
+        )}
+
+        {activeTab === 'layout' && (
+          <LayoutManager
+            customStyles={customStyles}
+            setCustomStyles={setCustomStyles}
+            userId={userId!}
+            onApplyLayout={handleApplyLayout}
+          />
+        )}
+
+        {/* Submit Button - Always visible */}
+        <div className="mt-8">
+          <SubmitButton
+            loading={loading}
+            stylesLoading={stylesLoading}
             uploadingFiles={uploadingFiles}
-            getMediaUrl={getMediaUrl}
-            handleChange={handleChange}
-            handleFileChange={handleFileChange}
+            onSubmit={handleSubmit}
           />
         </div>
 
-        <AdvancedStyleSettings
-          customStyles={customStyles}
-          handleStyleChange={handleStyleChange}
-          stylesLoading={stylesLoading}
-          userId={userId!}
-        />
-
-        <QuickStylePresets
-          customStyles={customStyles}
-          setCustomStyles={setCustomStyles}
-          userId={userId}
-          setMessage={setMessage}
-          setFormData={setFormData}
-        />
-
-        <SubmitButton
-          loading={loading}
-          stylesLoading={stylesLoading}
-          uploadingFiles={uploadingFiles}
-          onSubmit={handleSubmit}
-        />
+        {/* Toast luôn hiện ở góc phải màn hình */}
+        <Toast message={message} />
       </div>
-
-      {/* Toast luôn hiện ở góc phải màn hình */}
-      <Toast message={message} />
     </div>
   );
 };
