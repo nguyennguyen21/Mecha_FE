@@ -1,4 +1,6 @@
 import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { CheckCircle2, AlertCircle } from "lucide-react";
 
 interface MessageHandlerProps {
   message: string;
@@ -6,26 +8,50 @@ interface MessageHandlerProps {
 }
 
 const MessageHandler: React.FC<MessageHandlerProps> = ({ message, stylesError }) => {
-  return (
-    <>
-      {message && (
-        <div
-          className={`text-center font-semibold text-lg mx-4 mb-6 rounded-xl p-4 transition-all duration-300 animate-bounce ${
-            message.includes("success")
-              ? "bg-green-900/50 text-green-300 border border-green-700/50 shadow-lg shadow-green-900/30"
-              : "bg-red-900/50 text-red-300 border border-red-700/50 shadow-lg shadow-red-900/30"
-          }`}
-        >
-          {message}
-        </div>
-      )}
+  const isSuccess = message?.toLowerCase().includes("success");
 
-      {stylesError && (
-        <div className="text-center text-yellow-300 bg-yellow-900/50 border border-yellow-700/50 rounded-xl p-4 mx-4 mb-6">
-          Styles Error: {stylesError}
-        </div>
-      )}
-    </>
+  return (
+    <div className="space-y-4 mx-4 mb-6">
+      <AnimatePresence>
+        {message && (
+          <motion.div
+            key="message"
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            transition={{ duration: 0.3 }}
+            className={`flex items-center justify-center gap-3 text-center font-medium text-lg rounded-xl p-4 shadow-lg border
+              ${isSuccess 
+                ? "bg-green-900/50 text-green-300 border-green-700/50 shadow-green-900/30" 
+                : "bg-red-900/50 text-red-300 border-red-700/50 shadow-red-900/30"
+              }`}
+          >
+            {isSuccess ? (
+              <CheckCircle2 className="w-6 h-6 text-green-400" />
+            ) : (
+              <AlertCircle className="w-6 h-6 text-red-400" />
+            )}
+            <span>{message}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {stylesError && (
+          <motion.div
+            key="stylesError"
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            transition={{ duration: 0.3 }}
+            className="flex items-center justify-center gap-3 text-yellow-300 bg-yellow-900/50 border border-yellow-700/50 rounded-xl p-4 shadow-lg shadow-yellow-900/30"
+          >
+            <AlertCircle className="w-6 h-6 text-yellow-400" />
+            <span>Styles Error: {stylesError}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
 

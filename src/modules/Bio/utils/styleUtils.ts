@@ -43,9 +43,11 @@ export const subContainer = (parsedStyles: UserStyle, profile: ProfileData): Rea
   alignItems: "center",
   justifyContent: "center",
   textAlign: "center",
+
+  width: "100%",
   maxWidth: "500px",
-  width: "500px",
-  height: "500px",
+  height: "auto",
+  
   backgroundColor: parsedStyles?.profileBackgroundColor ?? "transparent",
   border: `${parsedStyles?.profileBorderWidth ?? '1px'} ${parsedStyles?.profileBorderStyle ?? 'solid'} ${parsedStyles?.profileBorderColor ?? '#8b5cf6'}`,
   borderRadius: parsedStyles?.profileBorderRadius ?? '16px',

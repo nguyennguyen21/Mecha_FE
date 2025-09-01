@@ -48,6 +48,13 @@ export interface UserStyle {
   usernameTextShadow?: string;
   usernameTextTransform?: string;
   usernameLetterSpacing?: string;
+  descFontSize?: string;
+  descFontStyle?: string;
+  descFontWeight?: string;
+  descColor?: string;
+  descTextShadow?: string;
+  descTextTransform?: "none" | "capitalize" | "uppercase" | "lowercase" | "initial" | "inherit";
+  descLetterSpacing?: string;
   locationFontSize?: string;
   locationColor?: string;
   locationFontStyle?: string;

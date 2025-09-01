@@ -9,7 +9,7 @@ const BackgroundWrapper = ({ children }: BackgroundWrapperProps) => {
   return (
       <div
         style={{
-          background: "#fff", // nền nhỏ (container trong)
+          background: "#fff", 
           width: "500px",
           borderRadius: "16px",
           boxShadow: "0 4px 20px rgba(0,0,0,0.15)",

@@ -8,6 +8,7 @@ import LocationSection from "./sections/LocationSection";
 import CursorSection from "./sections/CursorSection";
 import AudioTitleSection from "./sections/AudioTitleSection";
 import CoverImageSection from "./sections/CoverImageSection";
+import DescriptionSection from "./sections/DescriptionSection"
 import { type AdvancedStyleSettingsProps } from "../../../types";
 import { fetchUserStyles, getDefaultStyles } from "../services/styleService";
 
@@ -62,6 +63,10 @@ const AdvancedStyleSettings: React.FC<AdvancedStyleSettingsProps> = ({
         />
 
         <UsernameSection 
+          customStyles={customStyles}
+          handleStyleChange={handleStyleChange}
+        />
+          <DescriptionSection 
           customStyles={customStyles}
           handleStyleChange={handleStyleChange}
         />

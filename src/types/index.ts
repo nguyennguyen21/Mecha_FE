@@ -162,6 +162,13 @@ export interface UserStyle {
   audioBorderStyle?: string;   
   audioBorderWidth?: string;  
   audioBorderColor?: string; 
+  descFontSize?: string;
+  descFontStyle?: string;
+  descFontWeight?: string;
+  descColor?: string;
+  descTextShadow?: string;
+  descTextTransform?: string;
+  descLetterSpacing?: string;
 }
 
 export interface AdvancedStyleSettingsProps {
