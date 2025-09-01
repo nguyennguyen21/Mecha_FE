@@ -37,23 +37,34 @@ export const createContainerStyle = (parsedStyles: UserStyle): React.CSSProperti
   alignItems: "center",
 });
 
-export const subContainer = (parsedStyles: UserStyle, profile: ProfileData): React.CSSProperties => ({
+export const subContainer = (
+  parsedStyles: UserStyle,
+  profile: ProfileData
+): React.CSSProperties => ({
   display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-  textAlign: "center",
 
-  width: "100%",
-  maxWidth: "500px",
-  height: "auto",
-  
+  // 🔑 lấy từ API JSON thay vì hardcode
+  flexDirection: parsedStyles?.containerFlexDirection ?? "column",
+  alignItems: parsedStyles?.containerAlignItems ?? "center",
+  justifyContent: parsedStyles?.containerJustifyContent ?? "center",
+  textAlign: parsedStyles?.containerTextAlign ?? "center",
+  flexWrap: parsedStyles?.containerFlexWrap ?? "nowrap",
+  // gap: parsedStyles?.containerGap ?? "12px",
+
+  // width: "100%",
+  // maxWidth: "500px",
+  // height: "auto",
+
   backgroundColor: parsedStyles?.profileBackgroundColor ?? "transparent",
-  border: `${parsedStyles?.profileBorderWidth ?? '1px'} ${parsedStyles?.profileBorderStyle ?? 'solid'} ${parsedStyles?.profileBorderColor ?? '#8b5cf6'}`,
-  borderRadius: parsedStyles?.profileBorderRadius ?? '16px',
-  padding: parsedStyles?.profilePadding ?? '16px',
+  border: `${parsedStyles?.profileBorderWidth ?? "1px"} ${
+    parsedStyles?.profileBorderStyle ?? "solid"
+  } ${parsedStyles?.profileBorderColor ?? "#8b5cf6"}`,
+  borderRadius: parsedStyles?.profileBorderRadius ?? "16px",
+  padding: parsedStyles?.profilePadding ?? "16px",
   opacity: parsedStyles?.profileOpacity ?? 1,
-  boxShadow: parsedStyles?.profileBoxShadow ?? '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+  boxShadow:
+    parsedStyles?.profileBoxShadow ??
+    "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
 });
 
 export const createAvatarStyle = (parsedStyles: UserStyle, profile: ProfileData): React.CSSProperties => ({
@@ -85,6 +96,7 @@ export const createLocationStyle = (parsedStyles: UserStyle): React.CSSPropertie
   color: parsedStyles?.locationColor || "#555",
   fontStyle: parsedStyles?.locationFontStyle || "italic",
   marginBottom: "10px",
+  fontWeight: parsedStyles?.locationFontWeight ?? "400", 
 });
 
 export const getCursorType = (parsedStyles: UserStyle): string => {

@@ -58,6 +58,7 @@ export interface UserStyle {
   locationFontSize?: string;
   locationColor?: string;
   locationFontStyle?: string;
+  locationFontWeight?: string;
   cursorWidth?: string;
   cursorHeight?: string;
   cursorType?: string;

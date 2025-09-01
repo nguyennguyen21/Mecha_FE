@@ -16,7 +16,7 @@ const ProfileLocation: React.FC<ProfileLocationProps> = ({ profile, parsedStyles
 
   return (
     <p style={locationStyle}>
-      Location: {profile.location}
+      📍 Location: {profile.location}
     </p>
   );
 };

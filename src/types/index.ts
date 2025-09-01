@@ -51,6 +51,7 @@ export interface CustomStyles {
   locationFontSize: string;
   locationColor: string;
   locationFontStyle: string;
+  locationFontWeight?: string;
 
   coverImageWidth: string;
   coverImageHeight: string;

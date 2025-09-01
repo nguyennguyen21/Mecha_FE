@@ -51,13 +51,24 @@ const ProfilePage: React.FC = () => {
     >
       <div style={containerStyle}>
         <ProfileBackground profile={profile} />
-        <div style={subContainerStyle}>
-          <ProfileAvatar profile={profile} parsedStyles={parsedStyles} />
-          <ProfileUsername profile={profile} parsedStyles={parsedStyles} />
-          <ProfileDescription profile={profile} parsedStyles={parsedStyles} />
-          <ProfileLocation profile={profile} parsedStyles={parsedStyles} />
-          <AudioPlayer profile={profile} parsedStyles={parsedStyles} />
-        </div>
+       <div style={subContainerStyle}>
+  <div style={{ order: parsedStyles.avatarOrder }}>
+    <ProfileAvatar profile={profile} parsedStyles={parsedStyles} />
+  </div>
+  <div style={{ order: parsedStyles.usernameOrder }}>
+    <ProfileUsername profile={profile} parsedStyles={parsedStyles} />
+  </div>
+  <div style={{ order: parsedStyles.descriptionOrder }}>
+    <ProfileDescription profile={profile} parsedStyles={parsedStyles} />
+  </div>
+  <div style={{ order: parsedStyles.locationOrder }}>
+    <ProfileLocation profile={profile} parsedStyles={parsedStyles} />
+  </div>
+  <div style={{ order: parsedStyles.audioOrder }}>
+    <AudioPlayer profile={profile} parsedStyles={parsedStyles} />
+  </div>
+</div>
+
       </div>
     </div>
   );

@@ -15,32 +15,44 @@ export const useCustomCursor = (style: UserStyleRaw | null) => {
       document.body.appendChild(cursorEl);
     }
 
+    const width = parseInt(parsed.cursorWidth ?? "24", 10);
+    const height = parseInt(parsed.cursorHeight ?? "24", 10);
+    const scale = parseFloat(parsed.cursorScale ?? "1"); // scale thêm
+
     // Apply style từ JSON
     Object.assign(cursorEl.style, {
       position: "fixed",
       top: "0",
       left: "0",
-      width: parsed.cursorWidth ?? "14px",
-      height: parsed.cursorHeight ?? "14px",
-      borderRadius: parsed.cursorType === "circle" ? "50%" : "0",
-      backgroundColor: parsed.cursorColor ?? "#000",
-      pointerEvents: "none", // không block click
+      width: width * scale + "px",
+      height: height * scale + "px",
+      pointerEvents: "none",
       transform: "translate(-50%, -50%)",
-      boxShadow: parsed.cursorGlow ?? "none",
       zIndex: "9999",
-      fontSize: parsed.cursorFontSize ?? "14px",
-      fontWeight: parsed.cursorFontWeight ?? "normal",
-      mixBlendMode: "difference", // hiệu ứng blend đẹp
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "center",
+      backgroundSize: "contain",
     });
 
-    // Di chuyển theo chuột
+    if (parsed.customCursor) {
+      cursorEl.style.backgroundImage = `url(${parsed.customCursor})`;
+      cursorEl.style.borderRadius = "0";
+      cursorEl.style.backgroundColor = "transparent";
+      cursorEl.style.boxShadow = "none";
+    } else {
+      cursorEl.style.backgroundImage = "none";
+      cursorEl.style.borderRadius =
+        parsed.cursorType === "circle" ? "50%" : "0";
+      cursorEl.style.backgroundColor = parsed.cursorColor ?? "#000";
+      cursorEl.style.boxShadow = parsed.cursorGlow ?? "none";
+    }
+
     const moveCursor = (e: MouseEvent) => {
       cursorEl!.style.left = e.clientX + "px";
       cursorEl!.style.top = e.clientY + "px";
     };
     document.addEventListener("mousemove", moveCursor);
 
-    // Ẩn cursor gốc
     document.body.style.cursor = "none";
 
     return () => {

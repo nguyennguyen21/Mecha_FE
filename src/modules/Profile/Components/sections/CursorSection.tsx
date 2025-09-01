@@ -1,9 +1,5 @@
 import React from "react";
 import StyleInputGroup from "../../Components/StyleInputGroup";
-import {
-  CURSOR_TYPE_OPTIONS,
-  BASIC_FONT_WEIGHT_OPTIONS
-} from "../../constants/styleOptions";
 
 interface CursorSectionProps {
   customStyles: any;
@@ -14,70 +10,79 @@ const CursorSection: React.FC<CursorSectionProps> = ({
   customStyles,
   handleStyleChange
 }) => {
-  const { cursorType, cursorWidth, cursorHeight, cursorColor, cursorGlow } = customStyles;
+  const { customCursor, cursorSize } = customStyles;
 
-  const width = parseInt(cursorWidth?.replace("px", "") || "16");
-  const height = parseInt(cursorHeight?.replace("px", "") || "16");
+  const size = parseInt(cursorSize ?? "40", 10);
 
-  // preview style cho cursor custom
+  // preview style cho cursor custom (ảnh)
   const previewStyle: React.CSSProperties = {
-    width,
-    height,
-    backgroundColor: cursorColor || "#ffffff",
-    boxShadow: cursorGlow || "none",
-    borderRadius: cursorType === "circle" ? "50%" : "4px"
+    width: size + "px",
+    height: size + "px",
+    backgroundSize: "contain",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
+    backgroundImage: customCursor ? `url(${customCursor})` : "none",
+    border: "1px dashed #555",
+    borderRadius: "6px"
   };
 
   return (
     <div className="mb-8">
       <h3 className="text-xl font-semibold mb-4 text-indigo-300 border-b border-indigo-500/30 pb-2">
-        🖱️ Custom Cursor
+        🖱️ Custom Cursor (Image)
       </h3>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* Cursor Width */}
+        {/* Nhập URL ảnh */}
         <StyleInputGroup
-          label="Width"
-          value={width}
-          onChange={(value) => handleStyleChange("cursorWidth", `${value}px`)}
-          type="slider"
-          min={8}
-          max={64}
-          step={1}
-        />
-
-        {/* Cursor Height */}
-        <StyleInputGroup
-          label="Height"
-          value={height}
-          onChange={(value) => handleStyleChange("cursorHeight", `${value}px`)}
-          type="slider"
-          min={8}
-          max={64}
-          step={1}
-        />
-
-        {/* Cursor Color */}
-        <StyleInputGroup
-          label="Color"
-          value={cursorColor || "#ffffff"}
-          onChange={(value) => handleStyleChange("cursorColor", value)}
-          type="color"
-        />
-
-        {/* Cursor Glow */}
-        <StyleInputGroup
-          label="Glow Effect"
-          value={cursorGlow || ""}
-          onChange={(value) => handleStyleChange("cursorGlow", value)}
+          label="Cursor Image URL"
+          value={customCursor || ""}
+          onChange={(value) => handleStyleChange("customCursor", value)}
           type="text"
-          placeholder="e.g. 0 0 14px #ffdd88, 0 0 26px #ffeeaa"
+          placeholder="https://example.com/cursor.png"
+        />
+
+        {/* Upload ảnh */}
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">Upload Cursor</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                  handleStyleChange("customCursor", ev.target?.result);
+                };
+                reader.readAsDataURL(file); // chuyển thành base64 để preview
+              }
+            }}
+            className="block w-full text-sm text-gray-300 
+                       border border-gray-600 rounded-lg p-2 
+                       file:mr-3 file:py-1 file:px-3 
+                       file:rounded-md file:border-0 
+                       file:bg-indigo-600 file:text-white 
+                       hover:file:bg-indigo-500"
+          />
+        </div>
+
+        {/* Cursor Size (width = height) */}
+        <StyleInputGroup
+          label="Cursor Size"
+          value={size}
+          onChange={(value) => handleStyleChange("cursorSize", `${value}`)}
+          type="slider"
+          min={8}
+          max={128}
+          step={1}
         />
       </div>
 
       {/* Preview box */}
       <div className="mt-6">
         <p className="text-gray-400 text-sm mb-2">Preview:</p>
-        <div className="w-20 h-20 flex items-center justify-center bg-gray-800 rounded-lg">
+        <div className="w-24 h-24 flex items-center justify-center bg-gray-800 rounded-lg">
           <div style={previewStyle}></div>
         </div>
       </div>

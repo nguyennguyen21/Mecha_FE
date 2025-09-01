@@ -10,6 +10,7 @@ import { useProfileData } from "./hooks/useProfileData";
 import { useFileUpload } from "./hooks/useFileUpload";
 import { useProfileStyles } from "./hooks/useProfileStyles";
 import { useProfileSubmit } from "./hooks/useProfileSubmit";
+import Toast from "./Components/Toast";
 
 const ProfileForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -35,7 +36,8 @@ const ProfileForm: React.FC = () => {
     handleStyleChange,
   } = useProfileStyles();
 
-  const { loading: stylesLoading, error: stylesError, updateUserStyles } = useUserStyles();
+  const { loading: stylesLoading, error: stylesError, updateUserStyles } =
+    useUserStyles();
 
   const { handleFileChange } = useFileUpload(
     oldFiles,
@@ -79,7 +81,8 @@ const ProfileForm: React.FC = () => {
   return (
     <div className="flex items-center justify-center min-h-screen text-white transition-all duration-500">
       <div className="w-full max-w-6xl rounded-3xl shadow-2xl p-6">
-        <MessageHandler message={message} stylesError={stylesError} />
+        {/* vẫn có thể giữ MessageHandler nếu cần */}
+        {/* <MessageHandler message={message} stylesError={stylesError} /> */}
 
         <InformationProfile
           formData={formData}
@@ -121,6 +124,9 @@ const ProfileForm: React.FC = () => {
           onSubmit={handleSubmit}
         />
       </div>
+
+      {/* Toast luôn hiện ở góc phải màn hình */}
+      <Toast message={message} />
     </div>
   );
 };
