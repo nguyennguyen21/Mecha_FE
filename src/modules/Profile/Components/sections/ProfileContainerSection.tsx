@@ -57,6 +57,16 @@ const ProfileContainerSection: React.FC<ProfileContainerSectionProps> = ({
           step={1}
         />
 
+        <StyleInputGroup
+          label="Gap"
+          value={parseInt(customStyles.profileGap?.replace("px", "") || "16")}
+          onChange={(value) => handleStyleChange("profileGap", `${value}px`)}
+          type="slider"
+          min={0}
+          max={64}
+          step={1}
+        />
+
         {/* Padding */}
         <StyleInputGroup
           label="Padding"

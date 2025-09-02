@@ -6,8 +6,8 @@ import { parseStyles } from "../utils/styleUtils";
 export const useCustomCursor = (style: UserStyleRaw | null) => {
   useEffect(() => {
     const parsed = parseStyles(style);
+    console.log("Style raw:", style);
 
-    // Tạo div cursor nếu chưa có
     let cursorEl = document.getElementById("custom-cursor");
     if (!cursorEl) {
       cursorEl = document.createElement("div");
@@ -15,37 +15,27 @@ export const useCustomCursor = (style: UserStyleRaw | null) => {
       document.body.appendChild(cursorEl);
     }
 
-    const width = parseInt(parsed.cursorWidth ?? "24", 10);
-    const height = parseInt(parsed.cursorHeight ?? "24", 10);
-    const scale = parseFloat(parsed.cursorScale ?? "1"); // scale thêm
+    const width = Math.max(8, Number(parsed.cursorWidth?.replace("px","")) || 24);
+    const height = Math.max(8, Number(parsed.cursorHeight?.replace("px","")) || 24);
+    const scale = Math.max(0.1, Number(parsed.cursorScale) || 1);
 
-    // Apply style từ JSON
     Object.assign(cursorEl.style, {
       position: "fixed",
       top: "0",
       left: "0",
-      width: width * scale + "px",
-      height: height * scale + "px",
+      width: 35 + "px",
+      height: 35 + "px",
       pointerEvents: "none",
       transform: "translate(-50%, -50%)",
       zIndex: "9999",
       backgroundRepeat: "no-repeat",
       backgroundPosition: "center",
-      backgroundSize: "contain",
+      backgroundSize: parsed.customCursor ? "100% 100%" : "cover",
+      borderRadius: parsed.customCursor ? "0" : parsed.cursorType === "circle" ? "50%" : "0",
+      backgroundColor: parsed.customCursor ? "transparent" : parsed.cursorColor ?? "#000",
+      boxShadow: parsed.customCursor ? "none" : parsed.cursorGlow ?? "none",
+      backgroundImage: parsed.customCursor ? `url(${parsed.customCursor})` : "none",
     });
-
-    if (parsed.customCursor) {
-      cursorEl.style.backgroundImage = `url(${parsed.customCursor})`;
-      cursorEl.style.borderRadius = "0";
-      cursorEl.style.backgroundColor = "transparent";
-      cursorEl.style.boxShadow = "none";
-    } else {
-      cursorEl.style.backgroundImage = "none";
-      cursorEl.style.borderRadius =
-        parsed.cursorType === "circle" ? "50%" : "0";
-      cursorEl.style.backgroundColor = parsed.cursorColor ?? "#000";
-      cursorEl.style.boxShadow = parsed.cursorGlow ?? "none";
-    }
 
     const moveCursor = (e: MouseEvent) => {
       cursorEl!.style.left = e.clientX + "px";

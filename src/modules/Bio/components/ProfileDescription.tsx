@@ -6,8 +6,15 @@ interface ProfileDescriptionProps {
   parsedStyles: UserStyle;
 }
 
+const wrapText = (text: string, maxChars: number) => {
+  const regex = new RegExp(`(.{1,${maxChars}})`, "g");
+  return text.match(regex)?.join("\n") || text;
+};
+
 const ProfileDescription: React.FC<ProfileDescriptionProps> = ({ profile, parsedStyles }) => {
   if (!profile.description) return null;
+
+  const wrappedDescription = wrapText(profile.description, 30);
 
   return (
     <p
@@ -22,10 +29,10 @@ const ProfileDescription: React.FC<ProfileDescriptionProps> = ({ profile, parsed
         marginTop: "0.5rem",
         marginBottom: "0.5rem",
         lineHeight: 1.4,
-        whiteSpace: "pre-wrap", // giữ xuống dòng nếu có
+        whiteSpace: "pre-wrap", 
       }}
     >
-      {profile.description}
+      {wrappedDescription}
     </p>
   );
 };

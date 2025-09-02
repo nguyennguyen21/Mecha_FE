@@ -36,6 +36,7 @@ export interface UserStyle {
   profileBackgroundColor?: string;
   profileOpacity?: number;
   profileBoxShadow?: string;
+  profileGap?: number;
   avatarBorderRadius?: string;
   avatarShowBorder?: boolean;
   avatarBorderStyle?: string;
@@ -82,6 +83,7 @@ export interface UserStyle {
   SubContainerBorderradius?: string;
   SubContainerWidth?: string;
   SubContainerMaxWidth?: string; 
+  containerGap?: string;
   // Allow any additional properties
   [key: string]: any;
 }

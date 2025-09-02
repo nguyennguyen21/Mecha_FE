@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
 
-// Add this to your ProfileForm imports
-// import LayoutManager from './Components/LayoutManager';
-
 interface LayoutPreset {
   id: string;
   name: string;
@@ -20,11 +17,6 @@ interface LayoutPreset {
     locationOrder: number;
     descriptionOrder: number;
     audioOrder: number;
-    avatarWidth?: string;
-    avatarHeight?: string;
-    avatarBorderRadius?: string;
-    usernameFontSize?: string;
-    descriptionFontSize?: string;
   };
 }
 
@@ -115,22 +107,17 @@ const layoutPresets: LayoutPreset[] = [
   {
     id: 'compact-card',
     name: 'Compact Card',
-    description: 'Card-style layout with custom avatar sizing',
+    description: 'Card-style layout (layout only, no styling changes)',
     preview: '🃏\n👤\n📝',
     styles: {
       containerFlexDirection: 'column',
       containerJustifyContent: 'center',
       containerAlignItems: 'center',
       containerGap: '12px',
-      avatarWidth: '120px',
-      avatarHeight: '160px',
-      avatarBorderRadius: '8px',
-      usernameOrder: 2,
-      descriptionOrder: 3,
-      usernameFontSize: '18px',
-      descriptionFontSize: '14px',
       containerTextAlign: 'center',
       avatarOrder: 1,
+      usernameOrder: 2,
+      descriptionOrder: 3,
       locationOrder: 4,
       audioOrder: 5
     }
@@ -147,19 +134,53 @@ const LayoutManager: React.FC<LayoutManagerProps> = ({
   const [isApplying, setIsApplying] = useState<string>('');
   const [showPreview, setShowPreview] = useState<boolean>(true);
 
+  // Chỉ các key liên quan layout thuần túy với proper typing
+  const pureLayoutKeys: (keyof LayoutPreset['styles'])[] = [
+    'containerFlexDirection',
+    'containerJustifyContent',
+    'containerAlignItems',
+    'containerFlexWrap',
+    'containerGap',
+    'containerTextAlign',
+    'avatarOrder',
+    'usernameOrder',
+    'locationOrder',
+    'descriptionOrder',
+    'audioOrder'
+  ];
+
   const handlePresetSelect = (preset: LayoutPreset) => {
     setSelectedPreset(preset.id);
-    // Update local styles for preview
-    setCustomStyles({ ...customStyles, ...preset.styles });
+
+    // Merge chỉ các thuộc tính layout, giữ nguyên tất cả các style khác
+    const newStyles = { ...customStyles };
+    pureLayoutKeys.forEach((key) => {
+      if (preset.styles[key] !== undefined) {
+        newStyles[key] = preset.styles[key];
+      }
+    });
+
+    setCustomStyles(newStyles);
   };
 
   const handleApplyLayout = async (preset: LayoutPreset) => {
     setIsApplying(preset.id);
     try {
+      // Tạo object chứa tất cả styles hiện tại
+      const mergedStyles = { ...customStyles };
+      
+      // Chỉ override các layout properties
+      pureLayoutKeys.forEach((key) => {
+        if (preset.styles[key] !== undefined) {
+          mergedStyles[key] = preset.styles[key];
+        }
+      });
+
       const layoutData = {
         idUser: userId,
-        styles: preset.styles
+        styles: mergedStyles // Gửi toàn bộ styles (bao gồm styling + layout mới)
       };
+      
       await onApplyLayout(layoutData);
     } catch (error) {
       console.error('Error applying layout:', error);

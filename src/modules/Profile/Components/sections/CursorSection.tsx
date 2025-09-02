@@ -15,16 +15,18 @@ const CursorSection: React.FC<CursorSectionProps> = ({
   const size = parseInt(cursorSize ?? "40", 10);
 
   // preview style cho cursor custom (ảnh)
-  const previewStyle: React.CSSProperties = {
-    width: size + "px",
-    height: size + "px",
-    backgroundSize: "contain",
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "center",
-    backgroundImage: customCursor ? `url(${customCursor})` : "none",
-    border: "1px dashed #555",
-    borderRadius: "6px"
-  };
+  const previewScale = 2; 
+const previewStyle: React.CSSProperties = {
+  width: size * previewScale + "px",
+  height: size * previewScale + "px",
+  backgroundSize: "100% 100%",
+  backgroundRepeat: "no-repeat",
+  backgroundPosition: "center",
+  backgroundImage: customCursor ? `url(${customCursor})` : "none",
+  border: "1px dashed #555",
+  borderRadius: "6px",
+};
+
 
   return (
     <div className="mb-8">
@@ -68,7 +70,7 @@ const CursorSection: React.FC<CursorSectionProps> = ({
         </div>
 
         {/* Cursor Size (width = height) */}
-        <StyleInputGroup
+        {/* <StyleInputGroup
           label="Cursor Size"
           value={size}
           onChange={(value) => handleStyleChange("cursorSize", `${value}`)}
@@ -76,7 +78,7 @@ const CursorSection: React.FC<CursorSectionProps> = ({
           min={8}
           max={128}
           step={1}
-        />
+        /> */}
       </div>
 
       {/* Preview box */}

@@ -33,6 +33,7 @@ export interface CustomStyles {
   profileBackgroundColor: string;
   profileOpacity: number;
   profileBoxShadow: string;
+  profileGap?: number;
 
   avatarBorderRadius: string;
   avatarShowBorder: boolean;
@@ -75,6 +76,7 @@ export interface CustomStyles {
 
   cursorWidth?: string;
   cursorHeight?: string;
+  
 }
 
 // DTO khi lấy style riêng

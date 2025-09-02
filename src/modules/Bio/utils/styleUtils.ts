@@ -49,13 +49,13 @@ export const subContainer = (
   justifyContent: parsedStyles?.containerJustifyContent ?? "center",
   textAlign: parsedStyles?.containerTextAlign ?? "center",
   flexWrap: parsedStyles?.containerFlexWrap ?? "nowrap",
-  // gap: parsedStyles?.containerGap ?? "12px",
+  gap: parsedStyles?.profileGap ?? "8px",
 
   // width: "100%",
   // maxWidth: "500px",
   // height: "auto",
 
-  backgroundColor: parsedStyles?.profileBackgroundColor ?? "transparent",
+  backgroundColor: parsedStyles?.profileBackgroundColor?.trim() || "transparent",
   border: `${parsedStyles?.profileBorderWidth ?? "1px"} ${
     parsedStyles?.profileBorderStyle ?? "solid"
   } ${parsedStyles?.profileBorderColor ?? "#8b5cf6"}`,
