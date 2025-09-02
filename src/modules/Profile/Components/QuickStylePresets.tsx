@@ -2,6 +2,9 @@ import React from "react";
 import { type CustomStyles, type ProfileFormData } from "../../../types";
 import { useUserStyles } from "./useUserStyles";
 
+const API_BASE_URL =  import.meta.env.VITE_BASE_URL || "http://localhost:5159";
+
+
 interface QuickStylePresetsProps {
   customStyles: CustomStyles;
   setCustomStyles: React.Dispatch<React.SetStateAction<CustomStyles>>;
@@ -89,7 +92,7 @@ const QuickStylePresets: React.FC<QuickStylePresetsProps> = ({
 
       // Gọi API GET profile mới để cập nhật formData
       const token = localStorage.getItem("authToken") || "";
-      const response = await fetch(`http://localhost:5159/api/profile/${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/profile/${userId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

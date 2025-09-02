@@ -1,5 +1,9 @@
 import { type CustomStyles } from '../../../types/index';
 
+const BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:5159";
+
+
+
 // Default styles fallback
 export const getDefaultStyles = (): CustomStyles => ({
   profileBorderWidth: "1px",
@@ -52,7 +56,7 @@ export const getDefaultStyles = (): CustomStyles => ({
 // API service để fetch user styles
 export const fetchUserStyles = async (userId: number): Promise<CustomStyles> => {
   try {
-    const response = await fetch(`http://localhost:5159/api/UserStyles/${userId}`, {
+    const response = await fetch(`${BASE_URL}/api/UserStyles/${userId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

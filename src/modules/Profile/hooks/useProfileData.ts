@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { type ProfileFormData, type FileState } from "../../../types";
 
-const API_BASE_URL = "http://localhost:5159";
+const API_BASE_URL =  import.meta.env.VITE_BASE_URL || "http://localhost:5159";
+
 
 export const useProfileData = () => {
   const [formData, setFormData] = useState<ProfileFormData>({

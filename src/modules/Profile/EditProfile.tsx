@@ -14,6 +14,8 @@ import { useProfileSubmit } from "./hooks/useProfileSubmit";
 import Toast from "./Components/Toast";
 import SocialEditor from "../SocialLinks/Components/SocialEditor";
 
+const API_BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:5159";
+
 const ProfileForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -63,7 +65,7 @@ const ProfileForm: React.FC = () => {
   // New function to handle layout application
   const handleApplyLayout = async (layoutData: any) => {
     try {
-      const response = await fetch(`http://localhost:5159/api/UserStyles/${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/UserStyles/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

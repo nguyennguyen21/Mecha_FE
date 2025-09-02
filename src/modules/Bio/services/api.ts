@@ -1,7 +1,7 @@
 // services/api.ts
 import { type ProfileData, type UserStyleRaw } from '../types/profile';
 
-const BASE_URL = "http://localhost:5159";
+const BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:5159";
 
 export const apiService = {
   async fetchProfile(username: string): Promise<ProfileData> {

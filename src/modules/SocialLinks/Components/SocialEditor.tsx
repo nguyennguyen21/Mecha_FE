@@ -19,7 +19,7 @@ interface SocialEditorProps {
   userId: string;
 }
 
-const API_BASE_URL = "http://localhost:5159";
+const API_BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:5159";
 
 const SocialEditor: React.FC<SocialEditorProps> = ({ userId }) => {
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
