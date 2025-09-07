@@ -241,9 +241,9 @@ const AudioProfile: React.FC<AudioProfileProps> = ({
       
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
-        <div className="w-12 h-12 bg-gradient-to-br from-purple-200 to-pink-200 dark:from-purple-700 dark:to-pink-700 rounded-2xl flex items-center justify-center shadow-md">
+        <div className="w-12 h-12 bg-gradient-to-br from-blue-200 to-pink-200 dark:from-blue-700 dark:to-pink-700 rounded-2xl flex items-center justify-center shadow-md">
           <svg
-            className="w-6 h-6 text-purple-700 dark:text-purple-300 drop-shadow-sm"
+            className="w-6 h-6 text-blue-700 dark:text-blue-300 drop-shadow-sm"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -270,7 +270,7 @@ const AudioProfile: React.FC<AudioProfileProps> = ({
           </label>
           <div className="relative group cursor-pointer">
             <div
-              className="aspect-square rounded-2xl overflow-hidden border-2 border-dashed border-gray-200 dark:border-gray-700 hover:border-purple-500 hover:shadow-xl transition-all duration-300 ease-in-out bg-white dark:bg-gray-800 flex items-center justify-center"
+              className="aspect-square rounded-2xl overflow-hidden border-2 border-dashed border-gray-200 dark:border-gray-700 hover:border-blue-500 hover:shadow-xl transition-all duration-300 ease-in-out bg-white dark:bg-gray-800 flex items-center justify-center"
               onClick={() => !uploadingFiles.audioImage && audioImageInputRef.current?.click()}
             >
               {formData.audioImage ? (
@@ -306,7 +306,7 @@ const AudioProfile: React.FC<AudioProfileProps> = ({
             {uploadingFiles.audioImage && (
               <div className="absolute inset-0 bg-black/70 rounded-2xl flex items-center justify-center animate-pulse">
                 <div className="flex flex-col items-center text-white">
-                  <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-purple-400"></div>
+                  <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-400"></div>
                   <p className="text-sm mt-3 font-medium opacity-90">Uploading Cover...</p>
                 </div>
               </div>
@@ -363,7 +363,7 @@ const AudioProfile: React.FC<AudioProfileProps> = ({
                 letterSpacing: getStyle('audioTitleLetterSpacing', '0'),
                 fontFamily: "'Inter', sans-serif",
               }}
-              className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-200 dark:focus:ring-purple-300/50 outline-none transition-all duration-200 placeholder-gray-400 dark:placeholder-gray-500 text-sm bg-white dark:bg-gray-800"
+              className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-2xl focus:border-blue-500 focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-300/50 outline-none transition-all duration-200 placeholder-gray-400 dark:placeholder-gray-500 text-sm bg-white dark:bg-gray-800"
             />
           </div>
 
@@ -377,12 +377,12 @@ const AudioProfile: React.FC<AudioProfileProps> = ({
                   ref={audioInputRef}
                   type="file"
                   accept=".mp3,audio/mpeg"
-                  className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-2xl file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-none file:bg-gradient-to-r file:from-purple-100 file:to-violet-100 dark:file:from-purple-800 dark:file:to-violet-800 file:text-purple-700 dark:file:text-purple-300 file:font-medium hover:file:from-purple-200 hover:file:to-violet-200 dark:hover:file:from-purple-700 dark:hover:file:to-violet-700 focus:border-purple-500 focus:ring-4 focus:ring-purple-200 dark:focus:ring-purple-300/50 outline-none transition-all duration-200 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+                  className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-2xl file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-none file:bg-gradient-to-r file:from-blue-100 file:to-violet-100 dark:file:from-blue-800 dark:file:to-violet-800 file:text-blue-700 dark:file:text-blue-300 file:font-medium hover:file:from-blue-200 hover:file:to-violet-200 dark:hover:file:from-blue-700 dark:hover:file:to-violet-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-300/50 outline-none transition-all duration-200 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 cursor-pointer"
                   onChange={handleAudioFileChange}
                 />
                 {uploadingFiles.audio && (
-                  <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                    <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-purple-600"></div>
+                  <div className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer">
+                    <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-blue-600"></div>
                   </div>
                 )}
               </div>

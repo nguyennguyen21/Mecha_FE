@@ -31,7 +31,7 @@ const previewStyle: React.CSSProperties = {
   return (
     <div className="mb-8">
       <h3 className="text-xl font-semibold mb-4 text-indigo-300 border-b border-indigo-500/30 pb-2">
-        🖱️ Custom Cursor (Image)
+        Cursor
       </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

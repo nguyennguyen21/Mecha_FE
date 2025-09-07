@@ -48,7 +48,7 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
       );
     }
 
-    return "🚀 Update Profile & Styles";
+    return "Update Profile & Styles";
   };
 
   return (
@@ -56,7 +56,7 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
       <button
         onClick={onSubmit}
         disabled={isDisabled}
-        className="w-full py-4 rounded-xl font-semibold text-lg shadow-lg transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+        className="w-full py-4 rounded-xl font-semibold text-lg shadow-lg transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed bg-blue-400 hover:from-purple-700 hover:to-blue-700 text-white cursor-pointer"
       >
         {getButtonContent()}
       </button>

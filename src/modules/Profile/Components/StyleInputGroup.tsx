@@ -56,8 +56,8 @@ const StyleInputGroup: React.FC<StyleInputGroupProps> = ({
             min={min}
             max={max}
             step={step}
-            trackStyle={{ backgroundColor: "#8b5cf6" }}
-            handleStyle={{ borderColor: "#8b5cf6", backgroundColor: "#ffffff" }}
+            trackStyle={{ backgroundColor: "#60a5fa" }}
+            handleStyle={{ borderColor: "#60a5fa", backgroundColor: "#ffffff" }}
             railStyle={{ backgroundColor: "#4b5563" }}
           />
           <span className="text-xs text-gray-400 mt-1 block">

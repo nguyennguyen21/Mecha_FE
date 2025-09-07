@@ -3,8 +3,7 @@ import InformationProfile from "./Components/InformationProfile";
 import AudioProfile from "./Components/AudioProfile";
 import AdvancedStyleSettings from "./Components/AdvancedStyleSettings";
 import QuickStylePresets from "./Components/QuickStylePresets";
-import LayoutManager from "./Components/LayoutManager"; // New import
-import MessageHandler from "./Components/MessageHandler";
+import LayoutManager from "./Components/LayoutManager"; 
 import SubmitButton from "./Components/SubmitButtonProps";
 import { useUserStyles } from "./Components/useUserStyles";
 import { useProfileData } from "./hooks/useProfileData";
@@ -113,10 +112,10 @@ const ProfileForm: React.FC = () => {
   }
 
   const tabs = [
-    { id: 'profile', label: 'Profile Settings', icon: '👤' },
-    { id: 'styles', label: 'Style Settings', icon: '🎨' },
-    { id: 'layout', label: 'Layout Manager', icon: '📐' },
-    { id: 'social', label: 'Social Links', icon: '🔗' },
+    { id: 'profile', label: 'Information'},
+    { id: 'styles', label: 'Style Settings'},
+    { id: 'layout', label: 'Layout Manager'},
+    { id: 'social', label: 'Social Links'},
   ];
 
   return (
@@ -130,14 +129,13 @@ const ProfileForm: React.FC = () => {
               onClick={() => setActiveTab(tab.id)}
               className={`
                 flex-1 flex items-center justify-center space-x-2 px-4 py-3 rounded-lg
-                transition-all duration-200 text-sm font-medium
+                transition-all duration-200 text-sm font-medium cursor-pointer
                 ${activeTab === tab.id
                   ? 'bg-blue-600 text-white shadow-lg'
                   : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
                 }
               `}
             >
-              <span>{tab.icon}</span>
               <span className="hidden sm:inline">{tab.label}</span>
             </button>
           ))}

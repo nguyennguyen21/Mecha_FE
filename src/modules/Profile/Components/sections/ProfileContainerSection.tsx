@@ -14,7 +14,7 @@ const ProfileContainerSection: React.FC<ProfileContainerSectionProps> = ({
   return (
     <div className="mb-8">
       <h3 className="text-xl font-semibold mb-4 text-blue-300 border-b border-blue-500/30 pb-2">
-        📦 Profile Container
+        Container
       </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

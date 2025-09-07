@@ -47,9 +47,9 @@ const AdvancedStyleSettings: React.FC<AdvancedStyleSettingsProps> = ({
 
   return (
     <div className="mt-8 mx-4 sm:mx-8">
-      <div className="bg-gray-900/60 rounded-2xl p-6 border border-purple-500/30 shadow-lg">
+      <div className="bg-gray-900/60 rounded-2xl p-6 border border-blue-500/30 shadow-lg">
         <h2 className="text-2xl font-bold mb-6 text-purple-400 flex items-center gap-3">
-          🎨 Advanced Style Settings {stylesLoading && "(Loading...)"}
+          Advanced Style Settings {stylesLoading && "(Loading...)"}
         </h2>
 
         <ProfileContainerSection 

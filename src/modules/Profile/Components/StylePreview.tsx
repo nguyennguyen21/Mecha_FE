@@ -70,7 +70,7 @@ const StylePreview: React.FC<StylePreviewProps> = ({ customStyles }) => {
   return (
     <div className="mt-8">
       <h3 className="text-xl font-semibold mb-4 text-orange-300 border-b border-orange-500/30 pb-2">
-        👁️ Preview
+        Preview
       </h3>
       
       {/* Preview Container */}

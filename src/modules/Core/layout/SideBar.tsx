@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface MenuItem {
   label: string;
-  icon: ReactNode;
   path?: string;
   submenu?: string[];
   active?: boolean;
@@ -36,14 +34,15 @@ const SideBar: React.FC = () => {
     navigate("/login");
   };
 
-  const menuItems: MenuItem[] = [
-    { label: "Home", icon: <span>🌌</span>, path: "/home", active: true },
-    { label: "Account", icon: <span>👾</span>, path: "/account" },
-    { label: "Custom", icon: <span>🎨</span>, submenu: ["Theme", "Profile", "Settings"] },
-    { label: "Upgrade", icon: <span>🚀</span>, path: "/upgrade" },
-    { label: "Shop", icon: <span>🪐</span>, path: "/shop" },
-    { label: "Logout", icon: <span>🌀</span>, path: "/logout" },
+    const menuItems: MenuItem[] = [
+    { label: "Home", path: "/dashbaord", active: true },
+    { label: "Account", path: "/account" },
+    { label: "Custom", submenu: ["Theme", "Profile", "Settings"] },
+    { label: "Upgrade", path: "/upgrade" },
+    { label: "Shop", path: "/shop" },
+    { label: "Logout", path: "/logout" },
   ];
+
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -93,7 +92,6 @@ const SideBar: React.FC = () => {
                       ${sidebarOpen ? "justify-start" : "justify-center"}
                       ${openSubMenus.has(index) ? "bg-gray-800/70" : "hover:bg-gray-800/50"} cursor-pointer`}
                   >
-                    <span>{item.icon}</span>
                     {sidebarOpen && <span className="text-sm">{item.label}</span>}
                     {sidebarOpen && <span>{openSubMenus.has(index) ? "▲" : "▼"}</span>}
                   </button>
@@ -126,7 +124,6 @@ const SideBar: React.FC = () => {
                     ${item.active ? "bg-gray-800/70" : "hover:bg-gray-800/50"}
                     cursor-pointer`}
                 >
-                  <span>{item.icon}</span>
                   {sidebarOpen && <span className="text-sm">{item.label}</span>}
                 </button>
               )}

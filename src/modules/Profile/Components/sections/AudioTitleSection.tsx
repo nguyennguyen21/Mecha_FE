@@ -14,7 +14,7 @@ const AudioTitleSection: React.FC<AudioTitleSectionProps> = ({
   return (
     <div className="mb-8">
       <h3 className="text-xl font-semibold mb-4 text-pink-300 border-b border-pink-500/30 pb-2">
-        🎵 Audio Title
+        Audio Title
       </h3>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <StyleInputGroup

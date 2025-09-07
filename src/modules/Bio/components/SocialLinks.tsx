@@ -150,13 +150,13 @@ const SocialLinks: React.FC<SocialLinksProps> = ({ userId }) => {
     );
   }
 
-  if (links.length === 0) {
-    return (
-      <div style={{ color: "#666", fontSize: "14px" }}>
-        No social links available.
-      </div>
-    );
-  }
+  // if (links.length === 0) {
+  //   return (
+  //     <div style={{ color: "#666", fontSize: "14px" }}>
+  //       No social links available.
+  //     </div>
+  //   );
+  // }
 
   return (
     <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>

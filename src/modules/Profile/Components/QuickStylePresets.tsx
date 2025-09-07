@@ -28,9 +28,9 @@ const QuickStylePresets: React.FC<QuickStylePresetsProps> = ({
     gradient: string;
   }[] = [
     {
-      label: "💜 Purple Dream",
+      label: "💜",
       style: {
-        profileBackgroundColor: "rgba(31, 41, 55, 0.9)",
+        profileBackgroundColor: "purple",
         usernameColor: "#8b5cf6",
         locationColor: "#9ca3af",
         audioTitleColor: "#ffffff",
@@ -40,7 +40,7 @@ const QuickStylePresets: React.FC<QuickStylePresetsProps> = ({
       gradient: "from-purple-600 to-blue-600",
     },
     {
-      label: "🌊 Ocean Breeze",
+      label: "🌊",
       style: {
         profileBackgroundColor: "rgba(15, 23, 42, 0.9)",
         usernameColor: "#06b6d4",
@@ -52,7 +52,7 @@ const QuickStylePresets: React.FC<QuickStylePresetsProps> = ({
       gradient: "from-cyan-600 to-blue-600",
     },
     {
-      label: "🌿 Forest Zen",
+      label: "🌿",
       style: {
         profileBackgroundColor: "rgba(20, 25, 20, 0.9)",
         usernameColor: "#10b981",
@@ -64,7 +64,7 @@ const QuickStylePresets: React.FC<QuickStylePresetsProps> = ({
       gradient: "from-green-600 to-emerald-600",
     },
     {
-      label: "🔥 Sunset Vibes",
+      label: "🔥",
       style: {
         profileBackgroundColor: "rgba(30, 20, 25, 0.9)",
         usernameColor: "#f59e0b",
@@ -129,16 +129,16 @@ const QuickStylePresets: React.FC<QuickStylePresetsProps> = ({
 
   return (
     <div className="mx-4 sm:mx-8 mb-8">
-      <div className="bg-gray-900/60 rounded-2xl p-6 border border-purple-500/30 shadow-lg">
+      <div className="bg-gray-900/60 rounded-2xl p-6 border border-blue-500/30 shadow-lg">
         <h3 className="text-lg font-semibold mb-4 text-purple-400">
-          ⚡ Quick Style Presets
+          ⚡ Quick Style
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {presets.map((preset) => (
             <button
               key={preset.label}
               onClick={() => handlePresetClick(preset.style)}
-              className={`p-4 bg-gradient-to-br ${preset.gradient} rounded-lg text-white font-medium hover:scale-105 transition-transform`}
+              className={`p-4 bg-gradient-to-br ${preset.gradient} rounded-lg text-white font-medium hover:scale-105 transition-transform cursor-pointer`}
             >
               {preset.label}
             </button>

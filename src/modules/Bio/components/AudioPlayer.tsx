@@ -82,16 +82,6 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ profile, parsedStyles }) => {
     textOverflow: 'ellipsis',
   };
 
-  // Artist styles (matching .artist)
-  // const artistStyle: React.CSSProperties = {
-  //   fontSize: '0.875rem',
-  //   color: '#bfc7d5',
-  //   marginTop: '2px',
-  //   whiteSpace: 'nowrap',
-  //   overflow: 'hidden',
-  //   textOverflow: 'ellipsis',
-  // };
-
   // Progress container styles (matching .progress-container)
   const progressContainerStyle: React.CSSProperties = {
     marginTop: '6px',
@@ -166,6 +156,15 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ profile, parsedStyles }) => {
     const audio = audioRef.current;
     if (!audio) return;
 
+    const enableSound = () => {
+    audio.muted = false;
+    audio.play().catch(() => {});
+    document.removeEventListener("click", enableSound);
+    document.removeEventListener("scroll", enableSound);
+  };
+
+     document.addEventListener("click", enableSound);
+      document.addEventListener("scroll", enableSound);
     const updateTime = () => setCurrentTime(audio.currentTime);
     const updateDuration = () => setDuration(audio.duration);
     const handleEnded = () => setIsPlaying(false);
@@ -178,6 +177,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ profile, parsedStyles }) => {
       audio.removeEventListener('timeupdate', updateTime);
       audio.removeEventListener('loadedmetadata', updateDuration);
       audio.removeEventListener('ended', handleEnded);
+      document.removeEventListener("click", enableSound);
+    document.removeEventListener("scroll", enableSound);
     };
   }, []);
 
@@ -283,6 +284,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ profile, parsedStyles }) => {
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
       />
+
     </div>
   );
 };
