@@ -15,10 +15,10 @@ const Footer = () => {
         <div className="flex flex-col space-y-4">
           <h3 className="font-semibold text-lg">Quick Links</h3>
           <ul className="space-y-2">
-            <li className="hover:text-green-400 cursor-pointer transition">Home</li>
-            <li className="hover:text-green-400 cursor-pointer transition">About</li>
-            <li className="hover:text-green-400 cursor-pointer transition">Pricing</li>
-            <li className="hover:text-green-400 cursor-pointer transition">Contact</li>
+            <li className="hover:text-blue-400 cursor-pointer transition">Home</li>
+            <li className="hover:text-blue-400 cursor-pointer transition">About</li>
+            <li className="hover:text-blue-400 cursor-pointer transition">Pricing</li>
+            <li className="hover:text-blue-400 cursor-pointer transition">Contact</li>
           </ul>
         </div>
 
@@ -30,9 +30,9 @@ const Footer = () => {
 
           {/* Socials */}
           <div className="flex space-x-4 mt-2">
-            <a href="#" className="hover:text-green-400 transition">Facebook</a>
-            <a href="#" className="hover:text-green-400 transition">Twitter</a>
-            <a href="#" className="hover:text-green-400 transition">Instagram</a>
+            <a href="#" className="hover:text-blue-400 transition">Facebook</a>
+            <a href="#" className="hover:text-blue-400 transition">Twitter</a>
+            <a href="#" className="hover:text-blue-400 transition">Instagram</a>
           </div>
         </div>
 

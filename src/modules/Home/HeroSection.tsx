@@ -1,5 +1,5 @@
-import Button from "../../modules/Core/components/button/Button";
-import Search from "../../modules/Core/components/Search/Search";
+import Button from "../../modules/Core/Components/button/Button";
+import Search from "../../modules/Core/Components/Search/Search";
 import profile from "../../../src/assets/imgs/undraw_github-profile_abde (1).svg";
 
 const HeroSection = () => {

@@ -10,9 +10,22 @@ const Header = () => {
   return (
     <header className="relative py-5 flex justify-center z-50">
       {/* Container */}
-      <div className="fixed top-5 left-1/2 transform -translate-x-1/2 w-4/5 max-w-4xl h-14 rounded-3xl flex items-center justify-between px-8 text-white shadow-lg backdrop-blur-md">
+      <div className="fixed top-5 left-1/2 transform -translate-x-1/2 w-4/5 max-w-4xl h-14 rounded-3xl flex items-center justify-between px-8 text-white shadow-lg">
         {/* Logo */}
-        <div className="font-bold text-xl">Logo</div>
+       <div className="flex items-center font-bold text-xl">
+            <a
+              href="https://mecha.lol"
+              className="flex items-center space-x-2 no-underline text-white hover:text-blue-400 transition-colors"
+            >
+              <img
+                src="./mecha.png"
+                alt="Mecha Logo"
+                className="w-1/2 max-w-[50px] object-contain animate-bounce-updown"
+              />
+              <span className="leading-none">Mecha.lol</span>
+            </a>
+          </div>
+
 
         {/* Desktop Menu */}
         <nav className="hidden md:block">
@@ -44,7 +57,7 @@ const Header = () => {
             <li>
               <Link
                 to="/dashboard"
-                className="h-10 flex items-center px-4 bg-[#0000005d] border-2 border-[#072607] rounded-full font-medium text-[#fafafa] text-[17.5px] transition duration-200 hover:border-[#6cdf6c] cursor-pointer"
+                className="h-10 flex items-center px-4 bg-[#0000005d] border-2 border-[#11549c] rounded-full font-medium text-[#fafafa] text-[17.5px] transition duration-200 hover:border-[#176ecb] cursor-pointer"
               >
                 Start
               </Link>

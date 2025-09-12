@@ -1,5 +1,4 @@
 @import "tailwindcss";
-
 /* index.css */
 html, body, #root {
   margin: 0;
@@ -8,3 +7,15 @@ html, body, #root {
 }
 
 
+@keyframes bounce-updown {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-bounce-updown {
+  animation: bounce-updown 1.5s ease-in-out infinite;
+}

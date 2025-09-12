@@ -10,9 +10,9 @@ const Background: React.FC<BackgroundProps> = ({ children }) => {
     <div className="min-h-screen w-full relative">
       <div
         className="absolute inset-0 z-0"
-        style={{
-          background: "radial-gradient(125% 125% at 50% 90%, #000000 40%, #072607 100%)",
-        }}
+         style={{
+           background: "radial-gradient(125% 125% at 50% 10%, #000000 40%, #010133 100%)",
+    }}
       />
       <div className="relative z-10 w-full h-full">{children}</div>
     </div>

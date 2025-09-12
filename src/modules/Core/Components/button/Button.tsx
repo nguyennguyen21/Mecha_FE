@@ -12,9 +12,10 @@ const Button: React.FC<ButtonProps> = ({ children, variant, onClick }) => {
   const baseClasses = 'px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg';
 
   const variants = {
-    primary: 'bg-[#072607] text-white border border-green-400 text-[16.5px] opacity-90 cursor-pointer hover:bg-[#072607]',
-    secondary: 'bg-transparent border-2 border-white text-white opacity-90 cursor-pointer hover:bg-white/10',
-  };
+  primary: 'bg-gray-900 text-white border border-blue-400 text-[16.5px] opacity-90 cursor-pointer hover:border-blue-500 hover:shadow-sm',
+  secondary: 'bg-transparent border-2 border-white text-white opacity-90 cursor-pointer hover:border-white/70 hover:shadow-sm',
+};
+
 
   return (
     <button

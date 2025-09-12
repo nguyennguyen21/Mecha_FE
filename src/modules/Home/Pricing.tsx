@@ -1,5 +1,5 @@
 import Header from "../../modules/Core/layout/Header";
-import Button from "../../modules/Core/components/button/Button";
+import Button from "../../modules/Core/Components/button/Button";
 
 const plans = [
   {
@@ -24,7 +24,7 @@ const plans = [
       "Advanced Customization",
       "Metadata & SEO Customization"
     ],
-    border: "border-green-500",
+    border: "border-blue-500",
     bg: "bg-[#101010]",
     badge: "Most Popular",
   }
@@ -60,7 +60,7 @@ const Pricing = () => {
               `}
             >
               {plan.badge && (
-                <div className="absolute top-4 right-4 bg-green-400 text-black text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                <div className="absolute top-4 right-4 bg-blue-400 text-black text-xs font-bold px-3 py-1 rounded-full shadow-md">
                   {plan.badge}
                 </div>
               )}
@@ -70,7 +70,7 @@ const Pricing = () => {
               <ul className="mb-6 space-y-2 text-left w-full px-4">
                 {plan.features.map((feature, idx) => (
                   <li key={idx} className="text-white flex items-center gap-2">
-                    <span className="text-green-400 font-bold">/</span> {feature}
+                    <span className="text-blue-400 font-bold">/</span> {feature}
                   </li>
                 ))}
               </ul>
@@ -81,7 +81,7 @@ const Pricing = () => {
                   w-full py-3 rounded-lg 
                   transition-all duration-300
                   hover:scale-105 hover:shadow-lg hover:cursor-pointer
-                  ${plan.name === "Premium" ? "bg-green-500 text-black hover:bg-green-400" : "bg-gray-700 text-white hover:bg-gray-600"}
+                  ${plan.name === "Premium" ? "bg-blue-500 text-black hover:bg-blue-400" : "bg-gray-700 text-white hover:bg-gray-600"}
                 `}
               >
                 {plan.name === "Premium" ? "Get Premium" : "Get Started"}
