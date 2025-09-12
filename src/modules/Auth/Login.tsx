@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import LoginForm from "../../modules/Auth/component/LoginForm";
 import { login } from "../../modules/Auth/services/Authservices"; 
-import Background from "../../modules/Core/components/Background/Background";
+import Background from "../../modules/Core/Components/Background/Background";
 import { useNavigate } from "react-router-dom";
 import Header from "../../modules/Core/layout/Header";
 

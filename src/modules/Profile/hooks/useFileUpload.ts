@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { type ProfileFormData, type FileState } from "../../../types";
 
-const API_BASE_URL =  import.meta.env.VITE_BASE_URL || "http://localhost:5159";
+const API_BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:5159";
 
 export const useFileUpload = (
   oldFiles: FileState,
@@ -22,7 +22,32 @@ export const useFileUpload = (
     const url = new URL(`${API_BASE_URL}/api/FileUpload/upload`);
     url.searchParams.append("type", type);
 
-    const response = await fetch(url.toString(), { method: "POST", body: formData });
+    // FIX: Thêm userId cho video upload
+    if (type === "background_video") {
+      // Lấy userId từ localStorage hoặc context
+      const user = JSON.parse(localStorage.getItem("userInfo") || "{}");
+      const userId = user.idUser || user.IdUser;
+      
+      if (!userId) {
+        throw new Error("User ID not found. Please login again.");
+      }
+      
+      url.searchParams.append("userId", userId.toString());
+      console.log(`🎬 Video upload with userId: ${userId}`);
+    }
+
+    // FIX: Thêm Authorization header nếu có JWT token
+    const headers: HeadersInit = {};
+    const token = localStorage.getItem("token");
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(url.toString(), { 
+      method: "POST", 
+      body: formData,
+      headers: headers
+    });
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -37,9 +62,15 @@ export const useFileUpload = (
     if (!path || path.startsWith("blob:") || path.startsWith("http")) return;
 
     try {
+      const headers: HeadersInit = { "Content-Type": "application/json" };
+      const token = localStorage.getItem("token");
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
       const response = await fetch(`${API_BASE_URL}/api/FileUpload/delete`, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
+        headers: headers,
         body: JSON.stringify({ path }),
       });
 
@@ -66,7 +97,7 @@ export const useFileUpload = (
       });
 
       const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
-      const validVideoTypes = ["video/mp4", "video/webm", "video/ogg"]; // Thêm hỗ trợ video
+      const validVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
       const validAudioTypes = ["audio/mpeg", "audio/wav"];
       const maxSize = 10 * 1024 * 1024; // 10MB cho image và audio
       const maxVideoSize = 50 * 1024 * 1024; // 50MB cho video
@@ -79,6 +110,24 @@ export const useFileUpload = (
         isImage: validImageTypes.includes(file.type),
         isAudio: validAudioTypes.includes(file.type)
       });
+
+      // FIX: Kiểm tra premium status trước khi upload video
+      if (field === "background" && validVideoTypes.includes(file.type)) {
+        const user = JSON.parse(localStorage.getItem("userInfo") || "{}");
+        const isPremium = Boolean(user.premium || user.Premium);
+
+        
+        console.log(`👑 Premium check for video upload:`, {
+          user: user,
+          isPremium: isPremium,
+          premiumField: user.premium || user.Premium
+        });
+        
+        if (!isPremium) {
+          setMessage("Premium subscription required for video background upload!");
+          return;
+        }
+      }
 
       // Validation cho từng loại file
       if (field === "audio" && !validAudioTypes.includes(file.type)) {
@@ -149,8 +198,10 @@ export const useFileUpload = (
           // Phân biệt background image và video
           if (validVideoTypes.includes(file.type)) {
             fileType = "background_video";
+            console.log("🎬 Uploading background video...");
           } else {
             fileType = "background_image";
+            console.log("🖼️ Uploading background image...");
           }
         } else {
           fileType = "image";

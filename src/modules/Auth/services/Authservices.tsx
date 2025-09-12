@@ -52,6 +52,7 @@ export interface User {
   email: string;
   phone: string;
   roles: string;
+  premium?: boolean;
 }
 
 interface LoginResponse {
