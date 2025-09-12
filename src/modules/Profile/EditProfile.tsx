@@ -90,18 +90,6 @@ const ProfileForm: React.FC = () => {
     }
   };
 
-  // Debug logs
-  useEffect(() => {
-    console.log("🔄 formData changed:", {
-      audio: formData.audio,
-      audioImage: formData.audioImage,
-      audioTitle: formData.audioTitle,
-    });
-  }, [formData.audio, formData.audioImage, formData.audioTitle]);
-
-  useEffect(() => {
-    console.log("📁 oldFiles changed:", oldFiles);
-  }, [oldFiles]);
 
   if (isProfileLoading) {
     return (

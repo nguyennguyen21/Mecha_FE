@@ -33,7 +33,6 @@ export const useFileUpload = (
       }
       
       url.searchParams.append("userId", userId.toString());
-      console.log(`🎬 Video upload with userId: ${userId}`);
     }
 
     // FIX: Thêm Authorization header nếu có JWT token
@@ -88,40 +87,16 @@ export const useFileUpload = (
       const file = e.target.files?.[0];
       if (!file) return;
 
-      console.log(`🎵 Starting upload for ${field}:`, file.name);
-      console.log(`📁 File details:`, {
-        name: file.name,
-        type: file.type,
-        size: file.size,
-        sizeInMB: (file.size / (1024 * 1024)).toFixed(2) + 'MB'
-      });
-
       const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
       const validVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
       const validAudioTypes = ["audio/mpeg", "audio/wav"];
       const maxSize = 10 * 1024 * 1024; // 10MB cho image và audio
       const maxVideoSize = 50 * 1024 * 1024; // 50MB cho video
 
-      console.log(`🔍 Validation limits:`, {
-        maxSize: maxSize / (1024 * 1024) + 'MB',
-        maxVideoSize: maxVideoSize / (1024 * 1024) + 'MB',
-        field: field,
-        isVideo: validVideoTypes.includes(file.type),
-        isImage: validImageTypes.includes(file.type),
-        isAudio: validAudioTypes.includes(file.type)
-      });
-
       // FIX: Kiểm tra premium status trước khi upload video
       if (field === "background" && validVideoTypes.includes(file.type)) {
         const user = JSON.parse(localStorage.getItem("userInfo") || "{}");
         const isPremium = Boolean(user.premium || user.Premium);
-
-        
-        console.log(`👑 Premium check for video upload:`, {
-          user: user,
-          isPremium: isPremium,
-          premiumField: user.premium || user.Premium
-        });
         
         if (!isPremium) {
           setMessage("Premium subscription required for video background upload!");
@@ -131,57 +106,38 @@ export const useFileUpload = (
 
       // Validation cho từng loại file
       if (field === "audio" && !validAudioTypes.includes(file.type)) {
-        console.log("❌ Audio validation failed: Invalid file type");
         setMessage("Invalid audio file type. Supported: MP3, WAV");
         return;
       }
       
       if (field === "background") {
-        console.log("🖼️ Processing background file validation...");
         // Background hỗ trợ cả image và video
         if (!validImageTypes.includes(file.type) && !validVideoTypes.includes(file.type)) {
-          console.log("❌ Background validation failed: Invalid file type");
           setMessage("Invalid background file type. Supported: JPG, PNG, GIF, MP4, WebM, OGG");
           return;
         }
         // Kiểm tra size cho video background
         if (validVideoTypes.includes(file.type) && file.size > maxVideoSize) {
-          console.log("❌ Background video validation failed: Size exceeds 50MB", {
-            fileSize: (file.size / (1024 * 1024)).toFixed(2) + 'MB',
-            limit: '50MB'
-          });
           setMessage("Video file size exceeds 50MB.");
           return;
         }
         // Kiểm tra size cho image background
         if (validImageTypes.includes(file.type) && file.size > maxSize) {
-          console.log("❌ Background image validation failed: Size exceeds 10MB", {
-            fileSize: (file.size / (1024 * 1024)).toFixed(2) + 'MB',
-            limit: '10MB'
-          });
           setMessage("Background image size exceeds 10MB.");
           return;
         }
-        console.log("✅ Background validation passed!");
       } else {
-        console.log(`📝 Processing ${field} file validation...`);
         // Kiểm tra cho các field khác (profileAvatar, audioImage, audio)
         if (["profileAvatar", "audioImage"].includes(field) && !validImageTypes.includes(file.type)) {
-          console.log(`❌ ${field} validation failed: Invalid image type`);
           setMessage("Invalid image file type. Supported: JPG, PNG, GIF");
           return;
         }
         
         // Kiểm tra size cho image và audio (không phải background)
         if (file.size > maxSize) {
-          console.log(`❌ ${field} validation failed: Size exceeds 10MB`, {
-            fileSize: (file.size / (1024 * 1024)).toFixed(2) + 'MB',
-            limit: '10MB'
-          });
           setMessage("File size exceeds 10MB.");
           return;
         }
-        console.log(`✅ ${field} validation passed!`);
       }
 
       setUploadingFiles((prev) => ({ ...prev, [field]: true }));
@@ -198,18 +154,14 @@ export const useFileUpload = (
           // Phân biệt background image và video
           if (validVideoTypes.includes(file.type)) {
             fileType = "background_video";
-            console.log("🎬 Uploading background video...");
           } else {
             fileType = "background_image";
-            console.log("🖼️ Uploading background image...");
           }
         } else {
           fileType = "image";
         }
 
         const filePath = await uploadFile(file, fileType);
-
-        console.log(`✅ Upload successful for ${field}:`, filePath);
 
         // Delete old file if it exists and is different
         const oldFilePath = oldFiles[field as keyof FileState];
@@ -225,13 +177,10 @@ export const useFileUpload = (
               [field]: filePath,
               ...(field === "audio" && !prev.audioTitle && { audioTitle: file.name.replace(/\.[^/.]+$/, "") }),
             };
-            console.log(`🔄 Updated formData for ${field}:`, newData[field]);
-            console.log("📋 Full new formData:", newData);
 
             // Update oldFiles synchronously
             setOldFiles((prevOld) => {
               const newOldFiles = { ...prevOld, [field]: filePath };
-              console.log("📁 Updated oldFiles:", newOldFiles);
               resolve(null); // Resolve the promise after both states are updated
               return newOldFiles;
             });

@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
-
-// Components
 import ProfileBackground from "./components/ProfileBackground";
 import ProfileAvatar from "./components/ProfileAvatar";
 import ProfileUsername from "./components/ProfileUsername";
@@ -10,19 +8,16 @@ import AudioPlayer from "./components/AudioPlayer";
 import Loading from "./components/Loading";
 import ProfileDescription from "./components/ProfileDescription";
 import SocialLinks from "./components/SocialLinks";
-
-// Hooks
+import { type AudioPlayerRef } from "./components/AudioPlayer";
 import { useProfileData } from "./hooks/useProfileData";
 import { useUserStyle } from "./hooks/useUserStyle";
 import { useCustomCursor } from "./hooks/useCustomCursor";
-
-// Utils
 import { createContainerStyle, subContainer } from "./utils/styleUtils";
 
 const ProfilePage: React.FC = () => {
   const { username } = useParams<{ username: string }>();
   const [entered, setEntered] = useState(false);
-  const [fadeOut, setFadeOut] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const [elementsVisible, setElementsVisible] = useState({
     avatar: false,
     username: false,
@@ -31,164 +26,117 @@ const ProfilePage: React.FC = () => {
     location: false,
     audio: false,
   });
-
-  // Custom hooks
+  const audioRef = useRef<AudioPlayerRef>(null);
   const { profile, loading, error } = useProfileData(username);
   const { style, parsedStyles } = useUserStyle(profile?.userId);
   useCustomCursor(style);
 
+  // Preload background image
+  useEffect(() => {
+    if (profile?.background) {
+      const img = new Image();
+      img.src = profile.background;
+    }
+  }, [profile?.background]);
+
   const handleEnter = () => {
-    setFadeOut(true);
-    setTimeout(() => setEntered(true), 1000); // trùng với animation
+    if (audioRef.current && profile?.audio) {
+      audioRef.current.play().catch(console.error);
+    }
+    setEntered(true);
+    setShowProfile(true); // Show profile immediately
   };
 
-  // Staggered animation for profile elements
   useEffect(() => {
-    if (entered && profile) {
+    if (showProfile && profile) {
       const animationSequence = [
-        { key: 'avatar', delay: 200 },
-        { key: 'username', delay: 400 },
-        { key: 'description', delay: 600 },
-        { key: 'socialLinks', delay: 800 },
-        { key: 'location', delay: 1000 },
-        { key: 'audio', delay: 1200 },
+        { key: "avatar", delay: 0 },
+        { key: "username", delay: 200 },
+        { key: "description", delay: 400 },
+        { key: "socialLinks", delay: 600 },
+        { key: "location", delay: 800 },
+        { key: "audio", delay: 1000 },
       ];
-
       animationSequence.forEach(({ key, delay }) => {
         setTimeout(() => {
-          setElementsVisible(prev => ({
-            ...prev,
-            [key]: true,
-          }));
+          setElementsVisible((prev) => ({ ...prev, [key]: true }));
         }, delay);
       });
     }
-  }, [entered, profile]);
+  }, [showProfile, profile]);
 
-  if (!entered) {
-    return (
-      <div className="relative min-h-screen font-poppins">
-        {/* Background */}
-        <div
-          className={`absolute top-0 left-0 w-full h-full bg-cover bg-center transition-filter duration-1000 ${
-            fadeOut ? "blur-0" : "blur-sm"
-          }`}
-          style={{ background: "black" }}
-        />
-
-        {/* Splash overlay */}
-        <div
-          onClick={handleEnter}
-          className={`absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center cursor-pointer transition-all duration-1000 ${
-            fadeOut ? "opacity-20 bg-transparent" : "opacity-100 bg-black/70"
-          }`}
-        >
-          {/* Logo */}
-          <img
-            src="/mecha.png"
-            alt="Mecha Logo"
-            className={`transition-all duration-1000 ${
-              fadeOut ? "w-20 h-20" : "w-36 h-36 animate-pulse"
-            } drop-shadow-[0_0_20px_#8b5cf6] mb-5`}
-          />
-
-          {/* Title */}
-          <h1
-            className={`text-4xl md:text-5xl font-extrabold mb-2 bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent transition-all duration-1000 ${
-              fadeOut ? "text-2xl" : ""
-            }`}
-          >
-            Welcome to Mecha
-          </h1>
-
-          {/* Click to Enter */}
-          <p
-            className={`text-white/90 text-xl transition-all duration-1000 ${
-              fadeOut ? "text-base" : "text-2xl"
-            } drop-shadow-md`}
-          >
-            Click to Enter
-          </p>
-        </div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    setEntered(false);
+    setShowProfile(false);
+    setElementsVisible({
+      avatar: false,
+      username: false,
+      description: false,
+      socialLinks: false,
+      location: false,
+      audio: false,
+    });
+  }, [username]);
 
   if (loading) return <Loading message="Loading profile..." />;
-  if (error) return <div>Error: {error}</div>;
-  if (!profile) return <div>Profile not found</div>;
+  if (error) return <div className="flex justify-center items-center min-h-screen text-white">Error: {error}</div>;
+  if (!profile) return <div className="flex justify-center items-center min-h-screen text-white">Profile not found</div>;
 
   const containerStyle = createContainerStyle(parsedStyles);
   const subContainerStyle = subContainer(parsedStyles, profile);
-
-  // Animation style helper
   const getAnimationStyle = (isVisible: boolean) => ({
     opacity: isVisible ? 1 : 0,
-    transform: isVisible ? 'translateY(0px)' : 'translateY(20px)',
-    transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+    transform: isVisible ? "translateY(0px)" : "translateY(20px)",
+    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
   });
 
   return (
-    <div
-      className="flex justify-center items-center min-h-screen bg-cover bg-center"
-      style={{ backgroundImage: "url('/path/to/background.jpg')" }}
-    >
-      <div style={containerStyle}>
-        <ProfileBackground profile={profile} />
-        <div style={subContainerStyle}>
-          <div 
-            style={{
-              order: parsedStyles.avatarOrder,
-              ...getAnimationStyle(elementsVisible.avatar)
-            }}
-          >
-            <ProfileAvatar profile={profile} parsedStyles={parsedStyles} />
-          </div>
-          
-          <div 
-            style={{
-              order: parsedStyles.usernameOrder,
-              ...getAnimationStyle(elementsVisible.username)
-            }}
-          >
-            <ProfileUsername profile={profile} parsedStyles={parsedStyles} />
-          </div>
-          
-          <div 
-            style={{
-              order: parsedStyles.descriptionOrder,
-              ...getAnimationStyle(elementsVisible.description)
-            }}
-          >
-            <ProfileDescription profile={profile} parsedStyles={parsedStyles} />
-          </div>
-          
-          <div 
-            style={{
-              order: parsedStyles.descriptionOrder + 1,
-              marginTop: 10,
-              ...getAnimationStyle(elementsVisible.socialLinks)
-            }}
-          >
-            <SocialLinks userId={profile.userId} />
-          </div>
-          
-          <div 
-            style={{
-              order: parsedStyles.locationOrder,
-              ...getAnimationStyle(elementsVisible.location)
-            }}
-          >
-            <ProfileLocation profile={profile} parsedStyles={parsedStyles} />
-          </div>
-          
-          <div 
-            style={{
-              order: parsedStyles.audioOrder,
-              ...getAnimationStyle(elementsVisible.audio)
-            }}
-          >
-            <AudioPlayer profile={profile} parsedStyles={parsedStyles} />
+    <div className="relative min-h-screen font-poppins bg-black">
+      {!entered && (
+        <div className="fixed inset-0 z-50 flex flex-col justify-center items-center cursor-pointer bg-black"
+        onClick={handleEnter}>
+          <img
+            src="/mecha.png"
+            alt="Mecha Logo"
+            className="w-36 h-36 animate-pulse opacity-100 scale-100 drop-shadow-[0_0_20px_#8b5cf6] mb-5"
+          />
+          <h1 className="font-extrabold mb-2 bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent text-4xl md:text-5xl">
+            Welcome to Mecha
+          </h1>
+          <p className="text-xl md:text-2xl text-white/90 drop-shadow-md">Click to Enter</p>
+        </div>
+      )}
+      <div
+        className="fixed inset-0 flex justify-center items-center"
+        style={{
+          background: profile?.background
+            ? `url(${profile.background}) center/cover no-repeat`
+            : "#000",
+          opacity: showProfile ? 1 : 0,
+          transition: "opacity 0.3s ease-in-out",
+        }}
+      >
+        <div style={containerStyle}>
+          <ProfileBackground profile={profile} />
+          <div style={subContainerStyle}>
+            <div style={{ order: parsedStyles?.avatarOrder || 1, ...getAnimationStyle(elementsVisible.avatar) }}>
+              <ProfileAvatar profile={profile} parsedStyles={parsedStyles} />
+            </div>
+            <div style={{ order: parsedStyles?.usernameOrder || 2, ...getAnimationStyle(elementsVisible.username) }}>
+              <ProfileUsername profile={profile} parsedStyles={parsedStyles} />
+            </div>
+            <div style={{ order: parsedStyles?.descriptionOrder || 3, ...getAnimationStyle(elementsVisible.description) }}>
+              <ProfileDescription profile={profile} parsedStyles={parsedStyles} />
+            </div>
+            <div style={{ order: (parsedStyles?.descriptionOrder || 3) + 1, marginTop: 10, ...getAnimationStyle(elementsVisible.socialLinks) }}>
+              <SocialLinks userId={profile.userId} />
+            </div>
+            <div style={{ order: parsedStyles?.locationOrder || 5, ...getAnimationStyle(elementsVisible.location) }}>
+              <ProfileLocation profile={profile} parsedStyles={parsedStyles} />
+            </div>
+            <div style={{ order: parsedStyles?.audioOrder || 6, ...getAnimationStyle(elementsVisible.audio) }}>
+              <AudioPlayer ref={audioRef} profile={profile} parsedStyles={parsedStyles} />
+            </div>
           </div>
         </div>
       </div>

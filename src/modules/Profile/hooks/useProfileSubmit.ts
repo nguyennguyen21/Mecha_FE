@@ -18,11 +18,6 @@ export const useProfileSubmit = (
   setMessage: (message: string) => void
 ) => {
   const handleSubmit = useCallback(async () => {
-    console.log("🔍 Starting submit process...");
-    console.log("📋 Current formData at submit time:", formData);
-    console.log("🎵 Audio path:", formData.audio);
-    console.log("🖼️ Audio image path:", formData.audioImage);
-    console.log("📝 Audio title:", formData.audioTitle);
 
     if (!userId) {
       setMessage("User ID not found.");
@@ -58,8 +53,6 @@ export const useProfileSubmit = (
       effectUsername: formData.effectUsername?.trim() || ""
     };
 
-    console.log("📤 Submit data being sent:", submitData);
-
     try {
       const token = localStorage.getItem("authToken") || "";
       const requestUrl = `${API_BASE_URL}/api/profile/${userId}`;
@@ -73,8 +66,6 @@ export const useProfileSubmit = (
         body: JSON.stringify(submitData),
       });
 
-      console.log("📨 Response status:", response.status);
-
       if (!response.ok) {
         const errorData = await response.json();
         console.error("❌ Error response:", errorData);
@@ -82,14 +73,12 @@ export const useProfileSubmit = (
       }
 
       const responseData = await response.json();
-      console.log("✅ Success response:", responseData);
 
       // Update styles
       try {
-        console.log("🎨 Custom styles being sent:", customStyles); 
         await updateUserStyles(userId, customStyles);
       } catch (styleError) {
-        console.warn("⚠️ Failed to update styles:", styleError);
+       throw new Error("Cannot update styles: " + styleError);
       }
 
       setMessage("Profile updated successfully!");
