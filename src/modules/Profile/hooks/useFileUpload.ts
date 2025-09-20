@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { type ProfileFormData, type FileState } from "../../../types";
 
-const API_BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:5159";
+const API_BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export const useFileUpload = (
   oldFiles: FileState,
@@ -16,46 +16,36 @@ export const useFileUpload = (
   setMessage: (message: string) => void
 ) => {
   const uploadFile = useCallback(async (file: File, type: string): Promise<string> => {
-    const formData = new FormData();
-    formData.append("file", file);
+  const formData = new FormData();
+  formData.append('file', file);
 
-    const url = new URL(`${API_BASE_URL}/api/FileUpload/upload`);
-    url.searchParams.append("type", type);
+  const url = new URL(`${API_BASE_URL}/api/FileUpload/upload`);
+  url.searchParams.append('type', type);
 
-    // FIX: Thêm userId cho video upload
-    if (type === "background_video") {
-      // Lấy userId từ localStorage hoặc context
-      const user = JSON.parse(localStorage.getItem("userInfo") || "{}");
-      const userId = user.idUser || user.IdUser;
-      
-      if (!userId) {
-        throw new Error("User ID not found. Please login again.");
-      }
-      
-      url.searchParams.append("userId", userId.toString());
-    }
+  const user = JSON.parse(localStorage.getItem('userInfo') || '{}');
+  const userId = user.idUser || user.IdUser;
+  if (userId) url.searchParams.append('userId', userId);
 
-    // FIX: Thêm Authorization header nếu có JWT token
-    const headers: HeadersInit = {};
-    const token = localStorage.getItem("token");
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
+  const token = user.token || user.accessToken;
 
-    const response = await fetch(url.toString(), { 
-      method: "POST", 
-      body: formData,
-      headers: headers
-    });
+  const headers: HeadersInit = {};
+  if (token) headers.Authorization = `Bearer ${token}`;
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || `Upload failed: ${response.status}`);
-    }
+  const res = await fetch(url.toString(), {
+    method: 'POST',
+    body: formData,
+    headers,
+  });
 
-    const data = await response.json();
-    return data.url;
-  }, []);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || `Upload failed (${res.status})`);
+  }
+
+  const data = await res.json();
+  return data.url;
+}, []);
+
 
   const deleteFile = useCallback(async (path: string) => {
     if (!path || path.startsWith("blob:") || path.startsWith("http")) return;
@@ -97,6 +87,7 @@ export const useFileUpload = (
       if (field === "background" && validVideoTypes.includes(file.type)) {
         const user = JSON.parse(localStorage.getItem("userInfo") || "{}");
         const isPremium = Boolean(user.premium || user.Premium);
+        console.log("User premium status:", user);
         
         if (!isPremium) {
           setMessage("Premium subscription required for video background upload!");

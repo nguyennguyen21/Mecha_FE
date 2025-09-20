@@ -15,7 +15,7 @@ const SocialLinks: React.FC<SocialLinksProps> = ({ userId }) => {
   const [error, setError] = useState<string | null>(null);
   const [imageErrors, setImageErrors] = useState<Set<number>>(new Set());
 
-  const API_BASE_URL = "http://localhost:5159";
+  const API_BASE_URL = import.meta.env.VITE_BASE_URL;
 
   // Function to construct proper image URL
   const getImageUrl = (iconPath: string): string => {

@@ -2,7 +2,7 @@ import React from "react";
 import { type CustomStyles, type ProfileFormData } from "../../../types";
 import { useUserStyles } from "./useUserStyles";
 
-const API_BASE_URL =  import.meta.env.VITE_BASE_URL || "http://localhost:5159";
+const API_BASE_URL = import.meta.env.VITE_BASE_URL;
 
 
 interface QuickStylePresetsProps {

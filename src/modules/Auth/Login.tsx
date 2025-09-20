@@ -17,7 +17,7 @@ interface LoginResponse {
   };
 }
 
-const BACKEND_DISCORD = "http://localhost:5159/api/discordauth";
+const BACKEND_DISCORD = `${import.meta.env.VITE_BASE_URL}/api/discordauth`;
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -55,7 +55,7 @@ const Login: React.FC = () => {
   const top = window.screen.height / 2 - height / 2;
 
   const popup = window.open(
-    "http://localhost:5159/api/discordauth/login",
+    `${BACKEND_DISCORD}/login`,
     "Discord Login",
     `width=${width},height=${height},top=${top},left=${left}`
   );

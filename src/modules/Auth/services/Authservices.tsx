@@ -23,6 +23,7 @@ export const Register = async (userData: RegisterData): Promise<{ message: strin
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        //  "X-Requested-With": "XMLHttpRequest",
       },
       body: JSON.stringify(userData),
     });
@@ -60,27 +61,30 @@ interface LoginResponse {
   user: User;
 }
 
-// Hàm đăng nhập
-export const login = async (credentials: LoginCredentials): Promise<LoginResponse> => {
+export const login = async (
+  credentials: LoginCredentials
+): Promise<LoginResponse> => {
   const url = `${API_CONFIG.BASE_URL}/api/auth/login`;
 
   try {
     const response = await fetch(url, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(credentials),
     });
 
+    const payload = await response.json().catch(() => ({}));
+
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Login failed' }));
-      throw new Error(error.message || 'Login failed');
+      throw new Error(payload.message || 'Login failed');
     }
 
-    const data: LoginResponse = await response.json();
-    console.log('Login successful:', data);
-    return data;
+    // ✅ response ok => payload là dữ liệu user
+    localStorage.setItem('userInfo', JSON.stringify(payload));
+    console.log('Login successful:', payload);
+
+    return payload as LoginResponse;
   } catch (error) {
     console.error('Authentication error:', error);
     throw error;

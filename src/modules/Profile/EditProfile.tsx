@@ -13,7 +13,7 @@ import { useProfileSubmit } from "./hooks/useProfileSubmit";
 import Toast from "./Components/Toast";
 import SocialEditor from "../SocialLinks/Components/SocialEditor";
 
-const API_BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:5159";
+const API_BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const ProfileForm: React.FC = () => {
   const [loading, setLoading] = useState(false);

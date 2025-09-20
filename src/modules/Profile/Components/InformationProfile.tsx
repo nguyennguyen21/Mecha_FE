@@ -28,6 +28,18 @@ interface InformationProfileProps {
   ) => void;
 }
 
+const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const value = e.target.value;
+
+  // Nếu chuỗi có khoảng trắng
+  if (/\s/.test(value)) {
+    alert("Username cannot contain space!");
+    return;
+  }
+
+};
+
+
 const InformationProfile: React.FC<InformationProfileProps> = ({
   formData,
   uploadingFiles,
@@ -229,14 +241,14 @@ const isVideoFile = (url: string): boolean => {
               Username <span className="text-gray-500 text-xs">(max 20)</span>
             </label>
               <input
-                type="text"
-                name="username"
-                onChange={handleChange}
-                value={formData.username}
-                maxLength={20}
-                className="w-full px-4 py-3 border-2 border-gray-700 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-300/50 outline-none transition-all duration-200 text-gray-300 placeholder-gray-500 bg-gray-800/80"
-                placeholder="Enter your username"
-              />
+              type="text"
+              name="username"
+              maxLength={20}
+              onChange={handleUsernameChange}
+              className="w-full px-4 py-3 border-2 border-gray-700 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-300/50 outline-none transition-all duration-200 text-gray-300 placeholder-gray-500 bg-gray-800/80"
+              placeholder="Enter your username"
+            />
+
             </div>
             <div>
             </div>
