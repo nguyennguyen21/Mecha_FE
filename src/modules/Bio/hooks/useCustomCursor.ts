@@ -1,12 +1,12 @@
 // hooks/useCustomCursor.ts
 import { useEffect } from "react";
-import { type UserStyleRaw } from "../types/profile";
-import { parseStyles } from "../utils/styleUtils";
+import { type UserStyle } from "../types/profile";
 
-export const useCustomCursor = (style: UserStyleRaw | null) => {
+export const useCustomCursor = (parsedStyles: UserStyle | null) => {
   useEffect(() => {
-    const parsed = parseStyles(style);
-    console.log("Style raw:", style);
+    if (!parsedStyles) return;
+    
+    console.log("Parsed styles:", parsedStyles);
 
     let cursorEl = document.getElementById("custom-cursor");
     if (!cursorEl) {
@@ -15,9 +15,9 @@ export const useCustomCursor = (style: UserStyleRaw | null) => {
       document.body.appendChild(cursorEl);
     }
 
-    const width = Math.max(8, Number(parsed.cursorWidth?.replace("px","")) || 24);
-    const height = Math.max(8, Number(parsed.cursorHeight?.replace("px","")) || 24);
-    const scale = Math.max(0.1, Number(parsed.cursorScale) || 1);
+    const width = Math.max(8, Number(parsedStyles.cursorWidth?.replace("px","")) || 24);
+    const height = Math.max(8, Number(parsedStyles.cursorHeight?.replace("px","")) || 24);
+    const scale = Math.max(0.1, Number(parsedStyles.cursorScale) || 1);
 
     Object.assign(cursorEl.style, {
       position: "fixed",
@@ -30,11 +30,11 @@ export const useCustomCursor = (style: UserStyleRaw | null) => {
       zIndex: "9999",
       backgroundRepeat: "no-repeat",
       backgroundPosition: "center",
-      backgroundSize: parsed.customCursor ? "100% 100%" : "cover",
-      borderRadius: parsed.customCursor ? "0" : parsed.cursorType === "circle" ? "50%" : "0",
-      backgroundColor: parsed.customCursor ? "transparent" : parsed.cursorColor ?? "#000",
-      boxShadow: parsed.customCursor ? "none" : parsed.cursorGlow ?? "none",
-      backgroundImage: parsed.customCursor ? `url(${parsed.customCursor})` : "none",
+      backgroundSize: parsedStyles.customCursor ? "100% 100%" : "cover",
+      borderRadius: parsedStyles.customCursor ? "0" : parsedStyles.cursorType === "circle" ? "50%" : "0",
+      backgroundColor: parsedStyles.customCursor ? "transparent" : parsedStyles.cursorColor ?? "#000",
+      boxShadow: parsedStyles.customCursor ? "none" : parsedStyles.cursorGlow ?? "none",
+      backgroundImage: parsedStyles.customCursor ? `url(${parsedStyles.customCursor})` : "none",
     });
 
     const moveCursor = (e: MouseEvent) => {
@@ -50,5 +50,5 @@ export const useCustomCursor = (style: UserStyleRaw | null) => {
       document.body.style.cursor = "default";
       cursorEl?.remove();
     };
-  }, [style]);
+  }, [parsedStyles]);
 };

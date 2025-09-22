@@ -28,24 +28,32 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
 
   // Login bằng username/password
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+  setError(null);
 
-    try {
-      const data: LoginResponse = await login({ username, password });
-      localStorage.setItem("authToken", data.token);
-      localStorage.setItem("userInfo", JSON.stringify(data.user));
-      console.log("Login success:", data);
+  try {
+    const data: LoginResponse = await login({ username, password });
+    localStorage.setItem("authToken", data.token);
+    localStorage.setItem("userInfo", JSON.stringify(data.user));
+    console.log("Login success:", data);
 
-      navigate("/dashboard");
-    } catch (err: any) {
-      setError(err.message || "Login failed");
-    } finally {
-      setLoading(false);
+    navigate("/dashboard");
+  } catch (err: any) {
+    // Lấy message từ backend nếu có
+    if (err.response && err.response.data?.message) {
+      setError(err.response.data.message); 
+    } else if (err.response?.status === 401) {
+      setError("Invalid username or password");
+    } else {
+      setError("Login failed. Please try again later.");
     }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
+
 
 
   const handleDiscordLogin = () => {

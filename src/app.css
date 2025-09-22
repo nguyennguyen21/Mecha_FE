@@ -19,3 +19,11 @@ html, body, #root {
 .animate-bounce-updown {
   animation: bounce-updown 1.5s ease-in-out infinite;
 }
+
+@keyframes slide-in {
+  0% { opacity: 0; transform: translateX(100%); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-in {
+  animation: slide-in 0.3s forwards;
+}

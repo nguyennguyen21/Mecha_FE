@@ -19,12 +19,10 @@ export interface FileState {
   audioImage: string;
 }
 
-// Style được lưu trong DB
+// Updated CustomStyles interface với đầy đủ properties
 export interface CustomStyles {
+  // Profile Container
   profileBorder?: string;
-  avatarBorder?: string;
-  coverImageBorder?: string;
-
   profileBorderWidth: string;
   profileBorderStyle: string;
   profileBorderColor: string;
@@ -34,26 +32,53 @@ export interface CustomStyles {
   profileOpacity: number;
   profileBoxShadow: string;
   profileGap?: number;
+  containerGap?: string;
 
+  // Avatar
+  avatarBorder?: string;
   avatarBorderRadius: string;
   avatarShowBorder: boolean;
   avatarBorderWidth: string;
   avatarBorderStyle: string;
   avatarBorderColor: string;
+  avatarMargin?: string;
 
+  // Username
   usernameFontSize: string;
   usernameFontStyle: string;
   usernameFontWeight: string;
   usernameColor: string;
   usernameTextShadow: string;
-  usernameTextTransform: "none" | "capitalize" | "uppercase" | "lowercase" | "full-width" | "full-size-kana"; // ✅ fix type
+  usernameTextTransform: "none" | "capitalize" | "uppercase" | "lowercase" | "full-width" | "full-size-kana";
   usernameLetterSpacing: string;
+  usernameMargin?: string;
 
+  // Description
+  description?: string;
+  descriptionFontSize?: string;
+  descriptionColor?: string;
+  descriptionTextAlign?: string;
+  descriptionMargin?: string;
+
+  // Location
   locationFontSize: string;
   locationColor: string;
   locationFontStyle: string;
   locationFontWeight?: string;
+  locationMargin?: string;
 
+  // Audio Title
+  audioTitleFontSize?: string;
+  audioTitleFontWeight?: string;
+  audioTitleColor?: string;
+  audioTitleLetterSpacing?: string;
+  audioTitleMargin?: string;
+  audioHeight?: string;
+  audioWidth?: string;
+  audioMargin?: string;
+
+  // Cover Image
+  coverImageBorder?: string;
   coverImageWidth: string;
   coverImageHeight: string;
   coverImageBorderRadius: string;
@@ -63,20 +88,20 @@ export interface CustomStyles {
   coverImageBoxShadow: string;
   coverImageObjectFit: string;
 
-  audioTitleFontSize?: string;
-  audioTitleFontWeight?: string;
-  audioTitleColor?: string;
-  audioTitleLetterSpacing?: string;
-  audioHeight?: string;
-  audioWidth?: string;
+  // Cursor
   cursorType?: string;
   cursorFontSize?: string;
   cursorFontWeight?: string;
   cursorColor?: string;
-
   cursorWidth?: string;
   cursorHeight?: string;
-  
+
+  // Order properties
+  avatarOrder?: number;
+  usernameOrder?: number;
+  descriptionOrder?: number;
+  locationOrder?: number;
+  audioOrder?: number;
 }
 
 // DTO khi lấy style riêng
@@ -85,14 +110,6 @@ export interface UserStyleDto {
   styles: CustomStyles;
 }
 
-// Nếu bạn chỉ cần theme + primaryColor (ví dụ default style)
-export interface UserStyle {
-  idUser: number;
-  styles: {
-    theme: "light" | "dark";
-    primaryColor: string;
-  };
-}
 
 
 
@@ -112,7 +129,11 @@ export type ProfileData = {
 };
 
 export interface UserStyle {
-  [key: string]: any;
+  // Include the raw properties for compatibility
+  idUser?: number;
+  stylests?: string;
+
+  // UI-specific parsed properties
   profileBorderStyle?: string;
   profileBorderWidth?: string;
   profileBorderColor?: string;
@@ -121,11 +142,14 @@ export interface UserStyle {
   profileBackgroundColor?: string;
   profileOpacity?: number;
   profileBoxShadow?: string;
+  profileGap?: number;
+
   avatarBorderRadius?: string;
   avatarShowBorder?: boolean;
   avatarBorderStyle?: string;
   avatarBorderWidth?: string;
   avatarBorderColor?: string;
+
   usernameFontSize?: string;
   usernameFontStyle?: string;
   usernameFontWeight?: string;
@@ -133,19 +157,35 @@ export interface UserStyle {
   usernameTextShadow?: string;
   usernameTextTransform?: string;
   usernameLetterSpacing?: string;
+  usernameMargin?: string; // <-- margin riêng cho username
+
+  descFontSize?: string;
+  descFontStyle?: string;
+  descFontWeight?: string;
+  descColor?: string;
+  descTextShadow?: string;
+  descTextTransform?: "none" | "capitalize" | "uppercase" | "lowercase" | "initial" | "inherit";
+  descLetterSpacing?: string;
+  descMargin?: string; // <-- margin riêng cho description
+
   locationFontSize?: string;
   locationColor?: string;
   locationFontStyle?: string;
+  locationFontWeight?: string;
+  locationMargin?: string; // <-- margin riêng cho location
+
   cursorWidth?: string;
   cursorHeight?: string;
   cursorType?: string;
   cursorColor?: string;
   cursorFontSize?: string;
   cursorFontWeight?: string;
+
   audioTitleFontSize?: string;
   audioTitleFontWeight?: string;
   audioTitleColor?: string;
   audioTitleLetterSpacing?: string;
+
   coverImageWidth?: string;
   coverImageHeight?: string;
   coverImageBorderRadius?: string;
@@ -154,25 +194,38 @@ export interface UserStyle {
   coverImageBorderWidth?: string;
   coverImageBorderColor?: string;
   coverImageBoxShadow?: string;
-  audioHeight?: string;
-  audioWidth?: string;
-  audioBorderRadius?: string;
-  audioBoxShadow?: string;
-  audioBackgroundColor?: string;
-  audioProgressColor?: string;
-  audioThumbColor?: string;
-  audioControlsColor?: string;
-  audioBorderStyle?: string;   
-  audioBorderWidth?: string;  
-  audioBorderColor?: string; 
-  descFontSize?: string;
-  descFontStyle?: string;
-  descFontWeight?: string;
-  descColor?: string;
-  descTextShadow?: string;
-  descTextTransform?: string;
-  descLetterSpacing?: string;
+
+  SubContainerBackgroundColor?: string;
+  SubContainerBorder?: string;
+  SubContainerBorderradius?: string;
+  SubContainerWidth?: string;
+  SubContainerMaxWidth?: string;
+
+  containerGap?: string;
+
+  // New fields
+  background?: string;
+  backgroundMargin?: string; // margin riêng
+  audio?: string;
+  audioMargin?: string; 
+  audioImage?: string;
+  audioImageMargin?: string;
+  audioTitle?: string;
+  audioTitleMargin?: string;
+  customCursor?: string;
+  customCursorMargin?: string;
+  description?: string;
+  descriptionMargin?: string;
+  username: string;
+  effectUsername?: string;
+  effectUsernameMargin?: string;
+  location?: string;
+  locationEffectMargin?: string;
+
+  // Allow any additional properties
+  [key: string]: any;
 }
+
 
 export interface AdvancedStyleSettingsProps {
   customStyles: CustomStyles;

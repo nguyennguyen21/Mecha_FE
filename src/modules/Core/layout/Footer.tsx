@@ -5,7 +5,17 @@ const Footer = () => {
 
         {/* Logo & Description */}
         <div className="flex flex-col space-y-4">
-          <div className="font-bold text-2xl">Logo</div>
+           <a
+              href="https://mecha.lol"
+              className="flex items-center space-x-2 no-underline text-white hover:text-blue-400 transition-colors"
+            >
+              <img
+                src="./mecha.png"
+                alt="Mecha Logo"
+                className="w-1/2 max-w-[50px] object-contain animate-bounce-updown"
+              />
+              <span className="leading-none">Mecha.lol</span>
+            </a>
           <p className="text-gray-400 max-w-sm">
             Bringing you the best experience. Connect all your socials and showcase your profile in style.
           </p>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import InformationProfile from "./Components/InformationProfile";
 import AudioProfile from "./Components/AudioProfile";
 import AdvancedStyleSettings from "./Components/AdvancedStyleSettings";
@@ -15,10 +15,23 @@ import SocialEditor from "../SocialLinks/Components/SocialEditor";
 
 const API_BASE_URL = import.meta.env.VITE_BASE_URL;
 
+// Hook helper để map tất cả các margin từ customStyles
+const useApplyMargins = (customStyles: any) => {
+  return useMemo(() => {
+    const styleMap: Record<string, React.CSSProperties> = {};
+    Object.keys(customStyles).forEach(key => {
+      if (key.includes("Margin")) {
+        styleMap[key] = { margin: customStyles[key] };
+      }
+    });
+    return styleMap;
+  }, [customStyles]);
+};
+
 const ProfileForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [activeTab, setActiveTab] = useState("profile"); // New state for tabs
+  const [activeTab, setActiveTab] = useState("profile");
 
   // Custom hooks
   const {
@@ -61,35 +74,25 @@ const ProfileForm: React.FC = () => {
     setMessage
   );
 
-  // New function to handle layout application
+  const marginStyles = useApplyMargins(customStyles);
+
   const handleApplyLayout = async (layoutData: any) => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/UserStyles/${userId}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(layoutData),
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to apply layout');
-      }
-
-      // Update local styles
+      if (!response.ok) throw new Error('Failed to apply layout');
       setCustomStyles({ ...customStyles, ...layoutData.styles });
       setMessage("Layout applied successfully!");
-      
-      // Auto-hide message after 3 seconds
       setTimeout(() => setMessage(""), 3000);
-      
     } catch (error) {
       console.error('Error applying layout:', error);
       setMessage("Failed to apply layout. Please try again.");
       setTimeout(() => setMessage(""), 3000);
     }
   };
-
 
   if (isProfileLoading) {
     return (
@@ -132,15 +135,17 @@ const ProfileForm: React.FC = () => {
         {/* Tab Content */}
         {activeTab === 'profile' && (
           <div className="space-y-8">
-            <InformationProfile
-              formData={formData}
-              uploadingFiles={uploadingFiles}
-              getMediaUrl={getMediaUrl}
-              handleChange={handleChange}
-              handleFileChange={handleFileChange}
-            />
+            <div style={marginStyles.usernameMargin}>
+              <InformationProfile
+                formData={formData}
+                uploadingFiles={uploadingFiles}
+                getMediaUrl={getMediaUrl}
+                handleChange={handleChange}
+                handleFileChange={handleFileChange}
+              />
+            </div>
             
-            <div className="mx-4 sm:mx-8">
+            <div className="mx-4 sm:mx-8" style={marginStyles.descriptionMargin}>
               <AudioProfile
                 formData={formData}
                 uploadingFiles={uploadingFiles}
@@ -153,9 +158,8 @@ const ProfileForm: React.FC = () => {
         )}
 
         {activeTab === 'social' && (
-        <SocialEditor userId={userId ? userId.toString() : ""} />
-      )}
-
+          <SocialEditor userId={userId ? userId.toString() : ""} />
+        )}
 
         {activeTab === 'styles' && (
           <div className="space-y-8">
@@ -165,7 +169,6 @@ const ProfileForm: React.FC = () => {
               stylesLoading={stylesLoading}
               userId={userId!}
             />
-
             <QuickStylePresets
               customStyles={customStyles}
               setCustomStyles={setCustomStyles}
@@ -185,7 +188,6 @@ const ProfileForm: React.FC = () => {
           />
         )}
 
-        {/* Submit Button - Always visible */}
         <div className="mt-8">
           <SubmitButton
             loading={loading}
@@ -195,7 +197,6 @@ const ProfileForm: React.FC = () => {
           />
         </div>
 
-        {/* Toast luôn hiện ở góc phải màn hình */}
         <Toast message={message} />
       </div>
     </div>

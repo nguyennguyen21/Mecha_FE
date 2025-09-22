@@ -3,6 +3,7 @@ import Header from "../../modules/Core/layout/Header";
 import Footer from "../../modules/Core/layout/Footer";
 import Pricing from "./Pricing";
 import HeroSection from "./HeroSection";
+import CommunityPage from "./CommunityPage";
 
 const Home = () => {
   return (
@@ -15,6 +16,9 @@ const Home = () => {
 
         {/* Pricing Section */}
         <Pricing />
+
+        {/* Community Section */}
+        <CommunityPage />
 
         {/* Footer */}
         <Footer />

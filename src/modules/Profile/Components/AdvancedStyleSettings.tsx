@@ -8,9 +8,10 @@ import LocationSection from "./sections/LocationSection";
 import CursorSection from "./sections/CursorSection";
 import AudioTitleSection from "./sections/AudioTitleSection";
 import CoverImageSection from "./sections/CoverImageSection";
-import DescriptionSection from "./sections/DescriptionSection"
+import DescriptionSection from "./sections/DescriptionSection";
 import { type AdvancedStyleSettingsProps } from "../../../types";
 import { fetchUserStyles, getDefaultStyles } from "../services/styleService";
+import MarginEditor from "./MarginEditor";
 
 const AdvancedStyleSettings: React.FC<AdvancedStyleSettingsProps> = ({
   customStyles,
@@ -66,7 +67,8 @@ const AdvancedStyleSettings: React.FC<AdvancedStyleSettingsProps> = ({
           customStyles={customStyles}
           handleStyleChange={handleStyleChange}
         />
-          <DescriptionSection 
+        
+        <DescriptionSection 
           customStyles={customStyles}
           handleStyleChange={handleStyleChange}
         />
@@ -91,8 +93,22 @@ const AdvancedStyleSettings: React.FC<AdvancedStyleSettingsProps> = ({
           handleStyleChange={handleStyleChange}
         />
 
+        {/* Fixed MarginEditor - use handleStyleChange instead of setCustomStyles */}
+        <MarginEditor
+          customStyles={customStyles}
+          onChange={handleStyleChange}
+        />
+
         {/* Style Preview */}
-        <StylePreview customStyles={customStyles} />
+        <StylePreview 
+          customStyles={customStyles} 
+          onOrderChange={(newOrder) => {
+            // Update order properties in customStyles
+            Object.entries(newOrder).forEach(([key, value]) => {
+              handleStyleChange(`${key}Order`, value);
+            });
+          }}
+        />
       </div>
     </div>
   );

@@ -26,7 +26,7 @@ export interface UserStyle {
   // Include the raw properties for compatibility
   idUser?: number;
   stylests?: string;
-  
+
   // UI-specific parsed properties
   profileBorderStyle?: string;
   profileBorderWidth?: string;
@@ -37,11 +37,13 @@ export interface UserStyle {
   profileOpacity?: number;
   profileBoxShadow?: string;
   profileGap?: number;
+
   avatarBorderRadius?: string;
   avatarShowBorder?: boolean;
   avatarBorderStyle?: string;
   avatarBorderWidth?: string;
   avatarBorderColor?: string;
+
   usernameFontSize?: string;
   usernameFontStyle?: string;
   usernameFontWeight?: string;
@@ -49,6 +51,8 @@ export interface UserStyle {
   usernameTextShadow?: string;
   usernameTextTransform?: string;
   usernameLetterSpacing?: string;
+  usernameMargin?: string;
+
   descFontSize?: string;
   descFontStyle?: string;
   descFontWeight?: string;
@@ -56,20 +60,26 @@ export interface UserStyle {
   descTextShadow?: string;
   descTextTransform?: "none" | "capitalize" | "uppercase" | "lowercase" | "initial" | "inherit";
   descLetterSpacing?: string;
+  descMargin?: string; // <-- margin riêng cho description
+
   locationFontSize?: string;
   locationColor?: string;
   locationFontStyle?: string;
   locationFontWeight?: string;
+  locationMargin?: string; // <-- margin riêng cho location
+
   cursorWidth?: string;
   cursorHeight?: string;
   cursorType?: string;
   cursorColor?: string;
   cursorFontSize?: string;
   cursorFontWeight?: string;
+
   audioTitleFontSize?: string;
   audioTitleFontWeight?: string;
   audioTitleColor?: string;
   audioTitleLetterSpacing?: string;
+
   coverImageWidth?: string;
   coverImageHeight?: string;
   coverImageBorderRadius?: string;
@@ -78,15 +88,38 @@ export interface UserStyle {
   coverImageBorderWidth?: string;
   coverImageBorderColor?: string;
   coverImageBoxShadow?: string;
+
   SubContainerBackgroundColor?: string;
   SubContainerBorder?: string;
   SubContainerBorderradius?: string;
   SubContainerWidth?: string;
-  SubContainerMaxWidth?: string; 
+  SubContainerMaxWidth?: string;
+
   containerGap?: string;
+
+  // New fields
+  background?: string;
+  backgroundMargin?: string; // margin riêng
+  audio?: string;
+  audioMargin?: string; 
+  audioImage?: string;
+  audioImageMargin?: string;
+  audioTitle?: string;
+  audioTitleMargin?: string;
+  customCursor?: string;
+  customCursorMargin?: string;
+  description?: string;
+  descriptionMargin?: string;
+  username: string;
+  effectUsername?: string;
+  effectUsernameMargin?: string;
+  location?: string;
+  locationEffectMargin?: string;
+
   // Allow any additional properties
   [key: string]: any;
 }
+
 
 // Type alias for clarity - components should use this
 export type ParsedUserStyle = UserStyle;

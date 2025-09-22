@@ -26,12 +26,13 @@ const ProfilePage: React.FC = () => {
     location: false,
     audio: false,
   });
+
   const audioRef = useRef<AudioPlayerRef>(null);
   const { profile, loading, error } = useProfileData(username);
-  const { style, parsedStyles } = useUserStyle(profile?.userId);
-  useCustomCursor(style);
+  const { parsedStyles } = useUserStyle(profile?.userId, profile?.username ?? "Guest");
 
-  // Preload background image
+  useCustomCursor(parsedStyles);
+
   useEffect(() => {
     if (profile?.background) {
       const img = new Image();
@@ -44,12 +45,12 @@ const ProfilePage: React.FC = () => {
       audioRef.current.play().catch(console.error);
     }
     setEntered(true);
-    setShowProfile(true); // Show profile immediately
+    setShowProfile(true);
   };
 
   useEffect(() => {
     if (showProfile && profile) {
-      const animationSequence = [
+      const sequence = [
         { key: "avatar", delay: 0 },
         { key: "username", delay: 200 },
         { key: "description", delay: 400 },
@@ -57,7 +58,7 @@ const ProfilePage: React.FC = () => {
         { key: "location", delay: 800 },
         { key: "audio", delay: 1000 },
       ];
-      animationSequence.forEach(({ key, delay }) => {
+      sequence.forEach(({ key, delay }) => {
         setTimeout(() => {
           setElementsVisible((prev) => ({ ...prev, [key]: true }));
         }, delay);
@@ -65,25 +66,13 @@ const ProfilePage: React.FC = () => {
     }
   }, [showProfile, profile]);
 
-  useEffect(() => {
-    setEntered(false);
-    setShowProfile(false);
-    setElementsVisible({
-      avatar: false,
-      username: false,
-      description: false,
-      socialLinks: false,
-      location: false,
-      audio: false,
-    });
-  }, [username]);
-
   if (loading) return <Loading message="Loading profile..." />;
   if (error) return <div className="flex justify-center items-center min-h-screen text-white">Error: {error}</div>;
   if (!profile) return <div className="flex justify-center items-center min-h-screen text-white">Profile not found</div>;
 
   const containerStyle = createContainerStyle(parsedStyles);
   const subContainerStyle = subContainer(parsedStyles, profile);
+
   const getAnimationStyle = (isVisible: boolean) => ({
     opacity: isVisible ? 1 : 0,
     transform: isVisible ? "translateY(0px)" : "translateY(20px)",
@@ -93,8 +82,10 @@ const ProfilePage: React.FC = () => {
   return (
     <div className="relative min-h-screen font-poppins bg-black">
       {!entered && (
-        <div className="fixed inset-0 z-50 flex flex-col justify-center items-center cursor-pointer bg-black"
-        onClick={handleEnter}>
+        <div
+          className="fixed inset-0 z-50 flex flex-col justify-center items-center cursor-pointer bg-black"
+          onClick={handleEnter}
+        >
           <img
             src="/mecha.png"
             alt="Mecha Logo"
