@@ -17,9 +17,15 @@ const DescriptionSection: React.FC<DescriptionSectionProps> = ({
 }) => {
   return (
     <div className="mb-8">
-      <h3 className="text-xl font-semibold mb-4 text-green-300 border-b border-green-500/30 pb-2">
-        Description
-      </h3>
+      <div className="flex items-center gap-3 mb-6">
+        <div className="p-2 bg-green-500/20 rounded-lg">
+          <i className="fas fa-align-left text-green-400 text-xl"></i>
+        </div>
+        <div>
+          <h3 className="text-xl font-bold text-white">Description</h3>
+          <p className="text-gray-400 text-sm">Style your bio description</p>
+        </div>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <StyleInputGroup
           label="Font Size"

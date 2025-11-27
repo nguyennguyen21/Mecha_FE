@@ -3,6 +3,10 @@ import React, { useEffect, useState } from "react";
 interface SocialLink {
   icon: string;
   url: string;
+  color?: string;
+  size?: number;
+  marginLeft?: number;
+  marginRight?: number;
 }
 
 interface SocialLinksProps {
@@ -15,7 +19,7 @@ const SocialLinks: React.FC<SocialLinksProps> = ({ userId }) => {
   const [error, setError] = useState<string | null>(null);
   const [imageErrors, setImageErrors] = useState<Set<number>>(new Set());
 
-  const API_BASE_URL = import.meta.env.VITE_BASE_URL;
+  const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:5159';
 
   // Function to construct proper image URL
   const getImageUrl = (iconPath: string): string => {
@@ -158,28 +162,66 @@ const SocialLinks: React.FC<SocialLinksProps> = ({ userId }) => {
   //   );
   // }
 
+  // Check if icon is Font Awesome class
+  const isFontAwesomeIcon = (icon: string): boolean => {
+    if (!icon) return false;
+    return icon.startsWith("fa ") || icon.startsWith("fab ") || icon.startsWith("fas ") || icon.startsWith("far ") || icon.startsWith("fal ");
+  };
+
   return (
     <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
       {links.map((link, index) => {
-        const imageUrl = getImageUrl(link.icon);
-        const hasError = imageErrors.has(index);
+        const isFAIcon = isFontAwesomeIcon(link.icon);
+        const imageUrl = isFAIcon ? "" : getImageUrl(link.icon);
+        const hasError = !isFAIcon && imageErrors.has(index);
         
         return (
-          <a 
-            key={index} 
-            href={link.url} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            style={{ 
-              display: "inline-block",
-              transition: "transform 0.2s ease",
-              borderRadius: "8px",
-              overflow: "hidden"
+                 <a 
+                   key={index} 
+                   href={link.url || "#"} 
+                   target={link.url ? "_blank" : "_self"}
+                   rel="noopener noreferrer"
+                   style={{ 
+                     display: "inline-flex",
+                     alignItems: "center",
+                     justifyContent: "center",
+                     transition: "transform 0.2s ease",
+                     borderRadius: "8px",
+                     width: 40,
+                     height: 40,
+                     textDecoration: "none",
+                     opacity: link.url ? 1 : 0.5,
+                     cursor: link.url ? "pointer" : "default",
+                     marginLeft: link.marginLeft ?? 0,
+                     marginRight: link.marginRight ?? 0
+                   }}
+            onMouseOver={(e) => {
+              if (link.url) {
+                e.currentTarget.style.transform = "scale(1.1)";
+              }
             }}
-            onMouseOver={(e) => e.currentTarget.style.transform = "scale(1.1)"}
-            onMouseOut={(e) => e.currentTarget.style.transform = "scale(1)"}
+            onMouseOut={(e) => {
+              e.currentTarget.style.transform = "scale(1)";
+            }}
+            onClick={(e) => {
+              if (!link.url) {
+                e.preventDefault();
+              }
+            }}
           >
-            {hasError ? (
+            {isFAIcon ? (
+              <i 
+                className={link.icon}
+                style={{
+                  fontSize: `${link.size || 36}px`,
+                  color: link.color || "#ffffff",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+                title={link.url || "Add URL"}
+              />
+            ) : hasError ? (
               <div
                 style={{
                   width: 40,
@@ -210,7 +252,7 @@ const SocialLinks: React.FC<SocialLinksProps> = ({ userId }) => {
                 }}
                 onError={() => handleImageError(index, imageUrl, link)}
                 onLoad={() => handleImageLoad(index)}
-                title={link.url}
+                title={link.url || "Add URL"}
               />
             )}
           </a>

@@ -13,7 +13,7 @@ import { useProfileSubmit } from "./hooks/useProfileSubmit";
 import Toast from "./Components/Toast";
 import SocialEditor from "../SocialLinks/Components/SocialEditor";
 
-const API_BASE_URL = import.meta.env.VITE_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:5159';
 
 // Hook helper để map tất cả các margin từ customStyles
 const useApplyMargins = (customStyles: any) => {
@@ -163,18 +163,18 @@ const ProfileForm: React.FC = () => {
 
         {activeTab === 'styles' && (
           <div className="space-y-8">
-            <AdvancedStyleSettings
-              customStyles={customStyles}
-              handleStyleChange={handleStyleChange}
-              stylesLoading={stylesLoading}
-              userId={userId!}
-            />
             <QuickStylePresets
               customStyles={customStyles}
               setCustomStyles={setCustomStyles}
               userId={userId}
               setMessage={setMessage}
               setFormData={setFormData}
+            />
+            <AdvancedStyleSettings
+              customStyles={customStyles}
+              handleStyleChange={handleStyleChange}
+              stylesLoading={stylesLoading}
+              userId={userId!}
             />
           </div>
         )}

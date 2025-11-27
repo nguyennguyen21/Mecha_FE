@@ -16,9 +16,15 @@ const CoverImageSection: React.FC<CoverImageSectionProps> = ({
 }) => {
   return (
     <div className="mb-8">
-      <h3 className="text-xl font-semibold mb-4 text-cyan-300 border-b border-cyan-500/30 pb-2">
-        Photo Of Music
-      </h3>
+      <div className="flex items-center gap-3 mb-6">
+        <div className="p-2 bg-cyan-500/20 rounded-lg">
+          <i className="fas fa-image text-cyan-400 text-xl"></i>
+        </div>
+        <div>
+          <h3 className="text-xl font-bold text-white">Cover Image</h3>
+          <p className="text-gray-400 text-sm">Style the audio cover image</p>
+        </div>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <StyleInputGroup
           label="Width"

@@ -13,9 +13,15 @@ const ProfileContainerSection: React.FC<ProfileContainerSectionProps> = ({
 }) => {
   return (
     <div className="mb-8">
-      <h3 className="text-xl font-semibold mb-4 text-blue-300 border-b border-blue-500/30 pb-2">
-        Container
-      </h3>
+      <div className="flex items-center gap-3 mb-6">
+        <div className="p-2 bg-blue-500/20 rounded-lg">
+          <i className="fas fa-square text-blue-400 text-xl"></i>
+        </div>
+        <div>
+          <h3 className="text-xl font-bold text-white">Container</h3>
+          <p className="text-gray-400 text-sm">Customize the main profile container</p>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Border Width */}

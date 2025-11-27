@@ -105,7 +105,7 @@ export interface DiscordLoginResponse {
 }
 
 export const discordLogin = async (): Promise<DiscordLoginResponse> => {
-  const res = await fetch("http://localhost:5159/api/discordauth/callback", {
+  const res = await fetch(`${API_CONFIG.BASE_URL}/api/discordauth/callback`, {
     credentials: "include" 
   });
   if (!res.ok) throw new Error("Discord login failed");

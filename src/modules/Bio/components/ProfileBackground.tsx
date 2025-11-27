@@ -63,7 +63,9 @@ const ProfileBackground: React.FC<ProfileBackgroundProps> = ({ profile }) => {
     backgroundSize: "cover",
     backgroundPosition: "center",
     backgroundRepeat: "no-repeat",
-    zIndex: -1,
+    zIndex: 0,
+    borderRadius: "8px",
+    overflow: "hidden",
   };
 
   return <div style={backgroundStyle}></div>;

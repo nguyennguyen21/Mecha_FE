@@ -38,8 +38,8 @@ const SideBar: React.FC = () => {
     { label: "Home", path: "/dashbaord", active: true },
     { label: "Account", path: "/account" },
     { label: "Custom", submenu: ["Theme", "Profile", "Settings"] },
-    { label: "Upgrade", path: "/upgrade" },
     { label: "Shop", path: "/shop" },
+    { label: "Upgrade", path: "/upgrade" },
     { label: "Logout", path: "/logout" },
   ];
 

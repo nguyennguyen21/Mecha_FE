@@ -17,7 +17,7 @@ interface LoginResponse {
   };
 }
 
-const BACKEND_DISCORD = `${import.meta.env.VITE_BASE_URL}/api/discordauth`;
+const BACKEND_DISCORD = `${import.meta.env.VITE_BASE_URL || 'http://localhost:5159'}/api/discordauth`;
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");

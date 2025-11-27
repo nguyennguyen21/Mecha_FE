@@ -4,6 +4,7 @@ import { type ProfileData, type UserStyle } from "../types/profile";
 interface ProfileDescriptionProps {
   profile: ProfileData;
   parsedStyles: UserStyle;
+  effectStyles?: React.CSSProperties;
 }
 
 const wrapText = (text: string, maxChars: number) => {
@@ -11,7 +12,7 @@ const wrapText = (text: string, maxChars: number) => {
   return text.match(regex)?.join("\n") || text;
 };
 
-const ProfileDescription: React.FC<ProfileDescriptionProps> = ({ profile, parsedStyles }) => {
+const ProfileDescription: React.FC<ProfileDescriptionProps> = ({ profile, parsedStyles, effectStyles = {} }) => {
   if (!profile.description) return null;
 
   const wrappedDescription = wrapText(profile.description, 30);
@@ -29,7 +30,8 @@ const ProfileDescription: React.FC<ProfileDescriptionProps> = ({ profile, parsed
         marginTop: "0.5rem",
         marginBottom: "0.5rem",
         lineHeight: 1.4,
-        whiteSpace: "pre-wrap", 
+        whiteSpace: "pre-wrap",
+        ...effectStyles
       }}
     >
       {wrappedDescription}

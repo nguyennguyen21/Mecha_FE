@@ -73,16 +73,37 @@ const StylePreview: React.FC<StylePreviewProps> = ({ customStyles, onOrderChange
     setDraggedItem(itemType);
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', itemType);
+    // Add visual feedback
+    if (e.currentTarget instanceof HTMLElement) {
+      e.currentTarget.style.opacity = '0.5';
+      e.currentTarget.style.transform = 'scale(0.95)';
+    }
   };
 
   const handleItemDragOver = (e: React.DragEvent, itemType: string) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
-    setDragOverItem(itemType);
+    if (draggedItem && draggedItem !== itemType) {
+      setDragOverItem(itemType);
+      // Visual feedback for drop zone
+      if (e.currentTarget instanceof HTMLElement) {
+        e.currentTarget.style.transform = 'scale(1.05)';
+      }
+    }
   };
 
-  const handleItemDragLeave = () => {
-    setDragOverItem(null);
+  const handleItemDragLeave = (e: React.DragEvent) => {
+    // Only clear if we're actually leaving the element (not just moving to a child)
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX;
+    const y = e.clientY;
+    
+    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+      setDragOverItem(null);
+      if (e.currentTarget instanceof HTMLElement) {
+        e.currentTarget.style.transform = '';
+      }
+    }
   };
 
   const handleItemDrop = (e: React.DragEvent, targetItemType: string) => {
@@ -117,8 +138,15 @@ const StylePreview: React.FC<StylePreviewProps> = ({ customStyles, onOrderChange
       onOrderChange(newOrders);
     }
 
+    // Reset visual states
     setDraggedItem(null);
     setDragOverItem(null);
+    
+    // Reset all element styles
+    if (e.currentTarget instanceof HTMLElement) {
+      e.currentTarget.style.opacity = '';
+      e.currentTarget.style.transform = '';
+    }
   };
 
   // Helper function to parse margin string
@@ -275,7 +303,7 @@ const StylePreview: React.FC<StylePreviewProps> = ({ customStyles, onOrderChange
           console.log('Button clicked, setting visible to true');
           setIsVisible(true);
         }}
-        className="fixed top-4 right-4 z-50 w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white shadow-2xl hover:scale-110 transition-transform border border-purple-400/50"
+        className="fixed top-4 right-4 z-50 w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white shadow-2xl hover:scale-110 transition-transform border border-purple-400/50"
         title="Show Preview"
       >
         👁
@@ -293,7 +321,7 @@ const StylePreview: React.FC<StylePreviewProps> = ({ customStyles, onOrderChange
         }}
       >
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-xs">👁</div>
+          <div className="w-6 h-6 bg-purple-400 rounded-full flex items-center justify-center text-xs">👁</div>
           <span className="text-white text-sm font-medium">Preview</span>
         </div>
       </div>
@@ -305,7 +333,7 @@ const StylePreview: React.FC<StylePreviewProps> = ({ customStyles, onOrderChange
       {/* Toggle button when panel is visible */}
       <button
         onClick={() => setIsVisible(false)}
-        className="fixed top-4 right-4 z-50 w-12 h-12 bg-gradient-to-br from-red-500 to-pink-500 rounded-full flex items-center justify-center text-white shadow-2xl hover:scale-110 transition-transform border border-red-400/50"
+        className="fixed top-4 right-4 z-50 w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-white shadow-2xl hover:scale-110 transition-transform border border-red-400/50"
         title="Hide Preview"
       >
         ✕
@@ -314,7 +342,7 @@ const StylePreview: React.FC<StylePreviewProps> = ({ customStyles, onOrderChange
       {/* Main panel */}
       <div 
         ref={panelRef}
-        className="fixed z-40 bg-gradient-to-b from-gray-900/95 to-gray-800/95 backdrop-blur-sm border border-gray-700 shadow-2xl overflow-y-auto rounded-lg transition-transform duration-75 ease-out"
+        className="fixed z-40 bg-gray-900/95 backdrop-blur-sm border border-gray-700 shadow-2xl overflow-y-auto rounded-lg transition-transform duration-75 ease-out"
         style={{ 
           width: '400px',
           height: '600px',
@@ -381,15 +409,18 @@ const StylePreview: React.FC<StylePreviewProps> = ({ customStyles, onOrderChange
               style={{ 
                 order: customStyles.avatarOrder || 1,
                 ...getAvatarStyles(),
-                opacity: draggedItem === 'avatar' ? 0.5 : 1,
+                opacity: draggedItem === 'avatar' ? 0.5 : draggedItem && dragOverItem === 'avatar' ? 0.8 : 1,
                 border: dragOverItem === 'avatar' ? '2px dashed #8b5cf6' : 'none',
                 borderRadius: '8px',
                 padding: '4px',
-                cursor: 'grab'
+                cursor: draggedItem === 'avatar' ? 'grabbing' : 'grab',
+                transition: draggedItem ? 'none' : 'all 0.2s ease',
+                transform: dragOverItem === 'avatar' ? 'scale(1.05)' : 'scale(1)',
+                backgroundColor: dragOverItem === 'avatar' ? 'rgba(139, 92, 246, 0.1)' : 'transparent'
               }}
             >
               <div 
-                className="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white font-bold text-lg mx-auto"
+                className="w-16 h-16 bg-purple-400 flex items-center justify-center text-white font-bold text-lg mx-auto"
                 style={{ 
                   borderRadius: customStyles.avatarBorderRadius || '50%',
                   border: customStyles.avatarShowBorder 
@@ -397,7 +428,7 @@ const StylePreview: React.FC<StylePreviewProps> = ({ customStyles, onOrderChange
                     : '4px solid #888'
                 }}
               >
-                👤
+                <i className="fas fa-user text-white"></i>
               </div>
             </div>
 
@@ -411,11 +442,14 @@ const StylePreview: React.FC<StylePreviewProps> = ({ customStyles, onOrderChange
               style={{ 
                 order: customStyles.usernameOrder || 2,
                 ...getUsernameStyles(),
-                opacity: draggedItem === 'username' ? 0.5 : 1,
+                opacity: draggedItem === 'username' ? 0.5 : draggedItem && dragOverItem === 'username' ? 0.8 : 1,
                 border: dragOverItem === 'username' ? '2px dashed #8b5cf6' : 'none',
                 borderRadius: '8px',
                 padding: '4px',
-                cursor: 'grab'
+                cursor: draggedItem === 'username' ? 'grabbing' : 'grab',
+                transition: draggedItem ? 'none' : 'all 0.2s ease',
+                transform: dragOverItem === 'username' ? 'scale(1.05)' : 'scale(1)',
+                backgroundColor: dragOverItem === 'username' ? 'rgba(139, 92, 246, 0.1)' : 'transparent'
               }}
             >
               Sample Username
@@ -432,11 +466,14 @@ const StylePreview: React.FC<StylePreviewProps> = ({ customStyles, onOrderChange
                 style={{ 
                   order: customStyles.descriptionOrder || 3,
                   ...getDescriptionStyles(),
-                  opacity: draggedItem === 'description' ? 0.5 : 1,
+                  opacity: draggedItem === 'description' ? 0.5 : draggedItem && dragOverItem === 'description' ? 0.8 : 1,
                   border: dragOverItem === 'description' ? '2px dashed #8b5cf6' : 'none',
                   borderRadius: '8px',
                   padding: '4px',
-                  cursor: 'grab'
+                  cursor: draggedItem === 'description' ? 'grabbing' : 'grab',
+                  transition: draggedItem ? 'none' : 'all 0.2s ease',
+                  transform: dragOverItem === 'description' ? 'scale(1.05)' : 'scale(1)',
+                  backgroundColor: dragOverItem === 'description' ? 'rgba(139, 92, 246, 0.1)' : 'transparent'
                 }}
               >
                 {customStyles.description || "Welcome to my profile!"}
@@ -453,15 +490,20 @@ const StylePreview: React.FC<StylePreviewProps> = ({ customStyles, onOrderChange
               style={{ 
                 order: (customStyles.descriptionOrder || 3) + 1,
                 marginTop: '10px',
-                opacity: draggedItem === 'socialLinks' ? 0.5 : 1,
+                opacity: draggedItem === 'socialLinks' ? 0.5 : draggedItem && dragOverItem === 'socialLinks' ? 0.8 : 1,
                 border: dragOverItem === 'socialLinks' ? '2px dashed #8b5cf6' : 'none',
                 borderRadius: '8px',
                 padding: '4px',
-                cursor: 'grab'
+                cursor: draggedItem === 'socialLinks' ? 'grabbing' : 'grab',
+                transition: draggedItem ? 'none' : 'all 0.2s ease',
+                transform: dragOverItem === 'socialLinks' ? 'scale(1.05)' : 'scale(1)',
+                backgroundColor: dragOverItem === 'socialLinks' ? 'rgba(139, 92, 246, 0.1)' : 'transparent'
               }}
             >
               <div className="flex justify-center gap-3">
-                <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center text-white text-sm">📱</div>
+                <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center text-white text-sm">
+                  <i className="fas fa-mobile-alt"></i>
+                </div>
                 <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center text-white text-sm">🐦</div>
                 <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center text-white text-sm">💼</div>
               </div>
@@ -477,14 +519,20 @@ const StylePreview: React.FC<StylePreviewProps> = ({ customStyles, onOrderChange
               style={{ 
                 order: customStyles.locationOrder || 5,
                 ...getLocationStyles(),
-                opacity: draggedItem === 'location' ? 0.5 : 1,
+                opacity: draggedItem === 'location' ? 0.5 : draggedItem && dragOverItem === 'location' ? 0.8 : 1,
                 border: dragOverItem === 'location' ? '2px dashed #8b5cf6' : 'none',
                 borderRadius: '8px',
                 padding: '4px',
-                cursor: 'grab'
+                cursor: draggedItem === 'location' ? 'grabbing' : 'grab',
+                transition: draggedItem ? 'none' : 'all 0.2s ease',
+                transform: dragOverItem === 'location' ? 'scale(1.05)' : 'scale(1)',
+                backgroundColor: dragOverItem === 'location' ? 'rgba(139, 92, 246, 0.1)' : 'transparent'
               }}
-            >
-              📍 Ho Chi Minh City
+              >
+              <span className="flex items-center gap-2">
+                <i className="fas fa-map-marker-alt"></i>
+                Ho Chi Minh City
+              </span>
             </div>
             
             {/* Audio Section */}
@@ -497,17 +545,20 @@ const StylePreview: React.FC<StylePreviewProps> = ({ customStyles, onOrderChange
               style={{ 
                 order: customStyles.audioOrder || 6,
                 marginTop: '12px',
-                opacity: draggedItem === 'audio' ? 0.5 : 1,
+                opacity: draggedItem === 'audio' ? 0.5 : draggedItem && dragOverItem === 'audio' ? 0.8 : 1,
                 border: dragOverItem === 'audio' ? '2px dashed #8b5cf6' : 'none',
                 borderRadius: '8px',
                 padding: '4px',
-                cursor: 'grab'
+                cursor: draggedItem === 'audio' ? 'grabbing' : 'grab',
+                transition: draggedItem ? 'none' : 'all 0.2s ease',
+                transform: dragOverItem === 'audio' ? 'scale(1.05)' : 'scale(1)',
+                backgroundColor: dragOverItem === 'audio' ? 'rgba(139, 92, 246, 0.1)' : 'transparent'
               }}
             >
               <div className="bg-black/20 rounded-lg p-3 flex items-center gap-3 justify-center min-w-0">
                 {/* Cover Image */}
                 <div 
-                  className="bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center text-white font-bold shrink-0 rounded-lg"
+                  className="bg-purple-400 flex items-center justify-center text-white font-bold shrink-0 rounded-lg"
                   style={{
                     ...getCoverImageStyles(),
                     minWidth: '48px',
@@ -516,7 +567,7 @@ const StylePreview: React.FC<StylePreviewProps> = ({ customStyles, onOrderChange
                     height: '48px'
                   }}
                 >
-                  🎵
+                  <i className="fas fa-music text-white"></i>
                 </div>
                 
                 {/* Audio Title */}

@@ -15,8 +15,9 @@ const ProfileLocation: React.FC<ProfileLocationProps> = ({ profile, parsedStyles
   const locationStyle = createLocationStyle(parsedStyles);
 
   return (
-    <p style={locationStyle}>
-      📍 Location: {profile.location}
+    <p style={locationStyle} className="flex items-center gap-2">
+      <i className="fas fa-map-marker-alt"></i>
+      <span>Location: {profile.location}</span>
     </p>
   );
 };

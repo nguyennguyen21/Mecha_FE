@@ -1,11 +1,11 @@
 // services/api.ts
 import { type ProfileData, type UserStyleRaw } from '../types/profile';
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:5159';
 
 export const apiService = {
   async fetchProfile(username: string): Promise<ProfileData> {
-    const res = await fetch(`http://testsv.shinelord.net:30052/api/profile/username/${username}`);
+    const res = await fetch(`${BASE_URL}/api/profile/username/${username}`);
     if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
     return res.json();
   },

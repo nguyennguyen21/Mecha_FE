@@ -130,8 +130,7 @@ export const createUsernameStyle = (parsedStyles: UserStyle, profile: ProfileDat
   const margin = getMarginValues(parsedStyles, 'username');
   
   return {
-    color: parsedStyles?.usernameColor || "#fff",
-    textShadow: parsedStyles?.usernameTextShadow || (profile.effectUsername === "glow" ? `0 0 10px ${parsedStyles?.usernameColor || "#fff"}` : "none"),
+    color: parsedStyles?.usernameColor || "#ffffff",
     fontSize: parsedStyles?.usernameFontSize || "clamp(20px, 5vw, 32px)",
     fontWeight: parsedStyles?.usernameFontWeight || 700,
     fontStyle: parsedStyles?.usernameFontStyle || "normal",

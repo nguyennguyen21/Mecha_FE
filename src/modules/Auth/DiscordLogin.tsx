@@ -1,6 +1,6 @@
 import React from "react";
 
-const BACKEND_URL = `${import.meta.env.VITE_BASE_URL}/api/discordauth`;
+const BACKEND_URL = `${import.meta.env.VITE_BASE_URL || 'http://localhost:5159'}/api/discordauth`;
 
 const DiscordLogin: React.FC = () => {
   const handleLogin = () => {
@@ -16,7 +16,7 @@ const DiscordLogin: React.FC = () => {
     );
 
     const messageHandler = (event: MessageEvent) => {
-      const baseUrl = import.meta.env.VITE_BASE_URL;
+      const baseUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:5159';
       if (event.origin !== baseUrl) return;
       const data = event.data as { token?: string; user?: any; error?: string };
 

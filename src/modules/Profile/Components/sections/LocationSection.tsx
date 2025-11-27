@@ -13,9 +13,15 @@ const LocationSection: React.FC<LocationSectionProps> = ({
 }) => {
   return (
     <div className="mb-8">
-      <h3 className="text-xl font-semibold mb-4 text-red-300 border-b border-red-500/30 pb-2">
-        📍 Location
-      </h3>
+      <div className="flex items-center gap-3 mb-6">
+        <div className="p-2 bg-red-500/20 rounded-lg">
+          <i className="fas fa-map-marker-alt text-red-400 text-xl"></i>
+        </div>
+        <div>
+          <h3 className="text-xl font-bold text-white">Location</h3>
+          <p className="text-gray-400 text-sm">Customize location display</p>
+        </div>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Font size */}
         <StyleInputGroup

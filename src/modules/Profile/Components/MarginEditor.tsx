@@ -11,11 +11,11 @@ const MarginEditor: React.FC<MarginEditorProps> = ({ customStyles, onChange }) =
   const [activePreset, setActivePreset] = useState<string>("");
 
   const marginFields = [
-    { key: "avatarMargin", label: "Avatar", icon: "👤" },
-    { key: "usernameMargin", label: "Username", icon: "🏷️" },
-    { key: "descriptionMargin", label: "Description", icon: "📝" },
-    { key: "locationMargin", label: "Location", icon: "📍" },
-    { key: "audioMargin", label: "Audio", icon: "🎵" }, // Gộp audio
+    { key: "avatarMargin", label: "Avatar", icon: <i className="fas fa-user-circle text-purple-400"></i> },
+    { key: "usernameMargin", label: "Username", icon: <i className="fas fa-at text-blue-400"></i> },
+    { key: "descriptionMargin", label: "Description", icon: <i className="fas fa-align-left text-green-400"></i> },
+    { key: "locationMargin", label: "Location", icon: <i className="fas fa-map-marker-alt text-red-400"></i> },
+    { key: "audioMargin", label: "Audio", icon: <i className="fas fa-music text-yellow-400"></i> },
   ];
 
   const presets = [
@@ -49,7 +49,8 @@ const MarginEditor: React.FC<MarginEditorProps> = ({ customStyles, onChange }) =
     <div className="space-y-6 p-6 shadow-lg">
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-bold text-white flex items-center gap-2">
-          📐 Margin Editor
+          <i className="fas fa-arrows-alt text-blue-400"></i>
+          Margin Editor
         </h3>
         <button
           className="text-sm px-3 py-1.5 bg-red-600 hover:bg-red-700 rounded-lg text-white transition-colors"
@@ -92,7 +93,7 @@ const MarginEditor: React.FC<MarginEditorProps> = ({ customStyles, onChange }) =
               <div className="flex justify-between items-center mb-4">
                 <label className="text-white font-medium flex items-center gap-2">
                   <span className="text-lg">{field.icon}</span>
-                  {field.label}
+                  <span>{field.label}</span>
                 </label>
                 <div className="flex gap-2">
                   <button
@@ -138,7 +139,8 @@ const MarginEditor: React.FC<MarginEditorProps> = ({ customStyles, onChange }) =
                       }}
                     >
                       <div className="bg-white/20 px-3 py-1 rounded text-xs text-white flex items-center gap-2">
-                        {field.icon} {field.label}
+                        <span>{field.icon}</span>
+                        <span>{field.label}</span>
                       </div>
                     </div>
                     {/* Labels */}
@@ -194,10 +196,13 @@ const MarginEditor: React.FC<MarginEditorProps> = ({ customStyles, onChange }) =
         })}
       </div>
 
-      <div className="bg-gray-700/30 p-4 rounded-lg">
-        <p className="text-gray-400 text-sm">
-          💡 <strong>Tips:</strong> Use sliders for precise control, presets for quick setup, or type values directly. 
-          The visual preview shows how margin affects spacing around each element.
+      <div className="bg-gray-700/30 p-4 rounded-lg border border-gray-600/50">
+        <p className="text-gray-400 text-sm flex items-start gap-2">
+          <i className="fas fa-lightbulb text-yellow-400 mt-0.5"></i>
+          <span>
+            <strong className="text-gray-300">Tips:</strong> Use sliders for precise control, presets for quick setup, or type values directly. 
+            The visual preview shows how margin affects spacing around each element.
+          </span>
         </p>
       </div>
     </div>

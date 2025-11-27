@@ -241,7 +241,7 @@ const AudioProfile: React.FC<AudioProfileProps> = ({
       
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
-        <div className="w-12 h-12 bg-gradient-to-br from-blue-200 to-pink-200 dark:from-blue-700 dark:to-pink-700 rounded-2xl flex items-center justify-center shadow-md">
+        <div className="w-12 h-12 bg-blue-700 rounded-2xl flex items-center justify-center shadow-md">
           <svg
             className="w-6 h-6 text-blue-700 dark:text-blue-300 drop-shadow-sm"
             fill="none"
@@ -377,7 +377,7 @@ const AudioProfile: React.FC<AudioProfileProps> = ({
                   ref={audioInputRef}
                   type="file"
                    accept=".mp3,.wav,audio/*"
-                  className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-2xl file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-none file:bg-gradient-to-r file:from-blue-100 file:to-violet-100 dark:file:from-blue-800 dark:file:to-violet-800 file:text-blue-700 dark:file:text-blue-300 file:font-medium hover:file:from-blue-200 hover:file:to-violet-200 dark:hover:file:from-blue-700 dark:hover:file:to-violet-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-300/50 outline-none transition-all duration-200 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 cursor-pointer"
+                  className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-2xl file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-none file:bg-blue-800 file:text-blue-300 file:font-medium hover:file:bg-blue-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-300/50 outline-none transition-all duration-200 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 cursor-pointer"
                   onChange={handleAudioFileChange}
                 />
                 {uploadingFiles.audio && (
