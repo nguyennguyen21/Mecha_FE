@@ -1,6 +1,7 @@
 import React from "react";
 import StyleInputGroup from "../../Components/StyleInputGroup";
 import { BORDER_STYLE_OPTIONS } from "../../constants/styleOptions";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 interface ProfileContainerSectionProps {
   customStyles: any;
@@ -11,16 +12,45 @@ const ProfileContainerSection: React.FC<ProfileContainerSectionProps> = ({
   customStyles,
   handleStyleChange
 }) => {
+  // Default values for container styles
+  const defaultContainerStyles = {
+    profileBorderWidth: "1px",
+    profileBorderStyle: "solid",
+    profileBorderColor: "rgba(139, 92, 246, 0.3)",
+    profileBorderRadius: "16px",
+    profileGap: "16px",
+    profilePadding: "24px",
+    profileBackgroundColor: "rgba(31, 41, 55, 0.8)",
+    profileOpacity: 1,
+    profileBoxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+  };
+
+  const handleReset = () => {
+    Object.entries(defaultContainerStyles).forEach(([key, value]) => {
+      handleStyleChange(key, value);
+    });
+  };
+
   return (
     <div className="mb-8">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 bg-blue-500/20 rounded-lg">
-          <i className="fas fa-square text-blue-400 text-xl"></i>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-blue-500/20 rounded-lg">
+            <i className="fas fa-square text-blue-400 text-xl"></i>
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-white">Container</h3>
+            <p className="text-gray-400 text-sm">Customize the main profile container</p>
+          </div>
         </div>
-        <div>
-          <h3 className="text-xl font-bold text-white">Container</h3>
-          <p className="text-gray-400 text-sm">Customize the main profile container</p>
-        </div>
+        <button
+          type="button"
+          onClick={handleReset}
+          className="flex items-center gap-2 px-4 py-2 bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 hover:text-purple-200 border border-purple-500/30 hover:border-purple-500/50 rounded-lg transition-all duration-300 text-sm font-medium"
+        >
+          <i className="bi bi-arrow-counterclockwise"></i>
+          <span>Reset</span>
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

@@ -31,18 +31,18 @@ interface SocialEditorProps {
   userId: string;
 }
 
-const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:5159';
+const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:30052';
 
 const SocialEditor: React.FC<SocialEditorProps> = ({ userId }) => {
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
-  const [displayLinks, setDisplayLinks] = useState<DisplaySocialLink[]>([]);
+  const [, setDisplayLinks] = useState<DisplaySocialLink[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
   const [message, setMessage] = useState("");
   const [showIconPicker, setShowIconPicker] = useState<number | null>(null);
 
   // Optimized message handler with auto-clear
-  const showMessage = useCallback((msg: string, isError: boolean = false) => {
+  const showMessage = useCallback((msg: string, _isError: boolean = false) => {
     setMessage(msg);
     setTimeout(() => setMessage(""), 3000);
   }, []);
@@ -70,27 +70,39 @@ const SocialEditor: React.FC<SocialEditorProps> = ({ userId }) => {
       if (!res.ok) throw new Error("Failed to fetch social links");
       
       const data = await res.json();
-      console.log("Fetched social links data:", JSON.stringify(data, null, 2)); // Debug log
       
+      // Filter out links with empty/invalid URLs (placeholder links)
+      const isValidUrl = (url: string | null | undefined): boolean => {
+        if (!url || typeof url !== 'string') return false;
+        const trimmed = url.trim();
+        // Filter out empty, placeholder, or default URLs
+        return trimmed !== '' && 
+               trimmed !== '#' && 
+               !trimmed.includes('yourpage') && 
+               !trimmed.includes('your-username') &&
+               trimmed.length > 5; // Minimum valid URL length
+      };
+
       // Handle both DTO format and display format
       if (data.length > 0) {
         if ('Url' in data[0] && 'Icon' in data[0]) {
           // DTO format (PascalCase: Url, Icon, Color, Size)
-          const convertedData = data.map((item: SocialLinkDto | any) => {
-            const defaultIcon = defaultIcons.find((di: { icon: string; color: string }) => di.icon === (item.Icon || item.icon));
-            // Check for Size in multiple possible formats
-            const sizeValue = item.Size ?? item.size ?? (item as any).Size ?? 36;
-            const result = {
-              link: item.Url || item.url || "",
-              icon: item.Icon || item.icon || "",
-              color: item.Color || item.color || (defaultIcon ? defaultIcon.color : "#ffffff"),
-              size: sizeValue,
-              marginLeft: item.MarginLeft ?? item.marginLeft ?? 0,
-              marginRight: item.MarginRight ?? item.marginRight ?? 0
-            };
-            console.log(`Parsing DTO format item:`, item, `-> size:`, sizeValue); // Debug log
-            return result;
-          });
+          const convertedData = data
+            .filter((item: SocialLinkDto | any) => isValidUrl(item.Url || item.url)) // Filter valid URLs
+            .map((item: SocialLinkDto | any) => {
+              const defaultIcon = defaultIcons.find((di: { icon: string; color: string }) => di.icon === (item.Icon || item.icon));
+              // Check for Size in multiple possible formats
+              const sizeValue = item.Size ?? item.size ?? (item as any).Size ?? 36;
+              const result = {
+                link: item.Url || item.url || "",
+                icon: item.Icon || item.icon || "",
+                color: item.Color || item.color || (defaultIcon ? defaultIcon.color : "#ffffff"),
+                size: sizeValue,
+                marginLeft: item.MarginLeft ?? item.marginLeft ?? 0,
+                marginRight: item.MarginRight ?? item.marginRight ?? 0
+              };
+              return result;
+            });
           setSocialLinks(convertedData);
           // Also set display format
           setDisplayLinks(convertedData.map((item: SocialLink) => ({
@@ -101,9 +113,10 @@ const SocialEditor: React.FC<SocialEditorProps> = ({ userId }) => {
           })));
         } else {
           // Display format (camelCase: icon, url, color, size)
-          setDisplayLinks(data);
+          const filteredData = data.filter((item: DisplaySocialLink | any) => isValidUrl(item.url || item.Url));
+          setDisplayLinks(filteredData);
           // Also set editor data from display data
-          const editorData = data.map((item: DisplaySocialLink | any) => {
+          const editorData = filteredData.map((item: DisplaySocialLink | any) => {
             const defaultIcon = defaultIcons.find((di: { icon: string; color: string }) => di.icon === item.icon);
             // Check for size in multiple possible formats (camelCase, PascalCase, or missing)
             const sizeValue = item.size ?? item.Size ?? (item as any).Size ?? 36;
@@ -115,7 +128,6 @@ const SocialEditor: React.FC<SocialEditorProps> = ({ userId }) => {
               marginLeft: item.marginLeft ?? item.MarginLeft ?? 0,
               marginRight: item.marginRight ?? item.MarginRight ?? 0
             };
-            console.log(`Parsing display format item:`, item, `-> size:`, sizeValue); // Debug log
             return result;
           });
           setSocialLinks(editorData);
@@ -126,7 +138,6 @@ const SocialEditor: React.FC<SocialEditorProps> = ({ userId }) => {
         setDisplayLinks([]);
       }
     } catch (err) {
-      console.error(err);
       showMessage("Error loading social links", true);
     }
   }, [userId, showMessage]);
@@ -167,7 +178,6 @@ const SocialEditor: React.FC<SocialEditorProps> = ({ userId }) => {
 
       showMessage("Icon uploaded successfully!");
     } catch (err) {
-      console.error(err);
       showMessage(`Error uploading icon: ${err instanceof Error ? err.message : "Unknown error"}`, true);
     } finally {
       setUploadingIndex(null);
@@ -230,7 +240,6 @@ const SocialEditor: React.FC<SocialEditorProps> = ({ userId }) => {
       // Don't refresh to preserve user's current edits (size, color, etc.)
       // await fetchSocialLinks();
     } catch (err) {
-      console.error("Full error:", err);
       showMessage(`Error updating social links: ${err instanceof Error ? err.message : "Unknown error"}`, true);
     } finally {
       setLoading(false);
@@ -290,7 +299,6 @@ const SocialEditor: React.FC<SocialEditorProps> = ({ userId }) => {
       // Ensure size is a valid number between 12 and 64
       const validSize = Math.max(12, Math.min(64, size || 36));
       newLinks[index].size = validSize;
-      console.log(`Size changed for index ${index}: ${validSize}`); // Debug log
       return newLinks;
     });
   }, []);
@@ -588,214 +596,8 @@ const SocialEditor: React.FC<SocialEditorProps> = ({ userId }) => {
     </div>
   ), [handleLinkChange, handleIconUpload, uploadingIndex, getImageUrl, removeSocial, isFontAwesomeIcon, handleIconSelect, handleColorChange, handleSizeChange, handleMarginChange, defaultIcons, showIconPicker]);
 
-  // Edit individual social link
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [editValue, setEditValue] = useState("");
-
-  const startEdit = useCallback((index: number, currentUrl: string) => {
-    setEditingIndex(index);
-    setEditValue(currentUrl);
-  }, []);
-
-  const cancelEdit = useCallback(() => {
-    setEditingIndex(null);
-    setEditValue("");
-  }, []);
-
-  const saveEdit = useCallback(async (index: number) => {
-    if (!editValue.trim()) return;
-    
-    try {
-      setLoading(true);
-      // Update local state first
-      const newDisplayLinks = [...displayLinks];
-      newDisplayLinks[index].url = editValue.trim();
-      
-      const newSocialLinks = [...socialLinks];
-      newSocialLinks[index].link = editValue.trim();
-      
-      // Update backend
-      const dtoData: SocialLinkDto[] = newSocialLinks.map(item => ({
-        Url: item.link || "",
-        Icon: item.icon || "",
-        Color: item.color || "",
-        Size: item.size ?? 36,
-        MarginLeft: item.marginLeft ?? 0,
-        MarginRight: item.marginRight ?? 0
-      }));
-
-      const res = await fetch(`${API_BASE_URL}/api/StyleSocial/byUser/${userId}`, {
-        method: "PUT",
-        headers: { 
-          "Content-Type": "application/json", 
-          Accept: "application/json" 
-        },
-        body: JSON.stringify(dtoData),
-      });
-
-      if (!res.ok) throw new Error("Failed to update social link");
-
-      // Update states after successful API call
-      setDisplayLinks(newDisplayLinks);
-      setSocialLinks(newSocialLinks);
-      setEditingIndex(null);
-      setEditValue("");
-      showMessage("Social link updated successfully!");
-    } catch (err) {
-      console.error("Edit error:", err);
-      showMessage(`Error updating social link: ${err instanceof Error ? err.message : "Unknown error"}`, true);
-    } finally {
-      setLoading(false);
-    }
-  }, [editValue, displayLinks, socialLinks, userId, showMessage]);
-
-  // Delete individual social link
-  const deleteSocialLink = useCallback(async (index: number) => {
-    if (!window.confirm("Are you sure you want to delete this social link?")) return;
-    
-    try {
-      setLoading(true);
-      // Remove from local state first
-      const newDisplayLinks = displayLinks.filter((_, i) => i !== index);
-      const newSocialLinks = socialLinks.filter((_, i) => i !== index);
-      
-      // Update backend
-      const dtoData: SocialLinkDto[] = newSocialLinks.map(item => ({
-        Url: item.link || "",
-        Icon: item.icon || "",
-        Color: item.color || "",
-        Size: item.size ?? 36,
-        MarginLeft: item.marginLeft ?? 0,
-        MarginRight: item.marginRight ?? 0
-      }));
-
-      const res = await fetch(`${API_BASE_URL}/api/StyleSocial/byUser/${userId}`, {
-        method: "PUT",
-        headers: { 
-          "Content-Type": "application/json", 
-          Accept: "application/json" 
-        },
-        body: JSON.stringify(dtoData),
-      });
-
-      if (!res.ok) throw new Error("Failed to delete social link");
-
-      // Update states after successful API call
-      setDisplayLinks(newDisplayLinks);
-      setSocialLinks(newSocialLinks);
-      showMessage("Social link deleted successfully!");
-    } catch (err) {
-      console.error("Delete error:", err);
-      showMessage(`Error deleting social link: ${err instanceof Error ? err.message : "Unknown error"}`, true);
-    } finally {
-      setLoading(false);
-    }
-  }, [displayLinks, socialLinks, userId, showMessage]);
-
-  // Render display link item
-  const renderDisplayLinkItem = useCallback((link: DisplaySocialLink, index: number) => (
-    <div
-      key={index}
-      className="bg-gray-800 p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 hover:bg-gray-750 group"
-    >
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 flex items-center justify-center bg-gray-700 rounded-lg border border-gray-600 flex-shrink-0">
-          {isFontAwesomeIcon(link.icon) ? (
-            <i className={`${link.icon} text-lg`} style={{ color: link.color || "#ffffff" }}></i>
-          ) : (
-            <>
-              <img
-                src={getImageUrl(link.icon)}
-                alt="Social icon"
-                className="w-6 h-6 object-contain"
-                onError={(e) => {
-                  const target = e.currentTarget as HTMLImageElement;
-                  target.style.display = "none";
-                  const fallback = target.nextElementSibling as HTMLElement;
-                  if (fallback) fallback.style.display = "flex";
-                }}
-              />
-              <div className="w-6 h-6 bg-gray-600 rounded flex items-center justify-center text-gray-400 text-xs" style={{ display: "none" }}>
-                IMG
-              </div>
-            </>
-          )}
-        </div>
-        
-        <div className="flex-1 min-w-0">
-          {editingIndex === index ? (
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                value={editValue}
-                onChange={(e) => setEditValue(e.target.value)}
-                className="flex-1 px-2 py-1 text-xs bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:border-blue-500"
-                placeholder="Enter URL"
-                autoFocus
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') saveEdit(index);
-                  if (e.key === 'Escape') cancelEdit();
-                }}
-              />
-              <button
-                onClick={() => saveEdit(index)}
-                disabled={loading || !editValue.trim()}
-                className="p-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white rounded text-xs transition"
-              >
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </button>
-              <button
-                onClick={cancelEdit}
-                className="p-1 bg-gray-600 hover:bg-gray-700 text-white rounded text-xs transition"
-              >
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-          ) : (
-            <a
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-400 hover:text-blue-300 transition-colors duration-200 break-all text-xs hover:underline block"
-            >
-              {link.url.length > 40 ? `${link.url.substring(0, 40)}...` : link.url}
-            </a>
-          )}
-        </div>
-
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          {editingIndex !== index && (
-            <>
-              <button
-                onClick={() => startEdit(index, link.url)}
-                disabled={loading}
-                className="p-1.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white rounded transition-all duration-200"
-                title="Edit this social link"
-              >
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-              </button>
-              <button
-                onClick={() => deleteSocialLink(index)}
-                disabled={loading}
-                className="p-1.5 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white rounded transition-all duration-200"
-                title="Delete this social link"
-              >
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  ), [getImageUrl, deleteSocialLink, loading, editingIndex, editValue, startEdit, cancelEdit, saveEdit, isFontAwesomeIcon]);
+  // Note: Edit/delete individual link functions were removed as they were not used
+  // The component uses renderSocialLinkItem which handles all editing inline
 
   const isDisabled = loading || uploadingIndex !== null;
 
@@ -843,31 +645,6 @@ const SocialEditor: React.FC<SocialEditorProps> = ({ userId }) => {
         )}
       </div>
 
-      {/* Display Section */}
-      <div className="p-6 max-w-3xl mx-auto bg-gray-900 rounded-2xl shadow-xl">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-2xl font-bold text-white border-b border-gray-700 pb-2">Current Social Links</h3>
-          <button
-            onClick={fetchSocialLinks}
-            disabled={loading}
-            className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white px-4 py-2 rounded-lg transition text-sm"
-          >
-            Refresh
-          </button>
-        </div>
-        
-        {displayLinks.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {displayLinks.map(renderDisplayLinkItem)}
-          </div>
-        ) : (
-          <div className="text-gray-400 text-center py-8">
-            <div className="text-4xl mb-2">🔗</div>
-            <p>No social links found</p>
-            <p className="text-sm mt-1">Add some links in the editor above</p>
-          </div>
-        )}
-      </div>
     </div>
   );
 };

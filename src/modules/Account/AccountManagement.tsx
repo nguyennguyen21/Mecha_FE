@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import "bootstrap-icons/font/bootstrap-icons.css";
+import ConnectDiscord from './components/ConnectDiscord';
 
 interface AccountInfo {
   idUser: number;
   username: string;
+  displayName?: string;
   email?: string;
   phone?: string;
   roles: string;
@@ -14,39 +18,17 @@ interface AccountInfo {
   totalPurchases: number;
   totalEffects: number;
   coins: number;
+  discordId?: string | null;
 }
 
-interface Purchase {
-  purchaseId: number;
-  userId: number;
-  productId: number;
-  productName: string;
-  price: number;
-  paymentMethod?: string;
-  transactionId?: string;
-  status: string;
-  purchasedAt: string;
-}
 
-interface UserEffect {
-  effectId: number;
-  userId: number;
-  productId: number;
-  productName: string;
-  isActive: boolean;
-  appliedTo: string;
-  effectSettings?: string;
-  appliedAt: string;
-}
-
-const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:5159';
+const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:30052';
 
 const AccountManagement: React.FC = () => {
+  const [searchParams] = useSearchParams();
   const [account, setAccount] = useState<AccountInfo | null>(null);
-  const [purchases, setPurchases] = useState<Purchase[]>([]);
-  const [effects, setEffects] = useState<UserEffect[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'purchases' | 'effects' | 'settings'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'settings' | 'donate'>('overview');
   const [editing, setEditing] = useState(false);
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -54,11 +36,17 @@ const AccountManagement: React.FC = () => {
   const userId = JSON.parse(localStorage.getItem('userInfo') || '{}')?.idUser || 
                  JSON.parse(localStorage.getItem('userInfo') || '{}')?.IdUser;
 
+  // Handle tab from URL
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab === 'donate' || tab === 'settings' || tab === 'overview') {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
+
   useEffect(() => {
     if (userId) {
       fetchAccount();
-      fetchPurchases();
-      fetchEffects();
     }
   }, [userId]);
 
@@ -77,27 +65,6 @@ const AccountManagement: React.FC = () => {
     }
   };
 
-  const fetchPurchases = async () => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/Account/${userId}/purchases`);
-      if (!res.ok) throw new Error('Failed to fetch purchases');
-      const data = await res.json();
-      setPurchases(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const fetchEffects = async () => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/Shop/user/${userId}/effects`);
-      if (!res.ok) throw new Error('Failed to fetch effects');
-      const data = await res.json();
-      setEffects(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   const handleUpdateAccount = async () => {
     try {
@@ -116,69 +83,37 @@ const AccountManagement: React.FC = () => {
     }
   };
 
-  const handleApplyEffect = async (effectId: number, appliedTo: string) => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/Shop/user/${userId}/effect/${effectId}/apply`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ AppliedTo: appliedTo })
-      });
-
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || 'Failed to apply effect');
-      }
-      await fetchEffects();
-      await fetchAccount(); // Refresh account stats
-    } catch (err: any) {
-      console.error(err);
-      alert(err.message || 'Failed to apply effect');
-    }
-  };
-
-  const handleRemoveEffect = async (effectId: number) => {
-    try {
-      // To remove, we need to deactivate it
-      // We can do this by applying a dummy effect or updating directly
-      // For now, let's just refresh and show message
-      const res = await fetch(`${API_BASE_URL}/api/Shop/user/${userId}/effect/${effectId}`, {
-        method: 'DELETE'
-      });
-
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || 'Failed to remove effect');
-      }
-      await fetchEffects();
-      await fetchAccount();
-    } catch (err: any) {
-      console.error(err);
-      alert(err.message || 'Failed to remove effect');
-    }
-  };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center">
-        <div className="text-white text-xl">Loading account...</div>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="text-white text-xl">Loading account...</div>
+        </div>
       </div>
     );
   }
 
   if (!account) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center">
-        <div className="text-white text-xl">Account not found</div>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <div className="text-6xl mb-4">😕</div>
+          <div className="text-white text-xl mb-2">Account not found</div>
+          <div className="text-gray-400">Please try refreshing the page</div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 py-12 px-4">
+    <div className="py-6 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">
+          <h1 className="text-4xl font-bold text-white mb-2 flex items-center justify-center gap-3">
+            <i className="bi bi-person-circle text-purple-400"></i>
             Account Management
           </h1>
           <p className="text-gray-400">Manage your account, purchases, and effects</p>
@@ -186,16 +121,19 @@ const AccountManagement: React.FC = () => {
 
         {/* Tabs */}
         <div className="flex flex-wrap gap-3 mb-8 justify-center">
-          {(['overview', 'purchases', 'effects', 'settings'] as const).map(tab => (
+          {(['overview', 'settings', 'donate'] as const).map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-6 py-3 rounded-xl font-semibold transition-all ${
+              className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${
                 activeTab === tab
-                  ? 'bg-purple-600 text-white shadow-lg hover:bg-purple-700'
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                  ? 'bg-purple-500/30 text-white shadow-lg shadow-purple-500/20 border border-purple-400/40'
+                  : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 border border-gray-700/50'
               }`}
             >
+              {tab === 'overview' && <i className="bi bi-grid-3x3-gap"></i>}
+              {tab === 'settings' && <i className="bi bi-gear"></i>}
+              {tab === 'donate' && <i className="bi bi-heart"></i>}
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>
           ))}
@@ -203,163 +141,91 @@ const AccountManagement: React.FC = () => {
 
         {/* Overview Tab */}
         {activeTab === 'overview' && (
-          <div className="bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 border border-gray-700">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-                <div className="text-4xl mb-2">👤</div>
-                <div className="text-2xl font-bold text-white mb-1">{account.username}</div>
-                <div className="text-gray-400 text-sm">{account.email || 'No email'}</div>
+          <div className="bg-gradient-to-br from-gray-800/60 via-purple-900/10 to-gray-800/60 rounded-2xl p-6 sm:p-8 border border-purple-400/20 backdrop-blur-sm shadow-lg">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              <div className="bg-gray-700/50 rounded-xl p-5 sm:p-6 border border-gray-600/50 hover:border-purple-400/40 transition-all duration-300 hover:shadow-md hover:shadow-purple-500/10">
+                <i className="bi bi-person text-4xl text-purple-400 mb-3 block"></i>
+                <div className="text-xl sm:text-2xl font-bold text-white mb-1 truncate">{account.displayName || account.username}</div>
+                <div className="text-gray-400 text-sm truncate">{account.email || 'No email'}</div>
               </div>
-              <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-                <div className="text-4xl mb-2">💰</div>
-                <div className="text-2xl font-bold text-white mb-1">{account.coins}</div>
+              <div className="bg-gray-700/50 rounded-xl p-5 sm:p-6 border border-gray-600/50 hover:border-purple-400/40 transition-all duration-300 hover:shadow-md hover:shadow-purple-500/10">
+                <i className="bi bi-wallet2 text-4xl text-purple-400 mb-3 block"></i>
+                <div className="text-xl sm:text-2xl font-bold text-white mb-1">{account.coins.toLocaleString()}</div>
                 <div className="text-gray-400 text-sm">Coins</div>
               </div>
-              <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-                <div className="text-4xl mb-2">🎨</div>
-                <div className="text-2xl font-bold text-white mb-1">{account.totalEffects}</div>
+              <div className="bg-gray-700/50 rounded-xl p-5 sm:p-6 border border-gray-600/50 hover:border-purple-400/40 transition-all duration-300 hover:shadow-md hover:shadow-purple-500/10 sm:col-span-2 lg:col-span-1">
+                <i className="bi bi-palette text-4xl text-purple-400 mb-3 block"></i>
+                <div className="text-xl sm:text-2xl font-bold text-white mb-1">{account.totalEffects}</div>
                 <div className="text-gray-400 text-sm">Effects Owned</div>
               </div>
             </div>
 
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-gray-700/50 rounded-xl p-6">
-                <h3 className="text-xl font-bold text-white mb-4">Account Status</h3>
+            <div className="mt-6 sm:mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              <div className="bg-gray-700/50 rounded-xl p-5 sm:p-6 border border-gray-600/50 hover:border-purple-400/40 transition-all duration-300">
+                <h3 className="text-lg sm:text-xl font-bold text-white mb-4 flex items-center gap-2">
+                  <i className="bi bi-info-circle text-purple-400"></i> Account Status
+                </h3>
                 <div className="space-y-3">
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center py-2 border-b border-gray-600/50">
                     <span className="text-gray-400">Premium:</span>
-                    <span className={account.premium ? 'text-yellow-400 font-bold' : 'text-gray-500'}>
+                    <span className={`font-bold px-3 py-1 rounded-full text-sm ${
+                      account.premium 
+                        ? 'text-yellow-400 bg-yellow-400/20 border border-yellow-400/30' 
+                        : 'text-gray-500 bg-gray-600/20 border border-gray-600'
+                    }`}>
                       {account.premium ? '✓ Active' : '✗ Inactive'}
                     </span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center py-2 border-b border-gray-600/50">
                     <span className="text-gray-400">Verified:</span>
-                    <span className={account.isVerified ? 'text-green-400 font-bold' : 'text-gray-500'}>
+                    <span className={`font-bold px-3 py-1 rounded-full text-sm ${
+                      account.isVerified 
+                        ? 'text-green-400 bg-green-400/20 border border-green-400/30' 
+                        : 'text-gray-500 bg-gray-600/20 border border-gray-600'
+                    }`}>
                       {account.isVerified ? '✓ Verified' : '✗ Not Verified'}
                     </span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center py-2">
                     <span className="text-gray-400">Role:</span>
-                    <span className="text-white font-semibold">{account.roles}</span>
+                    <span className="text-white font-semibold px-3 py-1 bg-purple-500/20 border border-purple-400/30 rounded-full text-sm">
+                      {account.roles}
+                    </span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-gray-700/50 rounded-xl p-6">
-                <h3 className="text-xl font-bold text-white mb-4">Statistics</h3>
+              <div className="bg-gray-700/50 rounded-xl p-5 sm:p-6 border border-gray-600/50 hover:border-purple-400/40 transition-all duration-300">
+                <h3 className="text-lg sm:text-xl font-bold text-white mb-4 flex items-center gap-2">
+                  <i className="bi bi-graph-up text-purple-400"></i> Statistics
+                </h3>
                 <div className="space-y-3">
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center py-2 border-b border-gray-600/50">
                     <span className="text-gray-400">Total Purchases:</span>
                     <span className="text-white font-semibold">{account.totalPurchases}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center py-2">
                     <span className="text-gray-400">Member Since:</span>
                     <span className="text-white font-semibold">
-                      {new Date(account.createdAt).toLocaleDateString()}
+                      {new Date(account.createdAt).toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric' 
+                      })}
                     </span>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
-
-        {/* Purchases Tab */}
-        {activeTab === 'purchases' && (
-          <div className="bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 border border-gray-700">
-            <h2 className="text-2xl font-bold text-white mb-6">Purchase History</h2>
-            {purchases.length === 0 ? (
-              <div className="text-center py-12 text-gray-400">
-                <div className="text-6xl mb-4">🛒</div>
-                <p>No purchases yet</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {purchases.map(purchase => (
-                  <div
-                    key={purchase.purchaseId}
-                    className="bg-gray-700/50 rounded-xl p-6 border border-gray-600"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-xl font-bold text-white mb-2">{purchase.productName}</h3>
-                        <p className="text-gray-400 text-sm">
-                          {new Date(purchase.purchasedAt).toLocaleString()}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-2xl font-bold text-purple-400">
-                          ${purchase.price.toFixed(2)}
-                        </div>
-                        <span className={`text-xs px-2 py-1 rounded ${
-                          purchase.status === 'completed' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'
-                        }`}>
-                          {purchase.status}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Effects Tab */}
-        {activeTab === 'effects' && (
-          <div className="bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 border border-gray-700">
-            <h2 className="text-2xl font-bold text-white mb-6">My Effects</h2>
-            {effects.length === 0 ? (
-              <div className="text-center py-12 text-gray-400">
-                <div className="text-6xl mb-4">🎨</div>
-                <p>No effects owned yet</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {effects.map(effect => (
-                  <div
-                    key={effect.effectId}
-                    className={`bg-gray-700/50 rounded-xl p-6 border-2 ${
-                      effect.isActive ? 'border-green-500 bg-green-500/10' : 'border-gray-600'
-                    }`}
-                  >
-                    <div className="flex justify-between items-start mb-4">
-                      <h3 className="text-xl font-bold text-white">{effect.productName}</h3>
-                      {effect.isActive && (
-                        <span className="px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
-                          ACTIVE
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-gray-400 text-sm mb-4">Applied to: {effect.appliedTo}</p>
-                    <div className="flex gap-2">
-                      {effect.isActive ? (
-                        <button
-                          onClick={() => handleRemoveEffect(effect.effectId)}
-                          className="flex-1 py-2 rounded-lg font-semibold transition bg-red-600 text-white hover:bg-red-700"
-                        >
-                          Remove
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => handleApplyEffect(effect.effectId, 'profile')}
-                          className="flex-1 py-2 rounded-lg font-semibold transition bg-purple-600 text-white hover:bg-purple-700"
-                        >
-                          Apply Effect
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         )}
 
         {/* Settings Tab */}
         {activeTab === 'settings' && (
-          <div className="bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 border border-gray-700">
-            <h2 className="text-2xl font-bold text-white mb-6">Account Settings</h2>
+          <div className="bg-gradient-to-br from-gray-800/60 via-purple-900/10 to-gray-800/60 rounded-2xl p-6 sm:p-8 border border-purple-400/20 backdrop-blur-sm shadow-lg">
+            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+              <i className="bi bi-gear text-purple-400"></i> Account Settings
+            </h2>
             <div className="space-y-6">
               <div>
                 <label className="block text-gray-400 mb-2">Email</label>
@@ -368,7 +234,7 @@ const AccountManagement: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={!editing}
-                  className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-purple-500 focus:outline-none disabled:opacity-50"
+                  className="w-full px-4 py-3 bg-gray-700/70 text-white rounded-lg border border-gray-600/50 focus:border-purple-400/50 focus:outline-none focus:ring-2 focus:ring-purple-400/20 disabled:opacity-50"
                 />
               </div>
               <div>
@@ -378,24 +244,34 @@ const AccountManagement: React.FC = () => {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   disabled={!editing}
-                  className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-purple-500 focus:outline-none disabled:opacity-50"
+                  className="w-full px-4 py-3 bg-gray-700/70 text-white rounded-lg border border-gray-600/50 focus:border-purple-400/50 focus:outline-none focus:ring-2 focus:ring-purple-400/20 disabled:opacity-50"
                 />
               </div>
+
+              {/* Discord Connection */}
+              {account && (
+                <ConnectDiscord 
+                  userId={userId} 
+                  discordId={account.discordId}
+                  onSuccess={() => fetchAccount()}
+                />
+              )}
+
               <div className="flex gap-4">
                 {!editing ? (
                   <button
                     onClick={() => setEditing(true)}
-                    className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition"
+                    className="px-6 py-3 bg-purple-500/40 text-white rounded-lg font-semibold hover:bg-purple-500/50 border border-purple-400/30 transition"
                   >
-                    Edit
+                    <i className="bi bi-pencil mr-2"></i>Edit
                   </button>
                 ) : (
                   <>
                     <button
                       onClick={handleUpdateAccount}
-                      className="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition"
+                      className="px-6 py-3 bg-green-500/40 text-white rounded-lg font-semibold hover:bg-green-500/50 border border-green-400/30 transition"
                     >
-                      Save
+                      <i className="bi bi-check-lg mr-2"></i>Save
                     </button>
                     <button
                       onClick={() => {
@@ -403,12 +279,64 @@ const AccountManagement: React.FC = () => {
                         setEmail(account.email || '');
                         setPhone(account.phone || '');
                       }}
-                      className="px-6 py-3 bg-gray-600 text-white rounded-lg font-semibold hover:bg-gray-700 transition"
+                      className="px-6 py-3 bg-gray-600/50 text-white rounded-lg font-semibold hover:bg-gray-600/70 border border-gray-500/30 transition"
                     >
-                      Cancel
+                      <i className="bi bi-x-lg mr-2"></i>Cancel
                     </button>
                   </>
                 )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Donate Tab */}
+        {activeTab === 'donate' && (
+          <div className="bg-gradient-to-br from-gray-800/60 via-purple-900/10 to-gray-800/60 rounded-2xl p-6 sm:p-8 border border-purple-400/20 backdrop-blur-sm shadow-lg">
+            <div className="max-w-2xl mx-auto">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-bold text-white mb-4 flex items-center justify-center gap-2">
+                  <i className="bi bi-heart text-purple-400"></i> Support Mecha
+                </h2>
+                <p className="text-gray-400">
+                  Your support helps us continue developing amazing features!
+                </p>
+              </div>
+              
+              <div className="bg-gray-700/50 rounded-xl p-5 sm:p-6 border border-gray-600/50 mb-6 hover:border-purple-400/40 transition-all duration-300">
+                <h3 className="text-xl font-bold text-white mb-4 text-center flex items-center justify-center gap-2">
+                  <i className="bi bi-bank text-purple-400"></i> Bank Transfer Information
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center py-2 border-b border-gray-600/50">
+                    <span className="text-gray-400 mb-1 sm:mb-0">Bank:</span>
+                    <span className="text-white font-semibold">MB Bank (Ngân hàng TMCP Quân đội)</span>
+                  </div>
+                  <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center py-2 border-b border-gray-600/50">
+                    <span className="text-gray-400 mb-1 sm:mb-0">Account Number:</span>
+                    <span className="text-white font-semibold text-lg bg-purple-500/20 border border-purple-400/30 px-3 py-1 rounded-full">
+                      0903982264
+                    </span>
+                  </div>
+                  <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center py-2">
+                    <span className="text-gray-400 mb-1 sm:mb-0">Account Name:</span>
+                    <span className="text-white font-semibold">Mecha Support</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <div className="bg-white p-4 sm:p-6 rounded-xl shadow-2xl mb-4 hover:shadow-purple-500/20 transition-all duration-300">
+                  <img 
+                    src="https://qr.sepay.vn/img?acc=0903982264&bank=MBBank" 
+                    alt="QR Code Donate" 
+                    className="w-56 h-56 sm:w-64 sm:h-64"
+                  />
+                </div>
+                <p className="text-gray-400 text-sm text-center max-w-md flex items-center justify-center gap-2">
+                  <i className="bi bi-phone text-purple-400"></i>
+                  Scan this QR code with your banking app to donate instantly
+                </p>
               </div>
             </div>
           </div>

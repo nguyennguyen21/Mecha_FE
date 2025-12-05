@@ -1,6 +1,6 @@
 import React from "react";
 
-const BACKEND_URL = `${import.meta.env.VITE_BASE_URL || 'http://localhost:5159'}/api/discordauth`;
+const BACKEND_URL = `${import.meta.env.VITE_BASE_URL || 'http://localhost:30052'}/api/discordauth`;
 
 const DiscordLogin: React.FC = () => {
   const handleLogin = () => {
@@ -16,23 +16,32 @@ const DiscordLogin: React.FC = () => {
     );
 
     const messageHandler = (event: MessageEvent) => {
-      const baseUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:5159';
-      if (event.origin !== baseUrl) return;
-      const data = event.data as { token?: string; user?: any; error?: string };
-
-      if (data.error) {
-        console.error("Discord login failed:", data.error);
+      // Bỏ qua messages từ React DevTools và các sources khác
+      if (event.data && typeof event.data === 'object' && 'source' in event.data) {
+        return; // React DevTools messages
       }
 
-      if (data.token) {
-        // Lưu token + user info
+      // Chỉ xử lý messages có token hoặc error (từ Discord callback)
+      const data = event.data as { token?: string; user?: any; error?: string };
+      
+      if (!data || (typeof data !== 'object')) {
+        return; // Không phải Discord message
+      }
+
+      if (data.error) {
+        return;
+      }
+
+      if (data.token && data.user) {
+        // Clear old cache before setting new user info
+        localStorage.removeItem("userInfo");
+        localStorage.removeItem("authToken");
+        
         localStorage.setItem("authToken", data.token);
         localStorage.setItem("userInfo", JSON.stringify(data.user));
-
-        console.log("Discord login success:", data);
-        window.location.href = "/dashboard";
         popup?.close();
         window.removeEventListener("message", messageHandler);
+        window.location.href = "/dashboard";
       }
     };
 

@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import InformationProfile from "./Components/InformationProfile";
 import AudioProfile from "./Components/AudioProfile";
 import AdvancedStyleSettings from "./Components/AdvancedStyleSettings";
-import QuickStylePresets from "./Components/QuickStylePresets";
 import LayoutManager from "./Components/LayoutManager"; 
 import SubmitButton from "./Components/SubmitButtonProps";
 import { useUserStyles } from "./Components/useUserStyles";
@@ -13,7 +12,7 @@ import { useProfileSubmit } from "./hooks/useProfileSubmit";
 import Toast from "./Components/Toast";
 import SocialEditor from "../SocialLinks/Components/SocialEditor";
 
-const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:5159';
+const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:30052';
 
 // Hook helper để map tất cả các margin từ customStyles
 const useApplyMargins = (customStyles: any) => {
@@ -53,7 +52,7 @@ const ProfileForm: React.FC = () => {
     handleStyleChange,
   } = useProfileStyles();
 
-  const { loading: stylesLoading, error: stylesError, updateUserStyles } =
+  const { loading: stylesLoading, updateUserStyles } =
     useUserStyles();
 
   const { handleFileChange } = useFileUpload(
@@ -84,11 +83,14 @@ const ProfileForm: React.FC = () => {
         body: JSON.stringify(layoutData),
       });
       if (!response.ok) throw new Error('Failed to apply layout');
-      setCustomStyles({ ...customStyles, ...layoutData.styles });
-      setMessage("Layout applied successfully!");
-      setTimeout(() => setMessage(""), 3000);
+      
+      // Merge styles đúng cách - đảm bảo tất cả các thuộc tính layout được cập nhật
+      const updatedStyles = { ...customStyles, ...layoutData.styles };
+      setCustomStyles(updatedStyles);
+      
+      setMessage("Layout applied successfully! Please refresh the profile page to see changes.");
+      setTimeout(() => setMessage(""), 5000);
     } catch (error) {
-      console.error('Error applying layout:', error);
       setMessage("Failed to apply layout. Please try again.");
       setTimeout(() => setMessage(""), 3000);
     }
@@ -122,7 +124,7 @@ const ProfileForm: React.FC = () => {
                 flex-1 flex items-center justify-center space-x-2 px-4 py-3 rounded-lg
                 transition-all duration-200 text-sm font-medium cursor-pointer
                 ${activeTab === tab.id
-                  ? 'bg-blue-600 text-white shadow-lg'
+                  ? 'bg-purple-600 text-white shadow-lg'
                   : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
                 }
               `}
@@ -163,13 +165,6 @@ const ProfileForm: React.FC = () => {
 
         {activeTab === 'styles' && (
           <div className="space-y-8">
-            <QuickStylePresets
-              customStyles={customStyles}
-              setCustomStyles={setCustomStyles}
-              userId={userId}
-              setMessage={setMessage}
-              setFormData={setFormData}
-            />
             <AdvancedStyleSettings
               customStyles={customStyles}
               handleStyleChange={handleStyleChange}

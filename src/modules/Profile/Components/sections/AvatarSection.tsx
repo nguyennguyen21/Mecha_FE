@@ -33,7 +33,7 @@ const AvatarSection: React.FC<AvatarSectionProps> = ({
           options={AVATAR_SHAPE_OPTIONS}
         />
         <StyleInputGroup
-          label="Show Border"
+          label="Off/On Border"
           value={customStyles.avatarShowBorder ?? false}
           onChange={(value) => handleStyleChange("avatarShowBorder", value)}
           type="checkbox"

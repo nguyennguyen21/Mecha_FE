@@ -1,6 +1,6 @@
 import { type UserStyle, type ProfileData } from "../../../types/index";
 
-export const createUsernameStyle = (parsedStyles: UserStyle, profile: ProfileData) => {
+export const createUsernameStyle = (parsedStyles: UserStyle, _profile: ProfileData) => {
   return {
     fontSize: parsedStyles.usernameFontSize || "16px",
     fontStyle: parsedStyles.usernameFontStyle || "normal",

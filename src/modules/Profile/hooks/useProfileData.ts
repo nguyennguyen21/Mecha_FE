@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { type ProfileFormData, type FileState } from "../../../types";
 
-const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:5159';
+const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:30052';
 
 
 export const useProfileData = () => {
@@ -14,6 +14,7 @@ export const useProfileData = () => {
     customCursor: "crosshair",
     description: "",
     username: "",
+    displayName: "",
     effectUsername: "glow",
     location: "",
   });
@@ -79,6 +80,7 @@ export const useProfileData = () => {
           customCursor: data.customCursor ?? "crosshair",
           description: data.description ?? "",
           username: data.username ?? "",
+          displayName: data.displayName ?? data.username ?? "", // Mặc định = username nếu không có
           effectUsername: data.effectUsername ?? "glow",
           location: data.location ?? "",
         };
@@ -91,7 +93,6 @@ export const useProfileData = () => {
           audioImage: data.audioImage ?? "",
         });
       } catch (error) {
-        console.error("Fetch profile error:", error);
         throw error;
       } finally {
         setIsProfileLoading(false);

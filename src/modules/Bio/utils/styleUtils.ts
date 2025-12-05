@@ -76,7 +76,7 @@ const getMarginValues = (parsedStyles: UserStyle, prefix: string) => {
 };
 
 // Container
-export const createContainerStyle = (parsedStyles: UserStyle): React.CSSProperties => ({
+export const createContainerStyle = (_parsedStyles: UserStyle): React.CSSProperties => ({
   position: "relative",
   width: "100%",
   height: "100vh",
@@ -86,22 +86,46 @@ export const createContainerStyle = (parsedStyles: UserStyle): React.CSSProperti
   alignItems: "center",
 });
 
-// Sub-container
-export const subContainer = (parsedStyles: UserStyle, profile: ProfileData): React.CSSProperties => ({
-  display: "flex",
-  flexDirection: parsedStyles?.containerFlexDirection ?? "column",
-  alignItems: parsedStyles?.containerAlignItems ?? "center",
-  justifyContent: parsedStyles?.containerJustifyContent ?? "center",
-  textAlign: parsedStyles?.containerTextAlign ?? "center",
-  flexWrap: parsedStyles?.containerFlexWrap ?? "nowrap",
-  gap: parsedStyles?.containerGap ?? "8px",
-  backgroundColor: parsedStyles?.profileBackgroundColor?.trim() || "transparent",
-  border: `${parsedStyles?.profileBorderWidth ?? "1px"} ${parsedStyles?.profileBorderStyle ?? "solid"} ${parsedStyles?.profileBorderColor ?? "#8b5cf6"}`,
-  borderRadius: parsedStyles?.profileBorderRadius ?? "16px",
-  padding: parsedStyles?.profilePadding ?? "16px",
-  opacity: parsedStyles?.profileOpacity ?? 1,
-  boxShadow: parsedStyles?.profileBoxShadow ?? "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
-});
+// Get background color and opacity separately
+export const getContainerBackground = (parsedStyles: UserStyle) => {
+  // Get background color, with proper fallback
+  let backgroundColor = "rgba(31, 41, 55, 0.8)"; // Default dark gray with opacity
+  if (parsedStyles?.profileBackgroundColor) {
+    const bgColor = parsedStyles.profileBackgroundColor.trim();
+    // Only use the value if it's not empty and not "transparent"
+    if (bgColor && bgColor !== "transparent" && bgColor !== "") {
+      backgroundColor = bgColor;
+    }
+  }
+  
+  // Ensure opacity is valid (between 0 and 1)
+  const opacity = parsedStyles?.profileOpacity;
+  const validOpacity = opacity != null && opacity >= 0 && opacity <= 1 
+    ? opacity 
+    : 1;
+
+  return { backgroundColor, opacity: validOpacity };
+};
+
+// Sub-container - không có opacity và background color trực tiếp
+export const subContainer = (parsedStyles: UserStyle, _profile: ProfileData): React.CSSProperties => {
+  return {
+    position: "relative",
+    zIndex: 1,
+    display: "flex",
+    flexDirection: parsedStyles?.containerFlexDirection ?? "column",
+    alignItems: parsedStyles?.containerAlignItems ?? "center",
+    justifyContent: parsedStyles?.containerJustifyContent ?? "center",
+    textAlign: parsedStyles?.containerTextAlign ?? "center",
+    flexWrap: parsedStyles?.containerFlexWrap ?? "nowrap",
+    gap: parsedStyles?.containerGap ?? "8px",
+    border: `${parsedStyles?.profileBorderWidth ?? "1px"} ${parsedStyles?.profileBorderStyle ?? "solid"} ${parsedStyles?.profileBorderColor ?? "#8b5cf6"}`,
+    borderRadius: parsedStyles?.profileBorderRadius ?? "16px",
+    padding: parsedStyles?.profilePadding ?? "16px",
+    boxShadow: parsedStyles?.profileBoxShadow ?? "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
+    // Không có backgroundColor và opacity ở đây - sẽ được xử lý bởi background layer
+  };
+};
 
 // Avatar
 export const createAvatarStyle = (parsedStyles: UserStyle, profile: ProfileData): React.CSSProperties => {
@@ -126,7 +150,7 @@ export const createAvatarStyle = (parsedStyles: UserStyle, profile: ProfileData)
 };
 
 // Username
-export const createUsernameStyle = (parsedStyles: UserStyle, profile: ProfileData): React.CSSProperties => {
+export const createUsernameStyle = (parsedStyles: UserStyle, _profile: ProfileData): React.CSSProperties => {
   const margin = getMarginValues(parsedStyles, 'username');
   
   return {

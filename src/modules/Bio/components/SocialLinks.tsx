@@ -17,76 +17,18 @@ const SocialLinks: React.FC<SocialLinksProps> = ({ userId }) => {
   const [links, setLinks] = useState<SocialLink[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [imageErrors, setImageErrors] = useState<Set<number>>(new Set());
 
-  const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:5159';
+  const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:30052';
 
-  // Function to construct proper image URL
-  const getImageUrl = (iconPath: string): string => {
-    console.log('Processing icon path:', iconPath);
-    
-    if (!iconPath) {
-      console.warn('Empty icon path received');
-      return '';
+  // Extract domain name from URL for display
+  const getDomainName = (url: string): string => {
+    try {
+      const urlObj = new URL(url);
+      return urlObj.hostname.replace('www.', '');
+    } catch {
+      // If URL parsing fails, return the URL as is (maybe it's just a path)
+      return url;
     }
-    
-    // If it's already a full URL, return as is
-    if (iconPath.startsWith("http://") || iconPath.startsWith("https://")) {
-      console.log('Full URL detected:', iconPath);
-      return iconPath;
-    }
-    
-    // If it starts with /, it's a relative path from server root
-    if (iconPath.startsWith("/")) {
-      const fullUrl = `${API_BASE_URL}${iconPath}`;
-      console.log('Relative path detected, full URL:', fullUrl);
-      return fullUrl;
-    }
-    
-    // Otherwise, assume it's a filename in uploads directory
-    // Try static files first, fallback to API endpoint
-    const staticUrl = `${API_BASE_URL}/uploads/${iconPath}`;
-    console.log('Filename detected, constructed static URL:', staticUrl);
-    return staticUrl;
-  };
-
-  const getFallbackImageUrl = (iconPath: string): string => {
-    if (!iconPath || iconPath.startsWith("http")) return iconPath;
-    
-    // Fallback to API endpoint if static files fail
-    const apiUrl = `${API_BASE_URL}/api/file/uploads/${iconPath.startsWith('/') ? iconPath.substring(1) : iconPath}`;
-    console.log('Using fallback API URL:', apiUrl);
-    return apiUrl;
-  };
-
-  const handleImageError = (index: number, originalSrc: string, link: SocialLink) => {
-    console.error(`Failed to load image at index ${index}:`, originalSrc);
-    
-    // Try fallback URL if not already tried
-    if (!originalSrc.includes('/api/file/uploads/')) {
-      const fallbackUrl = getFallbackImageUrl(link.icon);
-      if (fallbackUrl !== originalSrc) {
-        console.log(`Trying fallback URL for index ${index}:`, fallbackUrl);
-        // Update the image src to try the fallback URL
-        const imgElement = document.querySelector(`img[data-index="${index}"]`) as HTMLImageElement;
-        if (imgElement) {
-          imgElement.src = fallbackUrl;
-          return; // Don't mark as error yet, let it try the fallback
-        }
-      }
-    }
-    
-    // Mark as error if both URLs failed
-    setImageErrors(prev => new Set(prev).add(index));
-  };
-
-  const handleImageLoad = (index: number) => {
-    // Remove from error set if image loads successfully
-    setImageErrors(prev => {
-      const newSet = new Set(prev);
-      newSet.delete(index);
-      return newSet;
-    });
   };
 
   useEffect(() => {
@@ -115,20 +57,10 @@ const SocialLinks: React.FC<SocialLinksProps> = ({ userId }) => {
         
         const data: SocialLink[] = await res.json();
         
-        // Debug logging
-        console.log('Social links data received:', data);
-        data.forEach((link, index) => {
-          const finalUrl = getImageUrl(link.icon);
-          console.log(`Link ${index}:`, {
-            originalIcon: link.icon,
-            finalUrl: finalUrl,
-            url: link.url
-          });
-        });
-        
-        setLinks(data);
+        // Chỉ lấy các link có URL hợp lệ
+        const validLinks = data.filter(link => link.url && link.url.trim() !== '' && link.url !== '#');
+        setLinks(validLinks);
       } catch (err: any) {
-        console.error('Error fetching social links:', err);
         setError(err.message || "Failed to fetch social links");
       } finally {
         setLoading(false);
@@ -139,125 +71,59 @@ const SocialLinks: React.FC<SocialLinksProps> = ({ userId }) => {
   }, [userId]);
 
   if (loading) {
-    return (
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        <span>Loading social links...</span>
-      </div>
-    );
+    return null; // Không hiển thị gì khi đang load
   }
 
   if (error) {
-    return (
-      <div style={{ color: "red", fontSize: "14px" }}>
-        Error loading social links: {error}
-      </div>
-    );
+    return null; // Không hiển thị gì nếu có lỗi
   }
 
-  // if (links.length === 0) {
-  //   return (
-  //     <div style={{ color: "#666", fontSize: "14px" }}>
-  //       No social links available.
-  //     </div>
-  //   );
-  // }
-
-  // Check if icon is Font Awesome class
-  const isFontAwesomeIcon = (icon: string): boolean => {
-    if (!icon) return false;
-    return icon.startsWith("fa ") || icon.startsWith("fab ") || icon.startsWith("fas ") || icon.startsWith("far ") || icon.startsWith("fal ");
-  };
+  // Không hiển thị gì nếu không có social links
+  if (links.length === 0) {
+    return null;
+  }
 
   return (
-    <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-      {links.map((link, index) => {
-        const isFAIcon = isFontAwesomeIcon(link.icon);
-        const imageUrl = isFAIcon ? "" : getImageUrl(link.icon);
-        const hasError = !isFAIcon && imageErrors.has(index);
-        
-        return (
-                 <a 
-                   key={index} 
-                   href={link.url || "#"} 
-                   target={link.url ? "_blank" : "_self"}
-                   rel="noopener noreferrer"
-                   style={{ 
-                     display: "inline-flex",
-                     alignItems: "center",
-                     justifyContent: "center",
-                     transition: "transform 0.2s ease",
-                     borderRadius: "8px",
-                     width: 40,
-                     height: 40,
-                     textDecoration: "none",
-                     opacity: link.url ? 1 : 0.5,
-                     cursor: link.url ? "pointer" : "default",
-                     marginLeft: link.marginLeft ?? 0,
-                     marginRight: link.marginRight ?? 0
-                   }}
-            onMouseOver={(e) => {
-              if (link.url) {
-                e.currentTarget.style.transform = "scale(1.1)";
-              }
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = "scale(1)";
-            }}
-            onClick={(e) => {
-              if (!link.url) {
-                e.preventDefault();
-              }
-            }}
-          >
-            {isFAIcon ? (
-              <i 
-                className={link.icon}
-                style={{
-                  fontSize: `${link.size || 36}px`,
-                  color: link.color || "#ffffff",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center"
-                }}
-                title={link.url || "Add URL"}
-              />
-            ) : hasError ? (
-              <div
-                style={{
-                  width: 40,
-                  height: 40,
-                  backgroundColor: "#f0f0f0",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "12px",
-                  color: "#666",
-                  border: "1px solid #ddd",
-                  borderRadius: "4px"
-                }}
-                title={`Failed to load: ${imageUrl}`}
-              >
-                ❌
-              </div>
-            ) : (
-              <img
-                src={imageUrl}
-                alt={`Social link ${index + 1}`}
-                data-index={index}
-                style={{ 
-                  width: 40, 
-                  height: 40,
-                  objectFit: "cover",
-                  borderRadius: "4px",
-                }}
-                onError={() => handleImageError(index, imageUrl, link)}
-                onLoad={() => handleImageLoad(index)}
-                title={link.url || "Add URL"}
-              />
-            )}
-          </a>
-        );
-      })}
+    <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", justifyContent: "center" }}>
+      {links.map((link, index) => (
+        <a 
+          key={index} 
+          href={link.url || "#"} 
+          target={link.url ? "_blank" : "_self"}
+          rel="noopener noreferrer"
+          style={{ 
+            display: "inline-block",
+            padding: "8px 16px",
+            textDecoration: "none",
+            color: link.color || "#ffffff",
+            borderRadius: "8px",
+            border: "1px solid rgba(255, 255, 255, 0.2)",
+            transition: "all 0.2s ease",
+            opacity: link.url ? 1 : 0.5,
+            cursor: link.url ? "pointer" : "default",
+            marginLeft: link.marginLeft ?? 0,
+            marginRight: link.marginRight ?? 0,
+            fontSize: "14px",
+          }}
+          onMouseOver={(e) => {
+            if (link.url) {
+              e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
+              e.currentTarget.style.transform = "translateY(-2px)";
+            }
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = "transparent";
+            e.currentTarget.style.transform = "translateY(0)";
+          }}
+          onClick={(e) => {
+            if (!link.url) {
+              e.preventDefault();
+            }
+          }}
+        >
+          {getDomainName(link.url)}
+        </a>
+      ))}
     </div>
   );
 };

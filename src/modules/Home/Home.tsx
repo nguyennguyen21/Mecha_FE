@@ -4,6 +4,7 @@ import Footer from "../../modules/Core/layout/Footer";
 import Pricing from "./Pricing";
 import HeroSection from "./HeroSection";
 import CommunityPage from "./CommunityPage";
+import FAQSection from "./FAQSection";
 
 const Home = () => {
   return (
@@ -19,6 +20,9 @@ const Home = () => {
 
         {/* Community Section */}
         <CommunityPage />
+
+        {/* FAQ Section */}
+        <FAQSection />
 
         {/* Footer */}
         <Footer />

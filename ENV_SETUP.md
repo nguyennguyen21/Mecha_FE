@@ -1,35 +1,49 @@
-# Environment Configuration
+# Environment Variables Setup
 
-## Setup
+## File .env
 
-1. Copy `.env.example` to `.env`:
-```bash
-cp .env.example .env
-```
+Tạo file `.env` trong thư mục `Mecha_FE/` với nội dung:
 
-2. Edit `.env` file and set your backend URL:
 ```env
-VITE_BASE_URL=http://localhost:5159
+# Backend API Base URL
+# Development: http://localhost:30052
+# Production: https://your-api-domain.com
+VITE_BASE_URL=http://localhost:30052
 ```
 
-## Default Values
+## Cách sử dụng
 
-- **Development**: `http://localhost:5159` (default backend port)
-- **Production**: Update to your production backend URL
+### Development (Local)
+```env
+VITE_BASE_URL=http://localhost:30052
+```
 
-## Usage
+### Production (Hosting)
+```env
+VITE_BASE_URL=https://your-api-domain.com
+```
 
-The API base URL is automatically loaded from `VITE_BASE_URL` environment variable.
+hoặc nếu có port:
+```env
+VITE_BASE_URL=https://your-api-domain.com:30052
+```
 
-All API calls use either:
-- `API_CONFIG.BASE_URL` (from `src/configs/ApiConfig.tsx`)
-- `import.meta.env.VITE_BASE_URL` (direct access)
+## Lưu ý
 
-Both will fallback to `http://localhost:5159` if the env variable is not set.
+1. **File `.env` không được commit lên Git** (đã có trong `.gitignore`)
+2. **File `.env.example`** là template, có thể commit
+3. Sau khi thay đổi `.env`, cần **restart dev server**:
+   ```bash
+   npm run dev
+   ```
+4. Tất cả API calls trong code đều tự động sử dụng `VITE_BASE_URL` từ environment variable
 
-## Important Notes
+## Kiểm tra
 
-- Vite requires the `VITE_` prefix for environment variables
-- Restart the dev server after changing `.env` file
-- Never commit `.env` file to git (it's in `.gitignore`)
+Sau khi setup, kiểm tra xem env có được load đúng không:
 
+```javascript
+console.log(import.meta.env.VITE_BASE_URL);
+```
+
+Nếu không có `.env` hoặc `VITE_BASE_URL` không được set, sẽ dùng giá trị mặc định: `http://localhost:30052`

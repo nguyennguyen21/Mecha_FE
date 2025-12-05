@@ -28,7 +28,7 @@ interface EffectPickerProps {
   compact?: boolean;
 }
 
-const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:5159';
+const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:30052';
 
 const EffectPicker: React.FC<EffectPickerProps> = ({ userId, onEffectApplied, compact = false }) => {
   const [showEffectPicker, setShowEffectPicker] = useState(false);
@@ -77,7 +77,7 @@ const EffectPicker: React.FC<EffectPickerProps> = ({ userId, onEffectApplied, co
               return { ...effect, product };
             }
           } catch (err) {
-            console.error(`Failed to fetch product ${effect.productId}:`, err);
+            // Silent fail
           }
           return effect;
         })
@@ -93,7 +93,7 @@ const EffectPicker: React.FC<EffectPickerProps> = ({ userId, onEffectApplied, co
         setAppliedEffect(null);
       }
     } catch (err) {
-      console.error('Failed to fetch effects:', err);
+      // Silent fail
     } finally {
       setLoading(false);
     }
@@ -123,7 +123,6 @@ const EffectPicker: React.FC<EffectPickerProps> = ({ userId, onEffectApplied, co
       await fetchUserEffects();
       if (onEffectApplied) onEffectApplied();
     } catch (err: any) {
-      console.error('Failed to apply effect:', err);
       alert(err.message || 'Failed to apply effect');
     } finally {
       setApplying(false);
@@ -166,7 +165,7 @@ const EffectPicker: React.FC<EffectPickerProps> = ({ userId, onEffectApplied, co
             ) : (
               <div className="p-2">
                 {userEffects.map((effect) => {
-                  const product = effect.product || {};
+                  const product = effect.product;
                   return (
                     <div
                       key={effect.effectId}
@@ -179,10 +178,10 @@ const EffectPicker: React.FC<EffectPickerProps> = ({ userId, onEffectApplied, co
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <span className="text-2xl">{product.icon || '🎨'}</span>
+                          <span className="text-2xl">{product?.icon || '🎨'}</span>
                           <div>
-                            <div className="text-white font-semibold text-sm">{product.name || effect.productName}</div>
-                            <div className="text-gray-400 text-xs">{product.category || 'effect'}</div>
+                            <div className="text-white font-semibold text-sm">{product?.name || effect.productName}</div>
+                            <div className="text-gray-400 text-xs">{product?.category || 'effect'}</div>
                           </div>
                         </div>
                         {effect.isActive && (
@@ -244,7 +243,7 @@ const EffectPicker: React.FC<EffectPickerProps> = ({ userId, onEffectApplied, co
               ) : (
                 <div className="p-2">
                   {userEffects.map((effect) => {
-                    const product = effect.product || {};
+                    const product = effect.product;
                     return (
                       <div
                         key={effect.effectId}
@@ -257,10 +256,10 @@ const EffectPicker: React.FC<EffectPickerProps> = ({ userId, onEffectApplied, co
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            <span className="text-2xl">{product.icon || '🎨'}</span>
+                            <span className="text-2xl">{product?.icon || '🎨'}</span>
                             <div>
-                              <div className="text-white font-semibold">{product.name || effect.productName}</div>
-                              <div className="text-gray-400 text-xs">{product.category || 'effect'}</div>
+                              <div className="text-white font-semibold">{product?.name || effect.productName}</div>
+                              <div className="text-gray-400 text-xs">{product?.category || 'effect'}</div>
                             </div>
                           </div>
                           {effect.isActive && (

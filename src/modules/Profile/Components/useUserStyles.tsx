@@ -12,7 +12,7 @@ export interface UserStylesHook {
   updateUserStyles: (idUser: number, styles: Record<string, any>) => Promise<void>;
 }
 
-const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:5159';
+const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:30052';
 
 // Service class for PUT API call only
 export class UserStylesService {

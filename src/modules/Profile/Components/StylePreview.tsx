@@ -300,7 +300,6 @@ const StylePreview: React.FC<StylePreviewProps> = ({ customStyles, onOrderChange
     return (
       <button
         onClick={() => {
-          console.log('Button clicked, setting visible to true');
           setIsVisible(true);
         }}
         className="fixed top-4 right-4 z-50 w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white shadow-2xl hover:scale-110 transition-transform border border-purple-400/50"

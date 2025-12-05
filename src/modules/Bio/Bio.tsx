@@ -13,7 +13,7 @@ import { useProfileData } from "./hooks/useProfileData";
 import { useUserStyle } from "./hooks/useUserStyle";
 import { useCustomCursor } from "./hooks/useCustomCursor";
 import { useUserEffects } from "./hooks/useUserEffects";
-import { createContainerStyle, subContainer } from "./utils/styleUtils";
+import { createContainerStyle, subContainer, getContainerBackground } from "./utils/styleUtils";
 import EffectRenderer from "../Effects/EffectRenderer";
 import CSSFireworks from "./components/CSSFireworks";
 
@@ -35,6 +35,10 @@ const ProfilePage: React.FC = () => {
   const { parsedStyles } = useUserStyle(profile?.userId, profile?.username ?? "Guest");
   const { appliedEffect } = useUserEffects(profile?.userId);
 
+  // Don't hide cursor on mount - let useCustomCursor handle it based on parsedStyles
+  // useEffect removed - cursor handling is now done in useCustomCursor hook
+
+  // Initialize custom cursor (will update when parsedStyles are available)
   useCustomCursor(parsedStyles);
   
 
@@ -77,6 +81,7 @@ const ProfilePage: React.FC = () => {
 
   const containerStyle = createContainerStyle(parsedStyles);
   const subContainerStyle = subContainer(parsedStyles, profile);
+  const { backgroundColor, opacity } = getContainerBackground(parsedStyles);
 
   // Check if layout is left-aligned
   const isLeftAligned = parsedStyles?.containerAlignItems === 'flex-start' && parsedStyles?.containerTextAlign === 'left';
@@ -296,6 +301,60 @@ const ProfilePage: React.FC = () => {
           styles.WebkitTextFillColor = 'transparent';
           styles.animation = 'coralFlow 3s ease infinite';
           break;
+        // Handle generic "gradient" type by checking name or colors
+        case 'gradient':
+          console.log('🔍 Generic gradient detected, checking name/colors');
+          if (name.includes('rainbow') && !name.includes('spotlight')) {
+            styles.background = 'linear-gradient(45deg, #f0f, #0ff, #ff0, #f0f)';
+            styles.backgroundSize = '300% 300%';
+            styles.WebkitBackgroundClip = 'text';
+            styles.WebkitTextFillColor = 'transparent';
+            styles.animation = 'rainbowGradient 3s ease infinite';
+          } else if (name.includes('fire')) {
+            styles.background = 'linear-gradient(45deg, #FF4500, #FF6347, #FFD700)';
+            styles.backgroundSize = '300% 300%';
+            styles.WebkitBackgroundClip = 'text';
+            styles.WebkitTextFillColor = 'transparent';
+            styles.animation = 'fireGradient 2s ease infinite';
+          } else if (name.includes('ocean')) {
+            styles.background = 'linear-gradient(45deg, #00CED1, #1E90FF, #4169E1)';
+            styles.backgroundSize = '300% 300%';
+            styles.WebkitBackgroundClip = 'text';
+            styles.WebkitTextFillColor = 'transparent';
+            styles.animation = 'oceanWave 3s ease infinite';
+          } else if (name.includes('sunset')) {
+            styles.background = 'linear-gradient(45deg, #FF6347, #FF69B4, #FF1493)';
+            styles.backgroundSize = '300% 300%';
+            styles.WebkitBackgroundClip = 'text';
+            styles.WebkitTextFillColor = 'transparent';
+            styles.animation = 'sunsetGlow 4s ease infinite';
+          } else if (name.includes('purple') || name.includes('dream')) {
+            styles.background = 'linear-gradient(45deg, #9370DB, #BA55D3, #DA70D6)';
+            styles.backgroundSize = '300% 300%';
+            styles.WebkitBackgroundClip = 'text';
+            styles.WebkitTextFillColor = 'transparent';
+            styles.animation = 'purpleDream 3s ease infinite';
+          } else if (name.includes('golden') || name.includes('shine')) {
+            styles.background = 'linear-gradient(90deg, #FFD700, #FFA500, #FFD700)';
+            styles.backgroundSize = '200% 100%';
+            styles.WebkitBackgroundClip = 'text';
+            styles.WebkitTextFillColor = 'transparent';
+            styles.animation = 'goldenShine 2s linear infinite';
+          } else if (name.includes('coral')) {
+            styles.background = 'linear-gradient(45deg, #FF7F50, #FFB6C1, #FFC0CB)';
+            styles.backgroundSize = '300% 300%';
+            styles.WebkitBackgroundClip = 'text';
+            styles.WebkitTextFillColor = 'transparent';
+            styles.animation = 'coralFlow 3s ease infinite';
+          } else {
+            // Default gradient
+            styles.background = 'linear-gradient(45deg, #f0f, #0ff, #ff0, #f0f)';
+            styles.backgroundSize = '300% 300%';
+            styles.WebkitBackgroundClip = 'text';
+            styles.WebkitTextFillColor = 'transparent';
+            styles.animation = 'rainbowGradient 3s ease infinite';
+          }
+          break;
         default:
           console.log('⚠️ No switch case match for effectType:', effectType);
           break;
@@ -377,6 +436,54 @@ const ProfilePage: React.FC = () => {
         styles.WebkitBackgroundClip = 'text';
         styles.WebkitTextFillColor = 'transparent';
         styles.animation = 'rainbowSpotlight 3s linear infinite';
+      } else if (name.includes('fire') && name.includes('gradient')) {
+        styles.background = 'linear-gradient(45deg, #FF4500, #FF6347, #FFD700)';
+        styles.backgroundSize = '300% 300%';
+        styles.WebkitBackgroundClip = 'text';
+        styles.WebkitTextFillColor = 'transparent';
+        styles.animation = 'fireGradient 2s ease infinite';
+      } else if (name.includes('ocean')) {
+        styles.background = 'linear-gradient(45deg, #00CED1, #1E90FF, #4169E1)';
+        styles.backgroundSize = '300% 300%';
+        styles.WebkitBackgroundClip = 'text';
+        styles.WebkitTextFillColor = 'transparent';
+        styles.animation = 'oceanWave 3s ease infinite';
+      } else if (name.includes('sunset')) {
+        styles.background = 'linear-gradient(45deg, #FF6347, #FF69B4, #FF1493)';
+        styles.backgroundSize = '300% 300%';
+        styles.WebkitBackgroundClip = 'text';
+        styles.WebkitTextFillColor = 'transparent';
+        styles.animation = 'sunsetGlow 4s ease infinite';
+      } else if (name.includes('electric') && name.includes('blue')) {
+        styles.textShadow = '0 0 10px rgba(0, 191, 255, 0.8), 0 0 20px rgba(0, 191, 255, 0.6), 0 0 30px rgba(0, 191, 255, 0.4)';
+        styles.animation = 'electricBlue 2s ease-in-out infinite';
+      } else if (name.includes('purple') || name.includes('dream')) {
+        styles.background = 'linear-gradient(45deg, #9370DB, #BA55D3, #DA70D6)';
+        styles.backgroundSize = '300% 300%';
+        styles.WebkitBackgroundClip = 'text';
+        styles.WebkitTextFillColor = 'transparent';
+        styles.animation = 'purpleDream 3s ease infinite';
+      } else if (name.includes('golden') || name.includes('shine')) {
+        styles.background = 'linear-gradient(90deg, #FFD700, #FFA500, #FFD700)';
+        styles.backgroundSize = '200% 100%';
+        styles.WebkitBackgroundClip = 'text';
+        styles.WebkitTextFillColor = 'transparent';
+        styles.animation = 'goldenShine 2s linear infinite';
+      } else if (name.includes('cyan') && name.includes('pulse')) {
+        styles.textShadow = '0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.6)';
+        styles.animation = 'cyanPulse 2s ease-in-out infinite';
+      } else if (name.includes('magenta')) {
+        styles.textShadow = '0 0 10px rgba(255, 0, 255, 0.8), 0 0 20px rgba(255, 0, 255, 0.6)';
+        styles.animation = 'magentaFlash 1.5s ease-in-out infinite';
+      } else if (name.includes('emerald')) {
+        styles.textShadow = '0 0 10px rgba(80, 200, 120, 0.8), 0 0 20px rgba(80, 200, 120, 0.6)';
+        styles.animation = 'emeraldGlow 2s ease-in-out infinite';
+      } else if (name.includes('coral')) {
+        styles.background = 'linear-gradient(45deg, #FF7F50, #FFB6C1, #FFC0CB)';
+        styles.backgroundSize = '300% 300%';
+        styles.WebkitBackgroundClip = 'text';
+        styles.WebkitTextFillColor = 'transparent';
+        styles.animation = 'coralFlow 3s ease infinite';
       }
     }
     
@@ -388,7 +495,7 @@ const ProfilePage: React.FC = () => {
     <div className="relative min-h-screen font-poppins bg-black">
       {!entered && (
         <div
-          className="fixed inset-0 z-50 flex flex-col justify-center items-center cursor-pointer bg-black"
+          className="fixed inset-0 z-50 flex flex-col justify-center items-center bg-black"
           onClick={handleEnter}
         >
           <img
@@ -416,6 +523,23 @@ const ProfilePage: React.FC = () => {
         <div style={containerStyle}>
           <ProfileBackground profile={profile} />
           <div style={subContainerStyle}>
+            {/* Background layer với opacity - chỉ làm mờ background, không ảnh hưởng nội dung */}
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: backgroundColor,
+                opacity: opacity,
+                borderRadius: parsedStyles?.profileBorderRadius ?? "16px",
+                zIndex: 0,
+                pointerEvents: "none", // Cho phép click xuyên qua
+              }}
+            />
+            {/* Nội dung container - không bị ảnh hưởng bởi opacity */}
+            <div style={{ position: "relative", zIndex: 1 }}>
             {isLeftAligned ? (
               <>
                 {/* Left-aligned layout: Avatar on left, info on right */}
@@ -434,22 +558,28 @@ const ProfilePage: React.FC = () => {
                     <ProfileAvatar profile={profile} parsedStyles={parsedStyles} />
                   </div>
                   
-                    {/* Info column */}
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      {(() => {
-                        const wrapperStyle = getAnimationStyle(elementsVisible.username, !!appliedEffect && Object.keys(getEffectStyles(appliedEffect).styles).length > 0);
-                        console.log('🔍 Bio.tsx - Wrapper div style:', wrapperStyle);
-                        return (
-                          <div style={wrapperStyle}>
-                            <ProfileUsername 
-                              profile={profile} 
-                              parsedStyles={parsedStyles}
-                              effectStyles={appliedEffect ? getEffectStyles(appliedEffect).styles : {}}
-                              effectData={appliedEffect ? getEffectStyles(appliedEffect).effectData : undefined}
-                            />
-                          </div>
-                        );
-                      })()}
+                  {/* Info column */}
+                  <div style={{ 
+                    flex: 1, 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    gap: '8px',
+                    alignItems: 'flex-start',
+                    justifyContent: 'flex-start'
+                  }}>
+                    {(() => {
+                      const wrapperStyle = getAnimationStyle(elementsVisible.username, !!appliedEffect && Object.keys(getEffectStyles(appliedEffect).styles).length > 0);
+                      return (
+                        <div style={{ ...wrapperStyle, width: '100%' }}>
+                          <ProfileUsername 
+                            profile={profile} 
+                            parsedStyles={parsedStyles}
+                            effectStyles={appliedEffect ? getEffectStyles(appliedEffect).styles : {}}
+                            effectData={appliedEffect ? getEffectStyles(appliedEffect).effectData : undefined}
+                          />
+                        </div>
+                      );
+                    })()}
                     <div style={getAnimationStyle(elementsVisible.description)}>
                       <ProfileDescription 
                         profile={profile} 
@@ -481,35 +611,80 @@ const ProfilePage: React.FC = () => {
               </>
             ) : (
               <>
-                {/* Centered layout: All elements in column */}
-            <div style={{ order: parsedStyles?.avatarOrder || 1, ...getAnimationStyle(elementsVisible.avatar) }}>
-              <ProfileAvatar profile={profile} parsedStyles={parsedStyles} />
-            </div>
-                <div style={{ order: parsedStyles?.usernameOrder || 2, ...getAnimationStyle(elementsVisible.username, !!appliedEffect && Object.keys(getEffectStyles(appliedEffect).styles).length > 0) }}>
+                {/* Centered layout: All elements in column - theo thứ tự preset */}
+                <div style={{ 
+                  order: parsedStyles?.avatarOrder || 1, 
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  ...getAnimationStyle(elementsVisible.avatar) 
+                }}>
+                  <ProfileAvatar profile={profile} parsedStyles={parsedStyles} />
+                </div>
+                <div style={{ 
+                  order: parsedStyles?.usernameOrder || 2, 
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  ...getAnimationStyle(elementsVisible.username, !!appliedEffect && Object.keys(getEffectStyles(appliedEffect).styles).length > 0) 
+                }}>
                   <ProfileUsername 
                     profile={profile} 
                     parsedStyles={parsedStyles}
                     effectStyles={appliedEffect ? getEffectStyles(appliedEffect).styles : {}}
                     effectData={appliedEffect ? getEffectStyles(appliedEffect).effectData : undefined}
                   />
-            </div>
-            <div style={{ order: parsedStyles?.descriptionOrder || 3, ...getAnimationStyle(elementsVisible.description) }}>
+                </div>
+                <div style={{ 
+                  order: parsedStyles?.descriptionOrder || 3, 
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  ...getAnimationStyle(elementsVisible.description) 
+                }}>
                   <ProfileDescription 
                     profile={profile} 
                     parsedStyles={parsedStyles}
                   />
-            </div>
-            <div style={{ order: (parsedStyles?.descriptionOrder || 3) + 1, marginTop: 10, ...getAnimationStyle(elementsVisible.socialLinks) }}>
-              <SocialLinks userId={profile.userId} />
-            </div>
-            <div style={{ order: parsedStyles?.locationOrder || 5, ...getAnimationStyle(elementsVisible.location) }}>
-              <ProfileLocation profile={profile} parsedStyles={parsedStyles} />
-            </div>
-            <div style={{ order: parsedStyles?.audioOrder || 6, ...getAnimationStyle(elementsVisible.audio) }}>
-              <AudioPlayer ref={audioRef} profile={profile} parsedStyles={parsedStyles} />
-            </div>
+                </div>
+                <div style={{ 
+                  order: parsedStyles?.locationOrder || 4, 
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  ...getAnimationStyle(elementsVisible.location) 
+                }}>
+                  <ProfileLocation profile={profile} parsedStyles={parsedStyles} />
+                </div>
+                <div style={{ 
+                  order: parsedStyles?.iconOrder || 5, 
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginTop: '10px',
+                  ...getAnimationStyle(elementsVisible.socialLinks) 
+                }}>
+                  <SocialLinks userId={profile.userId} />
+                </div>
+                <div style={{ 
+                  order: parsedStyles?.audioOrder || 6, 
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  ...getAnimationStyle(elementsVisible.audio) 
+                }}>
+                  <AudioPlayer ref={audioRef} profile={profile} parsedStyles={parsedStyles} />
+                </div>
               </>
             )}
+            </div>
+            {/* End content wrapper */}
           </div>
         </div>
       </div>
@@ -628,6 +803,71 @@ const ProfilePage: React.FC = () => {
         @keyframes rainbowSpotlight {
           0% { background-position: 0% 50%; }
           100% { background-position: 200% 50%; }
+        }
+        @keyframes fireGradient {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        @keyframes oceanWave {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        @keyframes sunsetGlow {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        @keyframes purpleDream {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        @keyframes goldenShine {
+          0% { background-position: 0% 0%; }
+          100% { background-position: 200% 0%; }
+        }
+        @keyframes coralFlow {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        @keyframes electricBlue {
+          0%, 100% {
+            text-shadow: 0 0 10px rgba(0, 191, 255, 0.8), 0 0 20px rgba(0, 191, 255, 0.6), 0 0 30px rgba(0, 191, 255, 0.4);
+          }
+          50% {
+            text-shadow: 0 0 20px rgba(0, 191, 255, 1), 0 0 30px rgba(0, 191, 255, 0.8), 0 0 40px rgba(0, 191, 255, 0.6);
+          }
+        }
+        @keyframes cyanPulse {
+          0%, 100% {
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.6);
+            transform: scale(1);
+          }
+          50% {
+            text-shadow: 0 0 20px rgba(0, 255, 255, 1), 0 0 30px rgba(0, 255, 255, 0.8);
+            transform: scale(1.05);
+          }
+        }
+        @keyframes magentaFlash {
+          0%, 100% {
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.8), 0 0 20px rgba(255, 0, 255, 0.6);
+            opacity: 1;
+          }
+          50% {
+            text-shadow: 0 0 30px rgba(255, 0, 255, 1), 0 0 40px rgba(255, 0, 255, 0.8);
+            opacity: 0.9;
+          }
+        }
+        @keyframes emeraldGlow {
+          0%, 100% {
+            text-shadow: 0 0 10px rgba(80, 200, 120, 0.8), 0 0 20px rgba(80, 200, 120, 0.6);
+          }
+          50% {
+            text-shadow: 0 0 20px rgba(80, 200, 120, 1), 0 0 30px rgba(80, 200, 120, 0.8);
+          }
         }
       `}</style>
     </div>

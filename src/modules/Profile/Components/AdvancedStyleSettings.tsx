@@ -36,7 +36,6 @@ const AdvancedStyleSettings: React.FC<AdvancedStyleSettingsProps> = ({
           
           setIsInitialized(true);
         } catch (error) {
-          console.error('Failed to load user styles:', error);
           setIsInitialized(true);
         }
       }

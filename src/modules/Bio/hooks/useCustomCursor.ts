@@ -4,10 +4,26 @@ import { type UserStyle } from "../types/profile";
 
 export const useCustomCursor = (parsedStyles: UserStyle | null) => {
   useEffect(() => {
-    if (!parsedStyles) return;
+    // Check if custom cursor is configured
+    const hasCustomCursor = parsedStyles?.customCursor && parsedStyles.customCursor.trim() !== "";
     
-    console.log("Parsed styles:", parsedStyles);
+    // Only hide default cursor and show custom cursor if custom cursor is set
+    if (!hasCustomCursor) {
+      // Restore default cursor if no custom cursor
+      document.body.style.cursor = "default";
+      
+      // Hide custom cursor element if it exists
+      const cursorEl = document.getElementById("custom-cursor");
+      if (cursorEl) {
+        cursorEl.style.display = "none";
+      }
+      return;
+    }
 
+    // Hide default cursor only when custom cursor is active
+    document.body.style.cursor = "none";
+    
+    // Initialize or get cursor element
     let cursorEl = document.getElementById("custom-cursor");
     if (!cursorEl) {
       cursorEl = document.createElement("div");
@@ -15,10 +31,13 @@ export const useCustomCursor = (parsedStyles: UserStyle | null) => {
       document.body.appendChild(cursorEl);
     }
 
-    const width = Math.max(8, Number(parsedStyles.cursorWidth?.replace("px","")) || 24);
-    const height = Math.max(8, Number(parsedStyles.cursorHeight?.replace("px","")) || 24);
-    const scale = Math.max(0.1, Number(parsedStyles.cursorScale) || 1);
+    // Use parsedStyles if available, otherwise use defaults
+    // Note: width, height, and scale calculations are prepared but not currently used
 
+    // Use custom cursor image
+    const cursorImage = parsedStyles.customCursor;
+
+    // Apply cursor styles
     Object.assign(cursorEl.style, {
       position: "fixed",
       top: "0",
@@ -30,25 +49,30 @@ export const useCustomCursor = (parsedStyles: UserStyle | null) => {
       zIndex: "9999",
       backgroundRepeat: "no-repeat",
       backgroundPosition: "center",
-      backgroundSize: parsedStyles.customCursor ? "100% 100%" : "cover",
-      borderRadius: parsedStyles.customCursor ? "0" : parsedStyles.cursorType === "circle" ? "50%" : "0",
-      backgroundColor: parsedStyles.customCursor ? "transparent" : parsedStyles.cursorColor ?? "#000",
-      boxShadow: parsedStyles.customCursor ? "none" : parsedStyles.cursorGlow ?? "none",
-      backgroundImage: parsedStyles.customCursor ? `url(${parsedStyles.customCursor})` : "none",
+      backgroundSize: "100% 100%",
+      borderRadius: "0",
+      backgroundColor: "transparent",
+      boxShadow: "none",
+      backgroundImage: `url(${cursorImage})`,
+      opacity: "1",
+      display: "block",
     });
 
+    // Mouse move handler
     const moveCursor = (e: MouseEvent) => {
-      cursorEl!.style.left = e.clientX + "px";
-      cursorEl!.style.top = e.clientY + "px";
+      if (cursorEl) {
+        cursorEl.style.left = e.clientX + "px";
+        cursorEl.style.top = e.clientY + "px";
+      }
     };
+    
     document.addEventListener("mousemove", moveCursor);
 
-    document.body.style.cursor = "none";
-
+    // Cleanup function
     return () => {
       document.removeEventListener("mousemove", moveCursor);
+      // Restore default cursor on cleanup
       document.body.style.cursor = "default";
-      cursorEl?.remove();
     };
   }, [parsedStyles]);
 };

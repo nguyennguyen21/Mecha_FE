@@ -15,7 +15,7 @@ const EffectRenderer: React.FC<EffectRendererProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     if (!containerRef.current || !canvasRef.current) return;
@@ -423,7 +423,7 @@ const renderFireworks = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElemen
 };
 
 // Hack Effect - Hacker-style code rain
-const renderMatrix = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, config: any) => {
+const renderMatrix = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, _config: any) => {
   // Hacker-style characters: hex codes, binary, and hacker keywords
   const hexChars = '0123456789ABCDEF';
   const binaryChars = '01';
@@ -456,7 +456,7 @@ const renderMatrix = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, 
     dropColors[i] = brightColors[colorIndex];
   }
 
-  const color = config.color || '#00FF41'; // Classic hacker green
+  // const color = config.color || '#00FF41'; // Classic hacker green (unused)
 
   let lastFrameTime = Date.now();
   const targetFPS = 40; // Faster animation
@@ -556,7 +556,7 @@ const renderConfetti = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement
     ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    confetti.forEach((piece, index) => {
+    confetti.forEach((piece) => {
       piece.x += piece.vx;
       piece.y += piece.vy;
       piece.rotation += 0.1;

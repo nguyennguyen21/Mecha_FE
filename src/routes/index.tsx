@@ -9,12 +9,7 @@ import  PrivateLayout from "../modules/Layouts/PrivateLayout/PrivateLayout";
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* Public Routes - không cần layout riêng */}
-      {publicRoutes.map((route) => (
-        <Route key={route.path} path={route.path} element={route.element} />
-      ))}
-
-      {/* Private Routes - bao bọc bởi PrivateLayout */}
+      {/* Private Routes - bao bọc bởi PrivateLayout (phải đặt trước để tránh match với /:username) */}
       {privateRoutes.map((route) => (
         <Route
           key={route.path}
@@ -25,6 +20,11 @@ export default function AppRoutes() {
             </PrivateLayout>
           }
         />
+      ))}
+
+      {/* Public Routes - không cần layout riêng */}
+      {publicRoutes.map((route) => (
+        <Route key={route.path} path={route.path} element={route.element} />
       ))}
      
     </Routes>

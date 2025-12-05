@@ -19,7 +19,7 @@ interface Product {
   effectData?: string;
 }
 
-const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:5159';
+const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:30052';
 
 export const useUserEffects = (userId: number | undefined) => {
   const [activeEffects, setActiveEffects] = useState<Array<UserEffect & { product?: Product }>>([]);

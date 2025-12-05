@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notification Animation</title>
+<style>
+  /* Container overlay */
+  #notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%;
+    background-color: rgba(50, 150, 250, 0.9);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    overflow: hidden;
+    white-space: nowrap;
+    display: none; /* ẩn mặc định */
+    font-size: 1.2rem;
+    z-index: 9999;
+  }
+
+  /* Text marquee */
+  #notification span {
+    display: inline-block;
+    padding-left: 100%;
+    animation: marquee 8s linear infinite;
+  }
+
+  @keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-100%); }
+  }
+
+  /* Close button */
+  #notification .close-btn {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+</style>
+</head>
+<body>
+
+<div id="notification">
+  <span>🎉 Đây là thông báo chạy ngang, bạn có thể tuỳ chỉnh nội dung này!</span>
+  <div class="close-btn" onclick="hideNotification()">×</div>
+</div>
+
+<script>
+  // Hiển thị thông báo
+  function showNotification(message) {
+    const notif = document.getElementById('notification');
+    notif.querySelector('span').textContent = message;
+    notif.style.display = 'block';
+
+    // Tự động ẩn sau 5 giây
+    setTimeout(() => {
+      hideNotification();
+    }, 5000);
+  }
+
+  // Ẩn thông báo
+  function hideNotification() {
+    const notif = document.getElementById('notification');
+    notif.style.display = 'none';
+  }
+
+  // Demo
+  showNotification("🚀 Chào mừng bạn đến với website! Nội dung chạy ngang này có thể thay đổi.");
+</script>
+
+</body>
+</html>

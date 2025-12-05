@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { type UserStyleRaw, type UserStyle, type ProfileData } from '../types/profile';
+import { type UserStyleRaw, type UserStyle } from '../types/profile';
 import { apiService } from '../services/api';
 import { parseStyles } from '../utils/styleUtils';
 

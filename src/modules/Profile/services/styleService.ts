@@ -1,6 +1,6 @@
 import { type CustomStyles } from '../../../types/index';
 
-const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:5159';
+const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:30052';
 
 
 
@@ -72,7 +72,6 @@ export const fetchUserStyles = async (userId: number): Promise<CustomStyles> => 
     // Giả sử API trả về dạng { idUser: number, styles: CustomStyles }
     return data.styles || {};
   } catch (error) {
-    console.error('Error fetching user styles:', error);
     // Trả về default styles nếu có lỗi
     return getDefaultStyles();
   }

@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { type ProfileFormData, type FileState } from "../../../types";
 
-const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:5159';
+const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:30052';
 
 export const useFileUpload = (
   oldFiles: FileState,
@@ -68,7 +68,7 @@ export const useFileUpload = (
         throw new Error(errorData.message || `Delete failed: ${response.status}`);
       }
     } catch (error) {
-      console.warn(`Failed to delete file: ${path}`, error);
+      // Silent fail for file deletion
     }
   }, []);
 
@@ -86,8 +86,9 @@ export const useFileUpload = (
       // FIX: Kiểm tra premium status trước khi upload video
       if (field === "background" && validVideoTypes.includes(file.type)) {
         const user = JSON.parse(localStorage.getItem("userInfo") || "{}");
-        const isPremium = Boolean(user.premium || user.Premium);
-        console.log("User premium status:", user);
+        // Check Premium - handle both boolean and number (1/0) from database
+        const isPremium = !!(user?.Premium === true || user?.Premium === 1 || 
+                            user?.premium === true || user?.premium === 1);
         
         if (!isPremium) {
           setMessage("Premium subscription required for video background upload!");
@@ -188,7 +189,6 @@ export const useFileUpload = (
         e.target.value = "";
       } catch (error) {
         setMessage(error instanceof Error ? error.message : `Failed to upload ${field}.`);
-        console.error(`Upload ${field} error:`, error);
         setTimeout(() => setMessage(""), 5000);
       } finally {
         setUploadingFiles((prev) => ({ ...prev, [field]: false }));

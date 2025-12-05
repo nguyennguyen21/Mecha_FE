@@ -39,12 +39,12 @@ const Header = () => {
               </Link>
             </li>
             <li>
-              <Link
-                to="/faq"
-                className="h-10 flex items-center px-3 hover:text-gray-300 transition"
+              <a
+                href="/#faq"
+                className="h-10 flex items-center px-3 hover:text-gray-300 transition cursor-pointer"
               >
                 FAQ
-              </Link>
+              </a>
             </li>
             <li>
               <Link

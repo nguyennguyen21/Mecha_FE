@@ -23,11 +23,11 @@ const AudioPlayer = forwardRef<AudioPlayerRef, AudioPlayerProps>(({ profile, par
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [volume, setVolumeState] = useState(1);
+  const [, setVolumeState] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [canAutoPlay, setCanAutoPlay] = useState(false);
+  const [, setCanAutoPlay] = useState(false);
 
   // Expose methods to parent component through ref
   useImperativeHandle(ref, () => ({
@@ -38,7 +38,6 @@ const AudioPlayer = forwardRef<AudioPlayerRef, AudioPlayerProps>(({ profile, par
           await audio.play();
           setIsPlaying(true);
         } catch (err) {
-          console.error('Failed to play audio:', err);
           setError('Playback failed');
         }
       }
@@ -318,7 +317,6 @@ const AudioPlayer = forwardRef<AudioPlayerRef, AudioPlayerProps>(({ profile, par
       try {
         await audio.play();
       } catch (err) {
-        console.error('Playback failed:', err);
         setError('Playback failed');
       }
     }

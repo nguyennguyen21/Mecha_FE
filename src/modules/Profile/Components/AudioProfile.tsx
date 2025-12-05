@@ -70,42 +70,6 @@ const AudioProfile: React.FC<AudioProfileProps> = ({
     return userStyle[property as keyof typeof userStyle] || defaultValue;
   };
 
-  // Audio title styles (matching .title from HTML)
-  const audioTitleStyles = {
-    fontSize: getStyle('audioTitleFontSize', '1.05rem'),
-    fontWeight: getStyle('audioTitleFontWeight', '600'),
-    color: getStyle('audioTitleColor', 'white'),
-    letterSpacing: getStyle('audioTitleLetterSpacing', '0'),
-    whiteSpace: 'nowrap' as const,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-  };
-
-  // Cover image styles (matching .cover img)
-  const coverImageStyles = {
-    width: getStyle('coverImageWidth', '64px'),
-    height: getStyle('coverImageHeight', '64px'),
-    borderRadius: getStyle('coverImageBorderRadius', '12px'),
-    objectFit: getStyle('coverImageObjectFit', 'cover') as 'cover' | 'contain' | 'fill' | 'none' | 'scale-down',
-    borderStyle: getStyle('coverImageBorderStyle', 'none'),
-    borderWidth: getStyle('coverImageBorderWidth', '0'),
-    borderColor: getStyle('coverImageBorderColor', 'transparent'),
-    boxShadow: getStyle('coverImageBoxShadow', ''),
-  };
-
-  // Audio player container styles (matching .player)
-  const audioPlayerContainerStyles = {
-    background: getStyle('audioBackgroundColor', 'rgba(255, 255, 255, 0.1)'),
-    backdropFilter: 'blur(12px)',
-    borderRadius: getStyle('audioBorderRadius', '16px'),
-    width: getStyle('audioWidth', '400px'),
-    display: 'flex',
-    alignItems: 'center',
-    padding: '12px 16px',
-    gap: '16px',
-    boxShadow: getStyle('audioBoxShadow', '0 8px 32px rgba(0, 0, 0, 0.3)'),
-  };
-
   // Generate CSS for custom audio player styling
   const audioCustomCSS = `
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');

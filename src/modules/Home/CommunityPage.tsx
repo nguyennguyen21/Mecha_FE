@@ -1,6 +1,5 @@
 import React from "react";
 import Button from "../../modules/Core/Components/button/Button";
-import Search from "../../modules/Core/Components/Search/Search";
 
 const COMMUNITY_DISCORD_LINK: string = "https://discord.gg/YOUR_DISCORD_INVITE";
 const BADGE_STORE_LINK: string = "https://mechabot.com/badges";

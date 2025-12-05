@@ -10,6 +10,7 @@ export type ProfileData = {
   customCursor?: string;
   description?: string;
   username: string;
+  displayName?: string;
   effectUsername?: string;
   location?: string;
 };

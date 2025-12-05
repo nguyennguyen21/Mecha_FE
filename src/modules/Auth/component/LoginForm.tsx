@@ -1,5 +1,6 @@
 import React from "react";
-import { FaDiscord } from "react-icons/fa";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import DiscordLoginButton from "../components/DiscordLoginButton";
 
 interface LoginFormProps {
   username: string;
@@ -9,7 +10,8 @@ interface LoginFormProps {
   onUsernameChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
   onSubmit: (e: React.FormEvent) => void;
-  onDiscordLogin: () => void;
+  onDiscordSuccess?: (data: { token: string; user: any }) => void;
+  onDiscordError?: (error: string) => void;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({
@@ -20,7 +22,8 @@ const LoginForm: React.FC<LoginFormProps> = ({
   onUsernameChange,
   onPasswordChange,
   onSubmit,
-  onDiscordLogin,
+  onDiscordSuccess,
+  onDiscordError,
 }) => {
   return (
     <div className="bg-[#121212] border-2 border-[#191919] rounded-2xl w-full p-8 flex flex-col items-center">
@@ -61,14 +64,16 @@ const LoginForm: React.FC<LoginFormProps> = ({
         </button>
       </form>
 
-      {/* Discord Login Button */}
-      <button
-        onClick={onDiscordLogin}
-        className="w-full mt-4 py-2 rounded-lg bg-[#5865F2] hover:bg-[#4752C4] transition-colors text-white flex items-center justify-center gap-2"
-      >
-        <FaDiscord className="text-lg" />
-        Login with Discord
-      </button>
+      <div className="w-full my-4 flex items-center gap-2">
+        <div className="flex-1 border-t border-gray-700"></div>
+        <span className="text-gray-500 text-sm">or</span>
+        <div className="flex-1 border-t border-gray-700"></div>
+      </div>
+
+      <DiscordLoginButton
+        onSuccess={onDiscordSuccess}
+        onError={onDiscordError}
+      />
 
       <p className="mt-4 text-gray-400 text-sm">
         Don't have an account?{" "}

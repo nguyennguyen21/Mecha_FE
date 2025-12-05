@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { type ProfileFormData, type CustomStyles } from "../../../types";
 
-const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:5159';
+const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:30052';
 
 export const useProfileSubmit = (
   formData: ProfileFormData,
@@ -42,6 +42,7 @@ export const useProfileSubmit = (
     // Prepare submit data
     const submitData: ProfileFormData = {
       username: formData.username.trim() || currentUsername, // giữ tên cũ nếu không nhập
+      displayName: formData.displayName?.trim() || formData.username.trim() || currentUsername, // Mặc định = username nếu không có
       description: formData.description?.trim() || "",
       location: formData.location?.trim() || "",
       profileAvatar: formData.profileAvatar?.trim() || "",
@@ -68,7 +69,6 @@ export const useProfileSubmit = (
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("❌ Error response:", errorData);
         throw new Error(errorData.message || `Profile update failed: ${response.status}`);
       }
 
@@ -92,7 +92,6 @@ export const useProfileSubmit = (
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to update profile.";
       setMessage(errorMessage);
-      console.error("Profile update error:", error);
       setTimeout(() => setMessage(""), 5000);
     } finally {
       setLoading(false);

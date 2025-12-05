@@ -72,12 +72,35 @@ const LayoutManager: React.FC<LayoutManagerProps> = ({
     try {
       const mergedStyles = { ...customStyles };
       
-      // Apply layout styles
+      // Apply layout styles - đảm bảo tất cả các key được áp dụng
       pureLayoutKeys.forEach((key) => {
-        if (!key.includes('Position') && preset.styles[key] !== undefined) {
+        if (key.includes('Position')) {
+          // Clear position keys
+          delete mergedStyles[key];
+        } else if (preset.styles[key] !== undefined) {
           mergedStyles[key] = preset.styles[key];
         }
       });
+
+      // Đảm bảo tất cả các thuộc tính layout được áp dụng
+      if (preset.styles.containerFlexDirection !== undefined) {
+        mergedStyles.containerFlexDirection = preset.styles.containerFlexDirection;
+      }
+      if (preset.styles.containerJustifyContent !== undefined) {
+        mergedStyles.containerJustifyContent = preset.styles.containerJustifyContent;
+      }
+      if (preset.styles.containerAlignItems !== undefined) {
+        mergedStyles.containerAlignItems = preset.styles.containerAlignItems;
+      }
+      if (preset.styles.containerFlexWrap !== undefined) {
+        mergedStyles.containerFlexWrap = preset.styles.containerFlexWrap;
+      }
+      if (preset.styles.containerGap !== undefined) {
+        mergedStyles.containerGap = preset.styles.containerGap;
+      }
+      if (preset.styles.containerTextAlign !== undefined) {
+        mergedStyles.containerTextAlign = preset.styles.containerTextAlign;
+      }
 
       const layoutData = {
         idUser: userId,
@@ -89,7 +112,7 @@ const LayoutManager: React.FC<LayoutManagerProps> = ({
       // Update local state after successful apply
       setCustomStyles(mergedStyles);
     } catch (error) {
-      console.error('Error applying layout:', error);
+      // Silent fail
     } finally {
       setIsApplying('');
     }

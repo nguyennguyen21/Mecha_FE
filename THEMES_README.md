@@ -122,3 +122,5 @@ To add a new theme:
 
 Selected theme is automatically saved to `localStorage` with key `mecha_selected_theme`.
 
+
+

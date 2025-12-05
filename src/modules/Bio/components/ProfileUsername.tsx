@@ -104,7 +104,7 @@ const ProfileUsername: React.FC<ProfileUsernameProps> = ({ profile, parsedStyles
   return (
     <div style={{ position: 'relative', display: 'inline-block' }}>
       <h1 ref={usernameRef} style={finalStyle}>
-        {profile.username}
+        {profile.displayName || profile.username}
       </h1>
       {showParticles && usernameRef.current && effectData && (
         <>

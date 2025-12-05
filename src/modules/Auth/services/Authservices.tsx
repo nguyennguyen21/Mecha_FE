@@ -81,12 +81,17 @@ export const login = async (
     }
 
     // ✅ response ok => payload là dữ liệu user
+    // Clear old cache before setting new user info
+    localStorage.removeItem("userInfo");
+    localStorage.removeItem("authToken");
+    
     localStorage.setItem('userInfo', JSON.stringify(payload));
-    console.log('Login successful:', payload);
+    if (payload.token) {
+      localStorage.setItem('authToken', payload.token);
+    }
 
     return payload as LoginResponse;
   } catch (error) {
-    console.error('Authentication error:', error);
     throw error;
   }
 };
