@@ -70,17 +70,30 @@ export const useProfileSubmit = (
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        // Handle 401 Unauthorized - token expired or invalid
+        if (response.status === 401) {
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("userInfo");
+          window.location.href = "/login";
+          throw new Error("Session expired. Please login again.");
+        }
+        const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || `Profile update failed: ${response.status}`);
       }
 
       const responseData = await response.json();
 
-      // Update styles
+      // Update styles - ensure all styles including locationColor are saved
       try {
-        await updateUserStyles(userId, customStyles);
-      } catch (styleError) {
-       throw new Error("Cannot update styles: " + styleError);
+        // Ensure locationColor is included in styles
+        const stylesToSave = { ...customStyles };
+        if (!stylesToSave.locationColor) {
+          stylesToSave.locationColor = "#9ca3af"; // Default if missing
+        }
+        await updateUserStyles(userId, stylesToSave);
+      } catch (styleError: any) {
+        const errorMsg = styleError instanceof Error ? styleError.message : String(styleError);
+        throw new Error("Cannot update styles: " + errorMsg);
       }
 
       setMessage("Profile updated successfully!");

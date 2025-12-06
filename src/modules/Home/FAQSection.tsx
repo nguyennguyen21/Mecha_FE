@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 interface FAQItem {
@@ -13,6 +13,25 @@ interface FAQItem {
 const FAQSection: React.FC = () => {
   const [openItems, setOpenItems] = useState<Set<number>>(new Set());
   const [language, setLanguage] = useState<"vi" | "en">("vi");
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (sectionRef.current) {
+        const rect = sectionRef.current.getBoundingClientRect();
+        setMousePosition({ 
+          x: e.clientX - rect.left, 
+          y: e.clientY - rect.top 
+        });
+      }
+    };
+    const section = sectionRef.current;
+    if (section) {
+      section.addEventListener("mousemove", handleMouseMove);
+      return () => section.removeEventListener("mousemove", handleMouseMove);
+    }
+  }, []);
 
   const toggleItem = (id: number) => {
     const newOpenItems = new Set(openItems);
@@ -148,14 +167,46 @@ const FAQSection: React.FC = () => {
   ];
 
   return (
-    <section id="faq" className="w-full text-white py-20 px-6 md:px-20">
-      <div className="max-w-4xl mx-auto">
+    <section ref={sectionRef} id="faq" className="relative w-full text-white py-8 md:py-12 px-6 md:px-20 overflow-hidden">
+      {/* Background Animations */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Stars */}
+        {[...Array(60)].map((_, i) => (
+          <div
+            key={`star-${i}`}
+            className="absolute rounded-full bg-white"
+            style={{
+              width: `${Math.random() * 1.5 + 0.5}px`,
+              height: `${Math.random() * 1.5 + 0.5}px`,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              opacity: Math.random() * 0.6 + 0.2,
+              animation: `twinkle ${Math.random() * 3 + 2}s infinite ease-in-out`,
+              animationDelay: `${Math.random() * 3}s`,
+            }}
+          />
+        ))}
+        {/* Mouse Follow Glow */}
+        <div
+          className="absolute w-80 h-80 rounded-full blur-[80px] opacity-15"
+          style={{
+            background: `radial-gradient(circle, rgba(59, 130, 246, 0.4), rgba(139, 92, 246, 0.3), transparent)`,
+            left: `${mousePosition.x - 160}px`,
+            top: `${mousePosition.y - 160}px`,
+            transition: 'left 0.2s ease-out, top 0.2s ease-out',
+          }}
+        />
+      </div>
+
+      <div className="relative z-10 max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12 fade-in">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            {language === "vi" ? "Câu Hỏi Thường Gặp" : "Frequently Asked Questions"}
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 hover:scale-105 transition-transform duration-300 cursor-default">
+            <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
+              {language === "vi" ? "Câu Hỏi Thường Gặp" : "Frequently Asked Questions"}
+            </span>
           </h2>
-          <p className="text-lg md:text-xl text-gray-200 mt-6">
+          <p className="text-lg md:text-xl text-gray-200 mt-6 hover:text-white transition-colors duration-300">
             {language === "vi" 
               ? "Tìm câu trả lời cho các câu hỏi phổ biến về Mecha"
               : "Find answers to common questions about Mecha"}
@@ -165,9 +216,9 @@ const FAQSection: React.FC = () => {
           <div className="flex items-center justify-center gap-2 mt-6">
             <button
               onClick={() => setLanguage("vi")}
-              className={`px-4 py-2 rounded-lg transition-all duration-300 ${
+              className={`px-4 py-2 rounded-lg transition-all duration-300 hover:scale-110 ${
                 language === "vi"
-                  ? "bg-blue-500 text-white"
+                  ? "bg-blue-500 text-white shadow-lg shadow-blue-500/50"
                   : "bg-gray-700 text-gray-300 hover:bg-gray-600"
               }`}
             >
@@ -175,9 +226,9 @@ const FAQSection: React.FC = () => {
             </button>
             <button
               onClick={() => setLanguage("en")}
-              className={`px-4 py-2 rounded-lg transition-all duration-300 ${
+              className={`px-4 py-2 rounded-lg transition-all duration-300 hover:scale-110 ${
                 language === "en"
-                  ? "bg-blue-500 text-white"
+                  ? "bg-blue-500 text-white shadow-lg shadow-blue-500/50"
                   : "bg-gray-700 text-gray-300 hover:bg-gray-600"
               }`}
             >
@@ -196,22 +247,22 @@ const FAQSection: React.FC = () => {
             return (
               <div
                 key={item.id}
-                className="bg-[#101010] border-2 border-gray-800 rounded-[15px] overflow-hidden shadow-lg hover:border-blue-500 transition-all duration-300"
+                className="bg-[#101010] border-2 border-gray-800 rounded-[15px] overflow-hidden shadow-lg hover:border-blue-500 hover:shadow-blue-500/20 hover:scale-[1.02] transition-all duration-300 group"
               >
                 <button
                   onClick={() => toggleItem(item.id)}
-                  className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-900 transition-all duration-300"
+                  className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-900/50 transition-all duration-300"
                 >
                   <div className="flex items-center gap-4 flex-1">
-                    <i className={`bi ${item.icon} text-2xl text-blue-400 flex-shrink-0`}></i>
-                    <h3 className="text-lg font-semibold text-white pr-4">
+                    <i className={`bi ${item.icon} text-2xl text-blue-400 flex-shrink-0 group-hover:scale-125 group-hover:rotate-12 transition-all duration-300`}></i>
+                    <h3 className="text-lg font-semibold text-white pr-4 group-hover:text-blue-300 transition-colors duration-300">
                       {question}
                     </h3>
                   </div>
                   <i
                     className={`bi ${
                       isOpen ? "bi-chevron-up" : "bi-chevron-down"
-                    } text-blue-400 text-xl transition-transform duration-300 flex-shrink-0`}
+                    } text-blue-400 text-xl transition-all duration-300 flex-shrink-0 group-hover:scale-125`}
                   ></i>
                 </button>
                 <div
@@ -219,7 +270,7 @@ const FAQSection: React.FC = () => {
                     isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
                   }`}
                 >
-                  <div className="px-6 pb-5 pl-16 text-gray-300 leading-relaxed">
+                  <div className="px-6 pb-5 pl-16 text-gray-300 leading-relaxed animate-fadeIn">
                     {answer}
                   </div>
                 </div>
@@ -229,20 +280,42 @@ const FAQSection: React.FC = () => {
         </div>
 
         {/* Contact Section */}
-        <div className="mt-12 bg-[#101010] border-2 border-gray-800 rounded-[15px] p-6 text-center">
-          <i className="bi bi-envelope-heart text-3xl text-blue-400 mb-3"></i>
-          <h3 className="text-xl font-semibold text-white mb-2">
+        <div className="mt-12 bg-[#101010] border-2 border-gray-800 rounded-[15px] p-6 text-center hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 hover:scale-[1.02] transition-all duration-300 group cursor-pointer">
+          <i className="bi bi-envelope-heart text-3xl text-blue-400 mb-3 group-hover:scale-125 group-hover:rotate-12 transition-all duration-300 inline-block"></i>
+          <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-blue-300 transition-colors duration-300">
             {language === "vi" 
               ? "Vẫn chưa tìm thấy câu trả lời?"
               : "Still can't find the answer?"}
           </h3>
-          <p className="text-gray-200 mb-4">
+          <p className="text-gray-200 mb-4 group-hover:text-white transition-colors duration-300">
             {language === "vi"
               ? "Liên hệ với chúng tôi qua email để được hỗ trợ"
               : "Contact us via email for support"}
           </p>
         </div>
       </div>
+
+      {/* CSS Animations */}
+      <style>{`
+        @keyframes twinkle {
+          0%, 100% { opacity: 0.2; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.5); }
+        }
+        @keyframes gradientShift {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-gradient {
+          animation: gradientShift 3s ease infinite;
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.3s ease-out;
+        }
+      `}</style>
     </section>
   );
 };

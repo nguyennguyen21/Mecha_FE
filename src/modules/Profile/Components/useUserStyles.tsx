@@ -35,6 +35,13 @@ export class UserStylesService {
     });
 
     if (!response.ok) {
+      // Handle 401 Unauthorized - token expired or invalid
+      if (response.status === 401) {
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("userInfo");
+        window.location.href = "/login";
+        throw new Error("Session expired. Please login again.");
+      }
       const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.message || `Failed to update user styles: ${response.status}`);
     }

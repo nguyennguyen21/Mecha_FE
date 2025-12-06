@@ -9,7 +9,10 @@ export const useProfileData = (username: string | undefined) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!username) return;
+    if (!username) {
+      setLoading(false);
+      return;
+    }
 
     const fetchProfile = async () => {
       setLoading(true);
@@ -18,8 +21,20 @@ export const useProfileData = (username: string | undefined) => {
         const data = await apiService.fetchProfile(username);
         setProfile(data);
       } catch (err: any) {
-        console.error(err);
-        setError(err.message);
+        // Provide user-friendly error messages
+        let errorMessage = 'Failed to load profile';
+        
+        if (err.message?.includes('timeout')) {
+          errorMessage = 'Request timed out. Please try again.';
+        } else if (err.message?.includes('Network error')) {
+          errorMessage = 'Network error. Please check your connection.';
+        } else if (err.message?.includes('404') || err.message?.includes('not found')) {
+          errorMessage = 'Profile not found.';
+        } else if (err.message) {
+          errorMessage = err.message;
+        }
+        
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
