@@ -1,11 +1,19 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
 import { Transition } from "@headlessui/react";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
   const toggleMenu = () => setIsOpen(!isOpen);
+
+  const handleHomeClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (location.pathname === "/") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   return (
     <header className="relative py-5 flex justify-center z-50">
@@ -33,6 +41,7 @@ const Header = () => {
             <li>
               <Link
                 to="/"
+                onClick={handleHomeClick}
                 className="h-10 flex items-center px-3 hover:text-gray-300 transition"
               >
                 Home
@@ -74,7 +83,7 @@ const Header = () => {
         leaveTo="-translate-y-5 opacity-0"
       >
         <div className="md:hidden fixed top-20 left-1/2 transform -translate-x-1/2 w-4/5 rounded-xl shadow-lg p-5 flex flex-col space-y-4 text-center text-white z-40">
-          <Link to="/" onClick={toggleMenu} className="hover:text-gray-300">
+          <Link to="/" onClick={(e) => { handleHomeClick(e); toggleMenu(); }} className="hover:text-gray-300">
             Home
           </Link>
           <Link to="/about" onClick={toggleMenu} className="hover:text-gray-300">

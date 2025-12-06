@@ -1,3 +1,5 @@
+import "bootstrap-icons/font/bootstrap-icons.css";
+
 const Footer = () => {
   return (
     <footer className="bg-black-900 text-white mt-20">
@@ -21,29 +23,18 @@ const Footer = () => {
           </p>
         </div>
 
-        {/* Quick Links */}
+        {/* Discord */}
         <div className="flex flex-col space-y-4">
-          <h3 className="font-semibold text-lg">Quick Links</h3>
-          <ul className="space-y-2">
-            <li className="hover:text-blue-400 cursor-pointer transition">Home</li>
-            <li className="hover:text-blue-400 cursor-pointer transition">About</li>
-            <li className="hover:text-blue-400 cursor-pointer transition">Pricing</li>
-            <li className="hover:text-blue-400 cursor-pointer transition">Contact</li>
-          </ul>
-        </div>
-
-        {/* Contact */}
-        <div className="flex flex-col space-y-4">
-          <h3 className="font-semibold text-lg">Contact Us</h3>
-          <p className="text-gray-400">Email: support@example.com</p>
-          <p className="text-gray-400">Phone: +123 456 7890</p>
-
-          {/* Socials */}
-          <div className="flex space-x-4 mt-2">
-            <a href="#" className="hover:text-blue-400 transition">Facebook</a>
-            <a href="#" className="hover:text-blue-400 transition">Twitter</a>
-            <a href="#" className="hover:text-blue-400 transition">Instagram</a>
-          </div>
+          <h3 className="font-semibold text-lg">Join Our Community</h3>
+          <a 
+            href="https://discord.gg/YOUR_DISCORD_INVITE" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="hover:text-blue-400 transition flex items-center gap-2"
+          >
+            <i className="bi bi-discord text-xl"></i>
+            <span>Discord</span>
+          </a>
         </div>
 
       </div>

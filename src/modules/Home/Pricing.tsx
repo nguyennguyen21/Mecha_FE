@@ -1,4 +1,3 @@
-import Header from "../../modules/Core/layout/Header";
 import Button from "../../modules/Core/Components/button/Button";
 
 const plans = [
@@ -37,8 +36,6 @@ const Pricing = () => {
 
   return (
     <div className="font-inte min-h-screen flex flex-col">
-      <Header />
-
       <div className="px-6 md:px-20 mt-20 flex-1 text-white">
         <h2 className="text-4xl md:text-5xl font-bold text-center mb-12">
           Choose Your Plan

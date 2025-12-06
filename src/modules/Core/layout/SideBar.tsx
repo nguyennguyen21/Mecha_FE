@@ -60,6 +60,55 @@ const SideBar: React.FC = () => {
   const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
   const userRole = userInfo?.Roles || userInfo?.roles || 'user';
   const isAdmin = userRole === 'admin';
+  const displayName = userInfo?.displayName || userInfo?.DisplayName || userInfo?.username || userInfo?.Username || 'user';
+  
+  const [profileUsername, setProfileUsername] = useState<string>('');
+  const [copied, setCopied] = useState(false);
+
+  // Fetch profile username from API
+  useEffect(() => {
+    const fetchProfileUsername = async () => {
+      try {
+        const userId = userInfo?.idUser || userInfo?.IdUser || userInfo?.id || userInfo?.userId;
+        if (!userId) return;
+
+        const token = localStorage.getItem('authToken');
+        const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:30052';
+        
+        const response = await fetch(`${API_BASE_URL}/api/profile/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const profileData = await response.json();
+          const username = profileData?.username || profileData?.Username || profileData?.profileUsername || '';
+          if (username) {
+            setProfileUsername(username);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch profile username:', err);
+      }
+    };
+
+    fetchProfileUsername();
+  }, [userInfo]);
+
+  const username = profileUsername || userInfo?.username || userInfo?.Username || userInfo?.profileUsername || userInfo?.ProfileUsername || displayName;
+  const profileLink = `http://mecha.lol/${username}`;
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(profileLink);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
 
   const menuItems: MenuItem[] = [
     { label: "Home", path: "/dashboard", icon: "bi-house-door", active: getActiveState("/dashboard") },
@@ -120,6 +169,45 @@ const SideBar: React.FC = () => {
               <i className={`bi ${sidebarOpen ? 'bi-chevron-left' : 'bi-chevron-right'} text-lg transition-all duration-300`}></i>
             </button>
           </li>
+
+          {/* Profile Link Section */}
+          {sidebarOpen && (
+            <li className="mx-2 mb-4 p-3 bg-gray-800/50 rounded-xl border border-purple-500/20">
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2 mb-2">
+                  <i className="bi bi-person-circle text-purple-400"></i>
+                  <span className="text-sm font-semibold text-white truncate">{displayName}</span>
+                </div>
+                <div className="flex items-center gap-2 bg-gray-900/50 rounded-lg p-2">
+                  <input
+                    type="text"
+                    value={profileLink}
+                    readOnly
+                    className="flex-1 text-xs text-gray-300 bg-transparent border-none outline-none truncate"
+                  />
+                  <button
+                    onClick={handleCopyLink}
+                    className="p-1.5 rounded-lg bg-purple-500/30 hover:bg-purple-500/50 text-white transition-all duration-200 hover:scale-110 flex-shrink-0"
+                    title={copied ? "Copied!" : "Copy link"}
+                  >
+                    <i className={`bi ${copied ? 'bi-check-lg' : 'bi-clipboard'} text-sm`}></i>
+                  </button>
+                </div>
+              </div>
+            </li>
+          )}
+          
+          {!sidebarOpen && (
+            <li className="mx-2 mb-4 flex justify-center">
+              <button
+                onClick={handleCopyLink}
+                className="p-2 rounded-xl bg-gray-800/50 hover:bg-purple-500/30 text-white transition-all duration-200 hover:scale-110 border border-purple-500/20"
+                title={copied ? "Copied!" : "Copy profile link"}
+              >
+                <i className={`bi ${copied ? 'bi-check-lg' : 'bi-clipboard'} text-lg`}></i>
+              </button>
+            </li>
+          )}
 
           {menuItems.map((item, index) => (
             <li key={index} className="mb-1">
