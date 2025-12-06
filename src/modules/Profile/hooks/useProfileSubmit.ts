@@ -15,7 +15,8 @@ export const useProfileSubmit = (
   },
   updateUserStyles: (userId: number, styles: CustomStyles) => Promise<void>,
   setLoading: (loading: boolean) => void,
-  setMessage: (message: string) => void
+  setMessage: (message: string) => void,
+  refetchProfile?: () => Promise<void>
 ) => {
   const handleSubmit = useCallback(async () => {
 
@@ -47,12 +48,13 @@ export const useProfileSubmit = (
       location: formData.location?.trim() || "",
       profileAvatar: formData.profileAvatar?.trim() || "",
       background: formData.background?.trim() || "",
-      audio: formData.audio?.trim() || "",
-      audioImage: formData.audioImage?.trim() || "",
+      audio: (formData.audio && formData.audio.trim()) || "",
+      audioImage: (formData.audioImage && formData.audioImage.trim()) || "",
       audioTitle: formData.audioTitle?.trim() || "",
       customCursor: formData.customCursor?.trim() || "",
       effectUsername: formData.effectUsername?.trim() || ""
     };
+
 
     try {
       const token = localStorage.getItem("authToken") || "";
@@ -89,6 +91,15 @@ export const useProfileSubmit = (
         const updatedUserInfo = { ...userInfo, username: responseData.newUsername };
         localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
       }
+
+      // Reload profile data from server to show updated audio
+      if (refetchProfile) {
+        try {
+          await refetchProfile();
+        } catch (error) {
+          console.error("Failed to reload profile data:", error);
+        }
+      }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to update profile.";
       setMessage(errorMessage);
@@ -96,7 +107,7 @@ export const useProfileSubmit = (
     } finally {
       setLoading(false);
     }
-  }, [formData, userId, customStyles, updateUserStyles, uploadingFiles, setLoading, setMessage]);
+  }, [formData, userId, customStyles, updateUserStyles, uploadingFiles, setLoading, setMessage, refetchProfile]);
 
   return {
     handleSubmit,

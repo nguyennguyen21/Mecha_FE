@@ -106,7 +106,6 @@ const ProfilePage: React.FC = () => {
   // Get effect styles for username - Prismic CSS Text Animations + Colorful + Particles
   const getEffectStyles = (effect: any) => {
     if (!effect?.product) {
-      console.log('⚠️ No effect product found');
       return { styles: {}, effectData: null };
     }
     
@@ -124,8 +123,6 @@ const ProfilePage: React.FC = () => {
       console.error('Failed to parse effectData:', e);
     }
     
-    console.log('🎨 Applying effect:', { name, category, effectType, effectData, product: effect.product });
-    
     const styles: any = {};
     
     // If it's a particle effect or matrix rain, don't apply text styles, just return effectData
@@ -142,21 +139,17 @@ const ProfilePage: React.FC = () => {
         effectType === 'floating-emojis' || effectType === 'colorful-dots' ||
         effectType === 'fireworks' ||
         effectType === 'matrix' || effectType === 'matrix-rain' || name.includes('matrix') || name.includes('rain')) {
-      console.log('✨ Particle/Matrix effect - returning effectData only');
       return { styles: {}, effectData };
     }
     
     // Match by effectType first (most reliable)
     if (effectType) {
-      console.log('🔍 Matching effectType:', effectType);
       switch (effectType) {
         case 'neon-glow':
-          console.log('✅ Matched: neon-glow');
           styles.textShadow = '0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.6), 0 0 30px rgba(255, 0, 255, 0.4)';
           styles.animation = 'neonGlow 3s ease-in-out infinite';
           break;
         case 'rainbow-gradient':
-          console.log('✅ Matched: rainbow-gradient');
           styles.background = 'linear-gradient(45deg, #f0f, #0ff, #ff0, #f0f)';
           styles.backgroundSize = '300% 300%';
           styles.WebkitBackgroundClip = 'text';
@@ -164,7 +157,6 @@ const ProfilePage: React.FC = () => {
           styles.animation = 'rainbowGradient 3s ease infinite';
           break;
         case 'pulse':
-          console.log('✅ Matched: pulse');
           styles.animation = 'pulseText 2s ease-in-out infinite';
           styles.transformOrigin = 'center';
           // Ensure transform is not overridden
@@ -294,7 +286,6 @@ const ProfilePage: React.FC = () => {
           styles.animation = 'emeraldGlow 2s ease-in-out infinite';
           break;
         case 'coral-flow':
-          console.log('✅ Matched: coral-flow');
           styles.background = 'linear-gradient(45deg, #FF7F50, #FFB6C1, #FFC0CB)';
           styles.backgroundSize = '300% 300%';
           styles.WebkitBackgroundClip = 'text';
@@ -303,7 +294,6 @@ const ProfilePage: React.FC = () => {
           break;
         // Handle generic "gradient" type by checking name or colors
         case 'gradient':
-          console.log('🔍 Generic gradient detected, checking name/colors');
           if (name.includes('rainbow') && !name.includes('spotlight')) {
             styles.background = 'linear-gradient(45deg, #f0f, #0ff, #ff0, #f0f)';
             styles.backgroundSize = '300% 300%';
@@ -356,28 +346,22 @@ const ProfilePage: React.FC = () => {
           }
           break;
         default:
-          console.log('⚠️ No switch case match for effectType:', effectType);
           break;
       }
-    } else {
-      console.log('⚠️ No effectType found, using fallback matching');
     }
     
     // Fallback: Match by name if effectType didn't match
     if (Object.keys(styles).length === 0) {
-      console.log('🔄 Using fallback name matching for:', name);
       if (name.includes('neon') || name.includes('glow')) {
         styles.textShadow = '0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.6), 0 0 30px rgba(255, 0, 255, 0.4)';
         styles.animation = 'neonGlow 3s ease-in-out infinite';
       } else if (name.includes('rainbow') && !name.includes('spotlight')) {
-        console.log('✅ Fallback matched: rainbow-gradient');
         styles.background = 'linear-gradient(45deg, #f0f, #0ff, #ff0, #f0f)';
         styles.backgroundSize = '300% 300%';
         styles.WebkitBackgroundClip = 'text';
         styles.WebkitTextFillColor = 'transparent';
         styles.animation = 'rainbowGradient 3s ease infinite';
       } else if (name.includes('pulse') && !name.includes('cyan')) {
-        console.log('✅ Fallback matched: pulse');
         styles.animation = 'pulseText 2s ease-in-out infinite';
         styles.transformOrigin = 'center';
       } else if (name.includes('dancing') || (name.includes('shadow') && !name.includes('animation'))) {
@@ -487,7 +471,6 @@ const ProfilePage: React.FC = () => {
       }
     }
     
-    console.log('✅ Applied styles:', styles);
     return { styles, effectData };
   };
 

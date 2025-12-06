@@ -12,18 +12,14 @@ const TextParticles: React.FC<TextParticlesProps> = ({ effectType, effectData, t
 
   useEffect(() => {
     if (!textElement) {
-      console.log('⚠️ TextParticles: Missing textElement');
       return;
     }
     
     // Wait for next tick to ensure containerRef is mounted
     const timeoutId = setTimeout(() => {
       if (!containerRef.current) {
-        console.log('⚠️ TextParticles: ContainerRef still not available after timeout');
         return;
       }
-
-      console.log('✨ TextParticles: Initializing with effectType:', effectType, 'effectData:', effectData, 'textElement:', textElement, 'container:', containerRef.current);
 
       const container = containerRef.current;
       const rect = textElement.getBoundingClientRect();
@@ -39,17 +35,6 @@ const TextParticles: React.FC<TextParticlesProps> = ({ effectType, effectData, t
       container.style.pointerEvents = 'none';
       container.style.overflow = 'visible';
       container.style.zIndex = '10';
-      
-      console.log('📍 TextParticles positioning:', {
-        textRect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height },
-        parentRect: { left: parentRect.left, top: parentRect.top },
-        containerStyle: {
-          left: container.style.left,
-          top: container.style.top,
-          width: container.style.width,
-          height: container.style.height
-        }
-      });
 
       const colors = effectData?.colors || [effectData?.color || '#FFD700'];
       const count = effectData?.count || 20;
@@ -173,7 +158,6 @@ const TextParticles: React.FC<TextParticlesProps> = ({ effectType, effectData, t
               content = '✨';
               size = '12px';
             } else {
-              console.log('⚠️ TextParticles - Unknown effectType:', effectType, 'defaulting to sparkle');
               content = '✨';
               size = '10px';
             }

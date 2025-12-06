@@ -41,8 +41,7 @@ export const useProfileData = () => {
     return `${API_BASE_URL}/${path.replace(/^\//, "")}`;
   }, []);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
       setIsProfileLoading(true);
       try {
         const userInfoString = localStorage.getItem("userInfo");
@@ -93,13 +92,15 @@ export const useProfileData = () => {
           audioImage: data.audioImage ?? "",
         });
       } catch (error) {
-        throw error;
+        console.error("Error fetching profile:", error);
       } finally {
         setIsProfileLoading(false);
       }
-    };
+  }, []);
 
+  useEffect(() => {
     fetchProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChange = useCallback(
@@ -121,5 +122,6 @@ export const useProfileData = () => {
     userId,
     getMediaUrl,
     handleChange,
+    refetchProfile: fetchProfile,
   };
 };

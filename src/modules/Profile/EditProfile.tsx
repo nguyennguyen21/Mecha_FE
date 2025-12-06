@@ -44,6 +44,7 @@ const ProfileForm: React.FC = () => {
     userId,
     getMediaUrl,
     handleChange,
+    refetchProfile,
   } = useProfileData();
 
   const {
@@ -70,7 +71,8 @@ const ProfileForm: React.FC = () => {
     uploadingFiles,
     updateUserStyles,
     setLoading,
-    setMessage
+    setMessage,
+    refetchProfile
   );
 
   const marginStyles = useApplyMargins(customStyles);
@@ -112,31 +114,31 @@ const ProfileForm: React.FC = () => {
   ];
 
   return (
-    <div className="flex items-center justify-center min-h-screen text-white transition-all duration-500">
-      <div className="w-full max-w-6xl rounded-3xl shadow-2xl p-6">
+    <div className="flex items-center justify-center min-h-screen text-white transition-all duration-500 w-full">
+      <div className="w-full max-w-6xl rounded-xl sm:rounded-3xl shadow-2xl p-3 sm:p-4 md:p-6">
         {/* Tab Navigation */}
-        <div className="flex space-x-1 bg-gray-900/50 backdrop-blur-sm rounded-xl p-2 mb-6">
+        <div className="flex space-x-1 bg-gray-900/50 backdrop-blur-sm rounded-xl p-1.5 sm:p-2 mb-4 sm:mb-6 overflow-x-auto">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`
-                flex-1 flex items-center justify-center space-x-2 px-4 py-3 rounded-lg
-                transition-all duration-200 text-sm font-medium cursor-pointer
+                flex-1 flex items-center justify-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 sm:py-3 rounded-lg
+                transition-all duration-200 text-xs sm:text-sm font-medium cursor-pointer whitespace-nowrap min-w-fit
                 ${activeTab === tab.id
                   ? 'bg-purple-600 text-white shadow-lg'
                   : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
                 }
               `}
             >
-              <span className="hidden sm:inline">{tab.label}</span>
+              <span>{tab.label}</span>
             </button>
           ))}
         </div>
 
         {/* Tab Content */}
         {activeTab === 'profile' && (
-          <div className="space-y-8">
+          <div className="space-y-4 sm:space-y-6 md:space-y-8">
             <div style={marginStyles.usernameMargin}>
               <InformationProfile
                 formData={formData}
@@ -147,7 +149,7 @@ const ProfileForm: React.FC = () => {
               />
             </div>
             
-            <div className="mx-4 sm:mx-8" style={marginStyles.descriptionMargin}>
+            <div className="mx-0 sm:mx-4 md:mx-8" style={marginStyles.descriptionMargin}>
               <AudioProfile
                 formData={formData}
                 uploadingFiles={uploadingFiles}
@@ -164,7 +166,7 @@ const ProfileForm: React.FC = () => {
         )}
 
         {activeTab === 'styles' && (
-          <div className="space-y-8">
+          <div className="space-y-4 sm:space-y-6 md:space-y-8">
             <AdvancedStyleSettings
               customStyles={customStyles}
               handleStyleChange={handleStyleChange}
@@ -183,7 +185,7 @@ const ProfileForm: React.FC = () => {
           />
         )}
 
-        <div className="mt-8">
+        <div className="mt-4 sm:mt-6 md:mt-8">
           <SubmitButton
             loading={loading}
             stylesLoading={stylesLoading}

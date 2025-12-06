@@ -107,24 +107,24 @@ const AccountManagement: React.FC = () => {
   }
 
   return (
-    <div className="py-6 px-4">
+    <div className="py-4 sm:py-6 px-2 sm:px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2 flex items-center justify-center gap-3">
-            <i className="bi bi-person-circle text-purple-400"></i>
-            Account Management
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 flex items-center justify-center gap-2 sm:gap-3">
+            <i className="bi bi-person-circle text-purple-400 text-2xl sm:text-3xl md:text-4xl"></i>
+            <span>Account Management</span>
           </h1>
-          <p className="text-gray-400">Manage your account, purchases, and effects</p>
+          <p className="text-gray-400 text-sm sm:text-base">Manage your account, purchases, and effects</p>
         </div>
 
         {/* Tabs */}
-        <div className="flex flex-wrap gap-3 mb-8 justify-center">
+        <div className="flex flex-wrap gap-2 sm:gap-3 mb-6 sm:mb-8 justify-center">
           {(['overview', 'settings', 'donate'] as const).map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${
+              className={`px-3 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 flex items-center gap-1 sm:gap-2 ${
                 activeTab === tab
                   ? 'bg-purple-500/30 text-white shadow-lg shadow-purple-500/20 border border-purple-400/40'
                   : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 border border-gray-700/50'
@@ -133,15 +133,15 @@ const AccountManagement: React.FC = () => {
               {tab === 'overview' && <i className="bi bi-grid-3x3-gap"></i>}
               {tab === 'settings' && <i className="bi bi-gear"></i>}
               {tab === 'donate' && <i className="bi bi-heart"></i>}
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              <span>{tab.charAt(0).toUpperCase() + tab.slice(1)}</span>
             </button>
           ))}
         </div>
 
         {/* Overview Tab */}
         {activeTab === 'overview' && (
-          <div className="bg-gradient-to-br from-gray-800/60 via-purple-900/10 to-gray-800/60 rounded-2xl p-6 sm:p-8 border border-purple-400/20 backdrop-blur-sm shadow-lg">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="bg-gradient-to-br from-gray-800/60 via-purple-900/10 to-gray-800/60 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 border border-purple-400/20 backdrop-blur-sm shadow-lg">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
               <div className="bg-gray-700/50 rounded-xl p-5 sm:p-6 border border-gray-600/50 hover:border-purple-400/40 transition-all duration-300 hover:shadow-md hover:shadow-purple-500/10">
                 <i className="bi bi-person text-4xl text-purple-400 mb-3 block"></i>
                 <div className="text-xl sm:text-2xl font-bold text-white mb-1 truncate">{account.displayName || account.username}</div>

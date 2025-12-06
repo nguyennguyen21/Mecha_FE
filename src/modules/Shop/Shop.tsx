@@ -399,29 +399,29 @@ const Shop: React.FC = () => {
   }
 
   return (
-    <div className="py-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="py-4 sm:py-6">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-3">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 sm:mb-3">
             🎨 Effects
           </h1>
-          <p className="text-gray-300 text-base mb-4">Enhance your profile with amazing effects</p>
-          <div className="flex items-center justify-center gap-4 text-sm text-gray-400">
+          <p className="text-gray-300 text-sm sm:text-base mb-3 sm:mb-4 px-2">Enhance your profile with amazing effects</p>
+          <div className="flex items-center justify-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-400">
             <span className="flex items-center gap-2">
-              <span className="w-3 h-3 bg-blue-500 rounded-full"></span>
+              <span className="w-2 h-2 sm:w-3 sm:h-3 bg-blue-500 rounded-full"></span>
               Active
             </span>
           </div>
         </div>
 
         {/* Category Filter */}
-        <div className="flex flex-wrap justify-center gap-3 mb-8">
+        <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-6 sm:mb-8 px-2">
           {categories.map(cat => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+              className={`px-3 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 ${
                 selectedCategory === cat
                   ? 'bg-purple-600 text-white shadow-lg scale-105 hover:bg-purple-700'
                   : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
@@ -433,11 +433,11 @@ const Shop: React.FC = () => {
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {filteredProducts.map(product => (
             <div
               key={product.productId}
-              className={`group relative bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border-2 transition-all duration-300 hover:scale-105 ${
+              className={`group relative bg-gray-800/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border-2 transition-all duration-300 hover:scale-105 ${
                 product.isOwned
                   ? 'border-green-500 bg-green-500/10'
                   : product.premiumOnly
@@ -446,26 +446,26 @@ const Shop: React.FC = () => {
               }`}
             >
               {/* Badges */}
-              <div className="absolute top-4 right-4 flex flex-col gap-2">
+              <div className="absolute top-2 sm:top-4 right-2 sm:right-4 flex flex-col gap-1 sm:gap-2">
                 {product.premiumOnly && (
-                  <span className="px-3 py-1 bg-yellow-500 text-white text-xs font-bold rounded-full">
+                  <span className="px-2 sm:px-3 py-0.5 sm:py-1 bg-yellow-500 text-white text-[10px] sm:text-xs font-bold rounded-full">
                     PREMIUM
                   </span>
                 )}
                 {!product.premiumOnly && product.price === 0 && (
-                  <span className="px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
+                  <span className="px-2 sm:px-3 py-0.5 sm:py-1 bg-green-500 text-white text-[10px] sm:text-xs font-bold rounded-full">
                     FREE
                   </span>
                 )}
                 {product.isApplied && (
-                  <span className="px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded-full">
+                  <span className="px-2 sm:px-3 py-0.5 sm:py-1 bg-blue-500 text-white text-[10px] sm:text-xs font-bold rounded-full">
                     ACTIVE
                   </span>
                 )}
               </div>
 
               {/* Icon */}
-              <div className="text-6xl mb-4 text-center flex items-center justify-center">
+              <div className="text-4xl sm:text-5xl md:text-6xl mb-3 sm:mb-4 text-center flex items-center justify-center">
                 {product.icon ? (
                   <i className={`bi ${product.icon} text-purple-400`}></i>
                 ) : (
@@ -474,16 +474,16 @@ const Shop: React.FC = () => {
               </div>
 
               {/* Product Info */}
-              <h3 className="text-xl font-bold text-white mb-2">{product.name}</h3>
-              <p className="text-gray-400 text-sm mb-4 min-h-[40px]">{product.description}</p>
+              <h3 className="text-lg sm:text-xl font-bold text-white mb-1 sm:mb-2">{product.name}</h3>
+              <p className="text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4 min-h-[32px] sm:min-h-[40px] line-clamp-2">{product.description}</p>
 
               {/* Category & Price */}
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xs text-gray-500 flex items-center gap-1">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <span className="text-[10px] sm:text-xs text-gray-500 flex items-center gap-1">
                   <i className={`bi ${getCategoryIcon(product.category)}`}></i>
-                  <span className="capitalize">{product.category || 'general'}</span>
+                  <span className="capitalize hidden sm:inline">{product.category || 'general'}</span>
                 </span>
-                <span className={`text-lg font-bold ${
+                <span className={`text-sm sm:text-lg font-bold ${
                   (product.price === 0 || (isPremium && product.price > 0)) ? 'text-green-400' : 'text-purple-400'
                 }`}>
                   {getPriceDisplay(product.price, product.premiumOnly)}
@@ -491,13 +491,13 @@ const Shop: React.FC = () => {
               </div>
 
               {/* Preview Button */}
-              <div className="mb-3">
+              <div className="mb-2 sm:mb-3">
                 <button
                   onClick={() => handlePreviewEffect(product)}
-                  className="w-full py-2 rounded-xl font-semibold transition-all duration-300 bg-gray-700 text-white hover:bg-gray-600 text-sm flex items-center justify-center gap-2"
+                  className="w-full py-1.5 sm:py-2 rounded-lg sm:rounded-xl font-semibold transition-all duration-300 bg-gray-700 text-white hover:bg-gray-600 text-xs sm:text-sm flex items-center justify-center gap-1 sm:gap-2"
                 >
                   <i className="bi bi-eye"></i>
-                  <span>Preview Effect</span>
+                  <span>Preview</span>
                 </button>
               </div>
 
@@ -513,11 +513,11 @@ const Shop: React.FC = () => {
                   <button
                     onClick={() => handlePurchaseEffect(product)}
                     disabled={applying === product.productId}
-                    className="w-full py-3 rounded-xl font-semibold transition-all duration-300 bg-purple-600 text-white hover:bg-purple-700 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold transition-all duration-300 bg-purple-600 text-white hover:bg-purple-700 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm"
                   >
                     {applying === product.productId ? (
                       <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                         <span>Purchasing...</span>
                       </>
                     ) : (
@@ -565,7 +565,7 @@ const Shop: React.FC = () => {
 
         {/* Message */}
         {message && (
-          <div className={`fixed bottom-4 right-4 px-6 py-4 rounded-xl shadow-xl z-50 ${
+          <div className={`fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:w-auto px-4 sm:px-6 py-3 sm:py-4 rounded-lg sm:rounded-xl shadow-xl z-50 text-sm sm:text-base ${
             message.includes('Error') || message.includes('failed')
               ? 'bg-red-600 text-white'
               : 'bg-green-600 text-white'
@@ -576,8 +576,8 @@ const Shop: React.FC = () => {
 
         {/* Preview Modal */}
         {previewProduct && (
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-gray-800 rounded-2xl border border-purple-500/20 max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
+            <div className="bg-gray-800 rounded-xl sm:rounded-2xl border border-purple-500/20 max-w-4xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden flex flex-col">
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-gray-700">
                 <div className="flex items-center gap-3">

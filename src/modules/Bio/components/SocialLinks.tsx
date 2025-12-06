@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 interface SocialLink {
   icon: string;
@@ -20,16 +21,11 @@ const SocialLinks: React.FC<SocialLinksProps> = ({ userId }) => {
 
   const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:30052';
 
-  // Extract domain name from URL for display
-  const getDomainName = (url: string): string => {
-    try {
-      const urlObj = new URL(url);
-      return urlObj.hostname.replace('www.', '');
-    } catch {
-      // If URL parsing fails, return the URL as is (maybe it's just a path)
-      return url;
-    }
-  };
+  // Check if icon is Bootstrap Icons class
+  const isBootstrapIcon = useCallback((icon: string): boolean => {
+    if (!icon) return false;
+    return icon.startsWith("bi ") || icon.startsWith("bi-");
+  }, []);
 
   useEffect(() => {
     if (!userId) {
@@ -44,7 +40,7 @@ const SocialLinks: React.FC<SocialLinksProps> = ({ userId }) => {
         
         const res = await fetch(`${API_BASE_URL}/api/StyleSocial/byUser/${userId}`, {
           method: 'GET',
-          credentials: 'include', // Include cookies if needed
+          credentials: 'include',
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -55,11 +51,27 @@ const SocialLinks: React.FC<SocialLinksProps> = ({ userId }) => {
           throw new Error(`HTTP error! status: ${res.status} - ${res.statusText}`);
         }
         
-        const data: SocialLink[] = await res.json();
+        const data = await res.json();
         
-        // Chỉ lấy các link có URL hợp lệ
-        const validLinks = data.filter(link => link.url && link.url.trim() !== '' && link.url !== '#');
-        setLinks(validLinks);
+        // Handle both DTO format (PascalCase) and display format (camelCase)
+        const processedLinks = data
+          .filter((item: any) => {
+            const url = item.url || item.Url || '';
+            return url && url.trim() !== '' && url !== '#';
+          })
+          .map((item: any) => {
+            const mapped = {
+              icon: item.icon || item.Icon || '',
+              url: item.url || item.Url || '',
+              color: item.color || item.Color || '#ffffff',
+              size: item.size || item.Size || 24,
+              marginLeft: item.marginLeft || item.MarginLeft || 0,
+              marginRight: item.marginRight || item.MarginRight || 0,
+            };
+            return mapped;
+          });
+        
+        setLinks(processedLinks);
       } catch (err: any) {
         setError(err.message || "Failed to fetch social links");
       } finally {
@@ -71,11 +83,11 @@ const SocialLinks: React.FC<SocialLinksProps> = ({ userId }) => {
   }, [userId]);
 
   if (loading) {
-    return null; // Không hiển thị gì khi đang load
+    return null;
   }
 
   if (error) {
-    return null; // Không hiển thị gì nếu có lỗi
+    return null;
   }
 
   // Không hiển thị gì nếu không có social links
@@ -85,45 +97,66 @@ const SocialLinks: React.FC<SocialLinksProps> = ({ userId }) => {
 
   return (
     <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", justifyContent: "center" }}>
-      {links.map((link, index) => (
-        <a 
-          key={index} 
-          href={link.url || "#"} 
-          target={link.url ? "_blank" : "_self"}
-          rel="noopener noreferrer"
-          style={{ 
-            display: "inline-block",
-            padding: "8px 16px",
-            textDecoration: "none",
-            color: link.color || "#ffffff",
-            borderRadius: "8px",
-            border: "1px solid rgba(255, 255, 255, 0.2)",
-            transition: "all 0.2s ease",
-            opacity: link.url ? 1 : 0.5,
-            cursor: link.url ? "pointer" : "default",
-            marginLeft: link.marginLeft ?? 0,
-            marginRight: link.marginRight ?? 0,
-            fontSize: "14px",
-          }}
-          onMouseOver={(e) => {
-            if (link.url) {
+      {links.map((link, index) => {
+        const iconSize = link.size || 24;
+        const hasIcon = link.icon && link.icon.trim() !== "";
+        
+        return (
+          <a 
+            key={index} 
+            href={link.url || "#"} 
+            target={link.url ? "_blank" : "_self"}
+            rel="noopener noreferrer"
+            style={{ 
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: `${iconSize + 16}px`,
+              height: `${iconSize + 16}px`,
+              textDecoration: "none",
+              color: link.color || "#ffffff",
+              borderRadius: "50%",
+              border: `2px solid ${link.color || "#ffffff"}`,
+              transition: "all 0.2s ease",
+              opacity: link.url ? 1 : 0.5,
+              cursor: link.url ? "pointer" : "default",
+              marginLeft: link.marginLeft ?? 0,
+              marginRight: link.marginRight ?? 0,
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
+            }}
+            onMouseOver={(e) => {
+              if (link.url) {
+                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.2)";
+                e.currentTarget.style.transform = "translateY(-2px) scale(1.1)";
+              }
+            }}
+            onMouseOut={(e) => {
               e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
-              e.currentTarget.style.transform = "translateY(-2px)";
-            }
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.backgroundColor = "transparent";
-            e.currentTarget.style.transform = "translateY(0)";
-          }}
-          onClick={(e) => {
-            if (!link.url) {
-              e.preventDefault();
-            }
-          }}
-        >
-          {getDomainName(link.url)}
-        </a>
-      ))}
+              e.currentTarget.style.transform = "translateY(0) scale(1)";
+            }}
+            onClick={(e) => {
+              if (!link.url) {
+                e.preventDefault();
+              }
+            }}
+            title={link.url}
+          >
+            {hasIcon && (
+              <i 
+                className={isBootstrapIcon(link.icon) ? link.icon : "bi bi-link-45deg"} 
+                style={{ 
+                  color: link.color || "#ffffff",
+                  fontSize: `${iconSize}px`,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                aria-hidden="true"
+              ></i>
+            )}
+          </a>
+        );
+      })}
     </div>
   );
 };

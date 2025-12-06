@@ -93,7 +93,8 @@ const ProfileContainerSection: React.FC<ProfileContainerSectionProps> = ({
           step={1}
         />
 
-        <StyleInputGroup
+        {/* Gap - Hidden */}
+        {/* <StyleInputGroup
           label="Gap"
           value={parseInt(customStyles.profileGap?.replace("px", "") || "16")}
           onChange={(value) => handleStyleChange("profileGap", `${value}px`)}
@@ -101,7 +102,7 @@ const ProfileContainerSection: React.FC<ProfileContainerSectionProps> = ({
           min={0}
           max={64}
           step={1}
-        />
+        /> */}
 
         {/* Padding */}
         <StyleInputGroup

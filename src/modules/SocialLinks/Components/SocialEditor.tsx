@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState, useMemo } from "react";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 export interface SocialLink {
   link: string;
@@ -37,7 +38,6 @@ const SocialEditor: React.FC<SocialEditorProps> = ({ userId }) => {
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [, setDisplayLinks] = useState<DisplaySocialLink[]>([]);
   const [loading, setLoading] = useState(false);
-  const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
   const [message, setMessage] = useState("");
   const [showIconPicker, setShowIconPicker] = useState<number | null>(null);
 
@@ -49,18 +49,24 @@ const SocialEditor: React.FC<SocialEditorProps> = ({ userId }) => {
 
   // Default social icons (memoized) - defined early so it can be used in fetchSocialLinks
   const defaultIcons = useMemo(() => [
-    { name: "Facebook", icon: "fab fa-facebook", color: "#1877F2" },
-    { name: "Twitter", icon: "fab fa-twitter", color: "#1DA1F2" },
-    { name: "Instagram", icon: "fab fa-instagram", color: "#E4405F" },
-    { name: "GitHub", icon: "fab fa-github", color: "#181717" },
-    { name: "LinkedIn", icon: "fab fa-linkedin", color: "#0A66C2" },
-    { name: "YouTube", icon: "fab fa-youtube", color: "#FF0000" },
-    { name: "Discord", icon: "fab fa-discord", color: "#5865F2" },
-    { name: "TikTok", icon: "fab fa-tiktok", color: "#000000" },
-    { name: "Snapchat", icon: "fab fa-snapchat", color: "#FFFC00" },
-    { name: "Pinterest", icon: "fab fa-pinterest", color: "#BD081C" },
-    { name: "Reddit", icon: "fab fa-reddit", color: "#FF4500" },
-    { name: "Telegram", icon: "fab fa-telegram", color: "#26A5E4" },
+    { name: "Facebook", icon: "bi bi-facebook", color: "#1877F2" },
+    { name: "Twitter", icon: "bi bi-twitter", color: "#1DA1F2" },
+    { name: "Instagram", icon: "bi bi-instagram", color: "#E4405F" },
+    { name: "GitHub", icon: "bi bi-github", color: "#181717" },
+    { name: "LinkedIn", icon: "bi bi-linkedin", color: "#0A66C2" },
+    { name: "YouTube", icon: "bi bi-youtube", color: "#FF0000" },
+    { name: "Discord", icon: "bi bi-discord", color: "#5865F2" },
+    { name: "TikTok", icon: "bi bi-tiktok", color: "#000000" },
+    { name: "Snapchat", icon: "bi bi-snapchat", color: "#FFFC00" },
+    { name: "Pinterest", icon: "bi bi-pinterest", color: "#BD081C" },
+    { name: "Reddit", icon: "bi bi-reddit", color: "#FF4500" },
+    { name: "Telegram", icon: "bi bi-telegram", color: "#26A5E4" },
+    { name: "Spotify", icon: "bi bi-spotify", color: "#1DB954" },
+    { name: "Twitch", icon: "bi bi-twitch", color: "#9146FF" },
+    { name: "Steam", icon: "bi bi-steam", color: "#000000" },
+    { name: "PayPal", icon: "bi bi-paypal", color: "#0070BA" },
+    { name: "Apple", icon: "bi bi-apple", color: "#000000" },
+    { name: "Google", icon: "bi bi-google", color: "#4285F4" },
   ], []);
 
   // Single fetch function that handles both data types
@@ -154,35 +160,6 @@ const SocialEditor: React.FC<SocialEditorProps> = ({ userId }) => {
     });
   }, []);
 
-  const handleIconUpload = useCallback(async (index: number, file: File) => {
-    if (!file) return;
-    
-    setUploadingIndex(index);
-    const formData = new FormData();
-    formData.append("iconFile", file);
-
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/StyleSocial/byUser/${userId}/upload-icon`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!res.ok) throw new Error(await res.text());
-
-      const data = await res.json();
-      setSocialLinks(prev => {
-        const newLinks = [...prev];
-        newLinks[index].icon = data.iconUrl;
-        return newLinks;
-      });
-
-      showMessage("Icon uploaded successfully!");
-    } catch (err) {
-      showMessage(`Error uploading icon: ${err instanceof Error ? err.message : "Unknown error"}`, true);
-    } finally {
-      setUploadingIndex(null);
-    }
-  }, [userId, showMessage]);
 
   const addSocial = useCallback(() => {
     setSocialLinks(prev => [...prev, { link: "", icon: "", color: "#ffffff", size: 36, marginLeft: 0, marginRight: 0 }]);
@@ -207,11 +184,8 @@ const SocialEditor: React.FC<SocialEditorProps> = ({ userId }) => {
           MarginLeft: item.marginLeft ?? 0,
           MarginRight: item.marginRight ?? 0
         };
-        console.log(`Mapping item:`, item, `-> Size:`, sizeValue); // Debug log
         return result;
       });
-
-      console.log("Saving social links with data:", JSON.stringify(dtoData, null, 2)); // Debug log
 
       const res = await fetch(`${API_BASE_URL}/api/StyleSocial/byUser/${userId}`, {
         method: "PUT",
@@ -246,16 +220,10 @@ const SocialEditor: React.FC<SocialEditorProps> = ({ userId }) => {
     }
   }, [socialLinks, userId, showMessage, fetchSocialLinks]);
 
-  // Optimized image URL builder
-  const getImageUrl = useCallback((iconPath: string) => {
-    if (!iconPath) return "";
-    return iconPath.startsWith("http") ? iconPath : `${API_BASE_URL}${iconPath}`;
-  }, []);
-
-  // Check if icon is Font Awesome class
-  const isFontAwesomeIcon = useCallback((icon: string): boolean => {
+  // Check if icon is Bootstrap Icons class
+  const isBootstrapIcon = useCallback((icon: string): boolean => {
     if (!icon) return false;
-    return icon.startsWith("fa ") || icon.startsWith("fab ") || icon.startsWith("fas ") || icon.startsWith("far ") || icon.startsWith("fal ");
+    return icon.startsWith("bi ") || icon.startsWith("bi-");
   }, []);
 
   // Handle icon selection
@@ -341,7 +309,7 @@ const SocialEditor: React.FC<SocialEditorProps> = ({ userId }) => {
             onClick={() => setShowIconPicker(showIconPicker === i ? null : i)}
             className="text-sm text-blue-400 hover:text-blue-300 mb-2 flex items-center gap-2 transition"
           >
-            <i className="fas fa-th"></i>
+            <i className="bi bi-grid-3x3-gap"></i>
             {showIconPicker === i ? "Hide Icon Picker" : "Choose Icon"}
           </button>
           
@@ -376,7 +344,7 @@ const SocialEditor: React.FC<SocialEditorProps> = ({ userId }) => {
           <div className="mb-4">
             <label className="block text-xs text-gray-400 mb-2">Current Icon:</label>
             <div className="w-16 h-16 flex items-center justify-center bg-gray-700 rounded-lg border border-gray-600">
-              {isFontAwesomeIcon(s.icon) ? (
+              {isBootstrapIcon(s.icon) ? (
                 <i 
                   className={s.icon} 
                   style={{ 
@@ -385,16 +353,14 @@ const SocialEditor: React.FC<SocialEditorProps> = ({ userId }) => {
                   }}
                 ></i>
               ) : (
-                <img
-                  src={getImageUrl(s.icon)}
-                  alt="Icon preview"
-                  style={{
-                    width: `${s.size ?? 36}px`,
-                    height: `${s.size ?? 36}px`
+                <i 
+                  className="bi bi-question-circle" 
+                  style={{ 
+                    color: s.color || "#ffffff",
+                    fontSize: `${s.size ?? 36}px`
                   }}
-                  className="object-contain"
-                  onError={(e) => (e.currentTarget.style.display = "none")}
-                />
+                  title="Invalid icon - please select a Bootstrap Icon"
+                ></i>
               )}
             </div>
           </div>
@@ -403,8 +369,8 @@ const SocialEditor: React.FC<SocialEditorProps> = ({ userId }) => {
         {/* Part 1.5: Custom Icon Color & Size */}
         {s.icon && (
           <div className="mb-4 space-y-4">
-            {/* Icon Color (only for Font Awesome icons) */}
-            {isFontAwesomeIcon(s.icon) && (
+            {/* Icon Color (for Bootstrap Icons) */}
+            {isBootstrapIcon(s.icon) && (
               <div>
                 <label className="block text-xs text-gray-400 mb-2">Icon Color:</label>
                 <div className="flex items-center gap-3">
@@ -563,43 +529,23 @@ const SocialEditor: React.FC<SocialEditorProps> = ({ userId }) => {
           </div>
         )}
 
-        {/* Part 2: Upload custom icon */}
-        <div>
-          <label className="block text-xs text-gray-400 mb-2">Or Upload Custom Icon:</label>
-          <div className="flex items-center gap-4">
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => e.target.files?.[0] && handleIconUpload(i, e.target.files[0])}
-              disabled={uploadingIndex === i}
-              className="file:bg-blue-600 file:text-white file:py-2 file:px-4 file:rounded-lg file:border-0 hover:file:bg-blue-700 transition cursor-pointer disabled:opacity-50 text-sm"
-            />
-            {uploadingIndex === i && (
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-blue-400 text-sm">Uploading...</span>
-              </div>
-            )}
-          </div>
-        </div>
 
         <div className="flex justify-end mt-4">
           <button
             onClick={() => removeSocial(i)}
             className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition disabled:opacity-50 text-sm"
-            disabled={uploadingIndex === i}
           >
             Remove
           </button>
         </div>
       </div>
     </div>
-  ), [handleLinkChange, handleIconUpload, uploadingIndex, getImageUrl, removeSocial, isFontAwesomeIcon, handleIconSelect, handleColorChange, handleSizeChange, handleMarginChange, defaultIcons, showIconPicker]);
+  ), [handleLinkChange, removeSocial, isBootstrapIcon, handleIconSelect, handleColorChange, handleSizeChange, handleMarginChange, defaultIcons, showIconPicker]);
 
   // Note: Edit/delete individual link functions were removed as they were not used
   // The component uses renderSocialLinkItem which handles all editing inline
 
-  const isDisabled = loading || uploadingIndex !== null;
+  const isDisabled = loading;
 
   return (
     <div className="space-y-8">

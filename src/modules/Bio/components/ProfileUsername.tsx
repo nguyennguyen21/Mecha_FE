@@ -54,12 +54,6 @@ const ProfileUsername: React.FC<ProfileUsernameProps> = ({ profile, parsedStyles
       color: effectStyles.color || usernameStyle.color || "#ffffff",
     }),
   };
-  
-  console.log('🎨 ProfileUsername finalStyle:', finalStyle);
-  console.log('🎨 ProfileUsername - Animation in finalStyle:', finalStyle.animation);
-  console.log('🎨 ProfileUsername - TransformOrigin in finalStyle:', finalStyle.transformOrigin);
-  console.log('🎨 ProfileUsername - EffectStyles received:', effectStyles);
-  console.log('🎨 ProfileUsername - Base usernameStyle:', usernameStyle);
 
   useEffect(() => {
     // Check if this is a particle effect
@@ -89,14 +83,8 @@ const ProfileUsername: React.FC<ProfileUsernameProps> = ({ profile, parsedStyles
     );
     
     if (isParticleEffect) {
-      console.log('✨ ProfileUsername - Particle effect detected:', effectData);
       setShowParticles(true);
     } else {
-      // This is expected for text animations (like pulse, rainbow, etc.)
-      // They are not particle effects, so particles won't be shown
-      if (effectData) {
-        console.log('ℹ️ ProfileUsername - Text animation effect (not particle):', effectData.type || effectData);
-      }
       setShowParticles(false);
     }
   }, [effectData]);
@@ -108,7 +96,6 @@ const ProfileUsername: React.FC<ProfileUsernameProps> = ({ profile, parsedStyles
       </h1>
       {showParticles && usernameRef.current && effectData && (
         <>
-          {console.log('🎯 Rendering TextParticles with:', { effectType: effectData.type, effectData, hasTextElement: !!usernameRef.current })}
           <TextParticles
             effectType={effectData.type || 'sparkle'}
             effectData={effectData}

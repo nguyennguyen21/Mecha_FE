@@ -17,16 +17,19 @@ const DashboardPage: React.FC = () => {
         <SideBar />
 
         {/* Main Content */}
-        <main className="flex-1 p-4 sm:p-6">
-          {/* Content */}
-          <div className="bg-gray-950">
-            {tab === "shop" ? (
-              <Shop />
-            ) : tab === "account" || tab === "donate" ? (
-              <AccountManagement />
-            ) : (
-              <ProfileForm />
-            )}
+        <main className="flex-1 w-full sm:ml-0 min-h-screen overflow-x-hidden">
+          {/* Mobile padding top để tránh che bởi sidebar button */}
+          <div className="pt-16 sm:pt-0 p-3 sm:p-4 md:p-6">
+            {/* Content */}
+            <div className="bg-gray-950 w-full max-w-full">
+              {tab === "shop" ? (
+                <Shop />
+              ) : tab === "account" || tab === "donate" ? (
+                <AccountManagement />
+              ) : (
+                <ProfileForm />
+              )}
+            </div>
           </div>
         </main>
       </div>

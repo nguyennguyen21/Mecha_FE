@@ -12,6 +12,7 @@ interface MenuItem {
 
 const SideBar: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(window.innerWidth >= 640);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 640);
   const [openSubMenus, setOpenSubMenus] = useState<Set<number>>(new Set());
   const navigate = useNavigate();
   const location = useLocation();
@@ -21,7 +22,9 @@ const SideBar: React.FC = () => {
     const handleResize = () => {
       clearTimeout(timer);
       timer = setTimeout(() => {
-        setSidebarOpen(window.innerWidth >= 640);
+        const isMobileWidth = window.innerWidth < 640;
+        setIsMobile(isMobileWidth);
+        setSidebarOpen(!isMobileWidth);
       }, 200);
     };
     window.addEventListener("resize", handleResize);
@@ -98,7 +101,7 @@ const SideBar: React.FC = () => {
   }, [userInfo]);
 
   const username = profileUsername || userInfo?.username || userInfo?.Username || userInfo?.profileUsername || userInfo?.ProfileUsername || displayName;
-  const profileLink = `http://mecha.lol/${username}`;
+  const profileLink = `https://mecha.lol/${username}`;
 
   const handleCopyLink = async () => {
     try {
@@ -144,7 +147,8 @@ const SideBar: React.FC = () => {
       <nav
         className={`fixed sm:sticky top-0 left-0 h-screen z-40 transition-all duration-500 ease-in-out
           ${sidebarOpen ? "w-64" : "w-0 sm:w-16"}
-          overflow-hidden shadow-2xl bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 border-r border-purple-500/20`}
+          overflow-hidden shadow-2xl bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 border-r border-purple-500/20
+          ${sidebarOpen && isMobile ? 'backdrop-blur-md bg-gray-950/95' : ''}`}
       >
         <ul className="p-3">
           <li className="flex justify-between items-center mx-2 mb-6 mt-4">

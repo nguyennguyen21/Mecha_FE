@@ -23,10 +23,10 @@ export const useFileUpload = (
   url.searchParams.append('type', type);
 
   const user = JSON.parse(localStorage.getItem('userInfo') || '{}');
-  const userId = user.idUser || user.IdUser;
+  const userId = user.idUser || user.IdUser || user.id || user.userId;
   if (userId) url.searchParams.append('userId', userId);
 
-  const token = user.token || user.accessToken;
+  const token = localStorage.getItem('authToken') || user.token || user.accessToken;
 
   const headers: HeadersInit = {};
   if (token) headers.Authorization = `Bearer ${token}`;
@@ -50,12 +50,12 @@ export const useFileUpload = (
   const deleteFile = useCallback(async (path: string) => {
     if (!path || path.startsWith("blob:") || path.startsWith("http")) return;
 
-    try {
-      const headers: HeadersInit = { "Content-Type": "application/json" };
-      const token = localStorage.getItem("token");
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-      }
+      try {
+        const headers: HeadersInit = { "Content-Type": "application/json" };
+        const token = localStorage.getItem("authToken");
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
 
       const response = await fetch(`${API_BASE_URL}/api/FileUpload/delete`, {
         method: "DELETE",
@@ -80,7 +80,7 @@ export const useFileUpload = (
       const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
       const validVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
       const validAudioTypes = ["audio/mpeg", "audio/wav"];
-      const maxSize = 10 * 1024 * 1024; // 10MB cho image và audio
+      const maxSize = 20 * 1024 * 1024; // 10MB cho image và audio
       const maxVideoSize = 50 * 1024 * 1024; // 50MB cho video
 
       // FIX: Kiểm tra premium status trước khi upload video
