@@ -11,15 +11,6 @@ const HeroSection = () => {
     navigate("/dashboard");
   };
 
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
 
   return (
     <div className="relative min-h-[85vh] flex items-end md:items-center justify-center px-6 md:px-20 pt-24 md:pt-32 pb-16 md:pb-24 overflow-hidden">
@@ -189,12 +180,11 @@ const HeroSection = () => {
         })}
       </div>
 
-      {/* Animated Background Gradient */}
+      {/* Static Background Gradient */}
       <div 
         className="absolute inset-0 opacity-20"
         style={{
-          background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.25), rgba(59, 130, 246, 0.2), transparent 60%)`,
-          transition: 'background 0.5s ease-out'
+          background: 'radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.25), rgba(59, 130, 246, 0.2), transparent 60%)',
         }}
       />
 

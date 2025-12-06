@@ -5,17 +5,8 @@ const COMMUNITY_DISCORD_LINK: string = "https://discord.gg/YOUR_DISCORD_INVITE";
 const BADGE_STORE_LINK: string = "https://mechabot.com/badges";
 
 const CommunityHero: React.FC = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [joinRipples, setJoinRipples] = useState<Array<{ x: number; y: number; id: number }>>([]);
   const [badgeRipples, setBadgeRipples] = useState<Array<{ x: number; y: number; id: number }>>([]);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
 
   const handleJoinClick = (e: React.MouseEvent) => {
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
@@ -78,16 +69,6 @@ const CommunityHero: React.FC = () => {
             }}
           />
         ))}
-        {/* Mouse Follow Glow */}
-        <div
-          className="absolute w-96 h-96 rounded-full blur-[100px] opacity-20"
-          style={{
-            background: `radial-gradient(circle, rgba(139, 92, 246, 0.4), rgba(236, 72, 153, 0.3), transparent)`,
-            left: `${mousePosition.x - 192}px`,
-            top: `${mousePosition.y - 192}px`,
-            transition: 'left 0.3s ease-out, top 0.3s ease-out',
-          }}
-        />
       </div>
       {/* Content */}
       <div className="relative z-10 w-full max-w-5xl">

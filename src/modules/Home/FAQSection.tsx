@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 interface FAQItem {
@@ -13,25 +13,6 @@ interface FAQItem {
 const FAQSection: React.FC = () => {
   const [openItems, setOpenItems] = useState<Set<number>>(new Set());
   const [language, setLanguage] = useState<"vi" | "en">("vi");
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (sectionRef.current) {
-        const rect = sectionRef.current.getBoundingClientRect();
-        setMousePosition({ 
-          x: e.clientX - rect.left, 
-          y: e.clientY - rect.top 
-        });
-      }
-    };
-    const section = sectionRef.current;
-    if (section) {
-      section.addEventListener("mousemove", handleMouseMove);
-      return () => section.removeEventListener("mousemove", handleMouseMove);
-    }
-  }, []);
 
   const toggleItem = (id: number) => {
     const newOpenItems = new Set(openItems);
@@ -167,7 +148,7 @@ const FAQSection: React.FC = () => {
   ];
 
   return (
-    <section ref={sectionRef} id="faq" className="relative w-full text-white py-8 md:py-12 px-6 md:px-20 overflow-hidden">
+    <section id="faq" className="relative w-full text-white py-8 md:py-12 px-6 md:px-20 overflow-hidden">
       {/* Background Animations */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Stars */}
@@ -186,16 +167,6 @@ const FAQSection: React.FC = () => {
             }}
           />
         ))}
-        {/* Mouse Follow Glow */}
-        <div
-          className="absolute w-80 h-80 rounded-full blur-[80px] opacity-15"
-          style={{
-            background: `radial-gradient(circle, rgba(59, 130, 246, 0.4), rgba(139, 92, 246, 0.3), transparent)`,
-            left: `${mousePosition.x - 160}px`,
-            top: `${mousePosition.y - 160}px`,
-            transition: 'left 0.2s ease-out, top 0.2s ease-out',
-          }}
-        />
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto">
