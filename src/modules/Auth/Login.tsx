@@ -25,21 +25,6 @@ const Login: React.FC = () => {
 
   const navigate = useNavigate();
 
-  // Handle Discord login success
-  const handleDiscordSuccess = (data: { token: string; user: any }) => {
-    localStorage.removeItem("userInfo");
-    localStorage.removeItem("authToken");
-    
-    localStorage.setItem("authToken", data.token);
-    localStorage.setItem("userInfo", JSON.stringify(data.user));
-    
-    navigate("/dashboard");
-  };
-
-  const handleDiscordError = (errorMsg: string) => {
-    setError(errorMsg);
-  };
-
   // Login bằng username/password
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
@@ -85,8 +70,6 @@ const handleSubmit = async (e: React.FormEvent) => {
             onUsernameChange={setUsername}
             onPasswordChange={setPassword}
             onSubmit={handleSubmit}
-            onDiscordSuccess={handleDiscordSuccess}
-            onDiscordError={handleDiscordError}
           />
         </div>
       </div>

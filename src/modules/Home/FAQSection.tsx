@@ -37,8 +37,8 @@ const FAQSection: React.FC = () => {
       id: 2,
       questionVi: "Làm thế nào để đăng ký tài khoản?",
       questionEn: "How do I register an account?",
-      answerVi: "Bạn có thể đăng ký bằng cách click vào nút 'Start' ở trang chủ và chọn đăng nhập bằng Discord. Sau khi xác thực với Discord, tài khoản của bạn sẽ được tạo tự động.",
-      answerEn: "You can register by clicking the 'Start' button on the homepage and choosing to login with Discord. After authenticating with Discord, your account will be created automatically.",
+      answerVi: "Bạn có thể đăng ký bằng cách click vào nút 'Start' ở trang chủ và chọn 'Register' để tạo tài khoản mới. Điền thông tin username, email và password để hoàn tất đăng ký.",
+      answerEn: "You can register by clicking the 'Start' button on the homepage and selecting 'Register' to create a new account. Fill in your username, email, and password to complete registration.",
       icon: "bi-person-plus",
     },
     {
@@ -125,17 +125,9 @@ const FAQSection: React.FC = () => {
       id: 13,
       questionVi: "Tài khoản của tôi có bị mất không?",
       questionEn: "Will I lose my account?",
-      answerVi: "Không, dữ liệu của bạn được lưu trữ an toàn trên server. Tuy nhiên, bạn nên đảm bảo đã liên kết tài khoản với Discord để có thể đăng nhập lại dễ dàng.",
-      answerEn: "No, your data is safely stored on the server. However, you should ensure your account is linked with Discord so you can easily log in again.",
+      answerVi: "Không, dữ liệu của bạn được lưu trữ an toàn trên server. Hãy đảm bảo lưu giữ thông tin đăng nhập của bạn để có thể truy cập lại tài khoản.",
+      answerEn: "No, your data is safely stored on the server. Please make sure to keep your login information safe so you can access your account again.",
       icon: "bi-shield-check",
-    },
-    {
-      id: 14,
-      questionVi: "Tôi gặp lỗi khi đăng nhập bằng Discord, phải làm sao?",
-      questionEn: "I'm having trouble logging in with Discord, what should I do?",
-      answerVi: "Nếu bạn gặp lỗi khi đăng nhập bằng Discord, vui lòng liên hệ hỗ trợ qua Discord server của chúng tôi để được hỗ trợ nhanh chóng.",
-      answerEn: "If you encounter errors when logging in with Discord, please contact support through our Discord server for quick assistance.",
-      icon: "bi-exclamation-triangle",
     },
     {
       id: 15,
@@ -149,9 +141,9 @@ const FAQSection: React.FC = () => {
       id: 16,
       questionVi: "Làm thế nào để kiếm Coins miễn phí?",
       questionEn: "How can I earn Coins for free?",
-      answerVi: "Bạn có thể kiếm Coins miễn phí bằng cách tham gia Discord server của chúng tôi và chơi các trò chơi với bot Discord! Bot sẽ thưởng Coins cho các hoạt động và thành tích của bạn. Tham gia ngay để bắt đầu kiếm Coins!",
-      answerEn: "You can earn free Coins by joining our Discord server and playing games with the Discord bot! The bot will reward Coins for your activities and achievements. Join now to start earning Coins!",
-      icon: "bi-discord",
+      answerVi: "Hiện tại, bạn có thể nhận Coins thông qua các hoạt động trong hệ thống hoặc mua từ shop. Chúng tôi đang phát triển thêm nhiều cách để kiếm Coins miễn phí.",
+      answerEn: "Currently, you can earn Coins through system activities or purchase from the shop. We are developing more ways to earn Coins for free.",
+      icon: "bi-coin",
     },
   ];
 
@@ -246,18 +238,9 @@ const FAQSection: React.FC = () => {
           </h3>
           <p className="text-gray-200 mb-4">
             {language === "vi"
-              ? "Liên hệ với chúng tôi qua Discord hoặc email để được hỗ trợ"
-              : "Contact us via Discord or email for support"}
+              ? "Liên hệ với chúng tôi qua email để được hỗ trợ"
+              : "Contact us via email for support"}
           </p>
-          <div className="flex items-center justify-center gap-4">
-            <a
-              href="/discord"
-              className="px-6 py-2 bg-blue-500 hover:bg-blue-400 text-white rounded-lg transition-all duration-300 flex items-center gap-2"
-            >
-              <i className="bi bi-discord"></i>
-              <span>{language === "vi" ? "Discord Support" : "Discord Support"}</span>
-            </a>
-          </div>
         </div>
       </div>
     </section>

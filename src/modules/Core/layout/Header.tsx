@@ -48,14 +48,6 @@ const Header = () => {
             </li>
             <li>
               <Link
-                to="/discord"
-                className="h-10 flex items-center px-3 hover:text-gray-300 transition"
-              >
-                Discord
-              </Link>
-            </li>
-            <li>
-              <Link
                 to="/dashboard"
                 className="h-10 flex items-center px-4 bg-[#0000005d] border-2 border-[#11549c] rounded-full font-medium text-[#fafafa] text-[17.5px] transition duration-200 hover:border-[#176ecb] cursor-pointer"
               >

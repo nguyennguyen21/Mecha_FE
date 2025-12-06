@@ -1,6 +1,5 @@
 import React from "react";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import DiscordLoginButton from "../components/DiscordLoginButton";
 
 interface LoginFormProps {
   username: string;
@@ -10,8 +9,6 @@ interface LoginFormProps {
   onUsernameChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
   onSubmit: (e: React.FormEvent) => void;
-  onDiscordSuccess?: (data: { token: string; user: any }) => void;
-  onDiscordError?: (error: string) => void;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({
@@ -22,8 +19,6 @@ const LoginForm: React.FC<LoginFormProps> = ({
   onUsernameChange,
   onPasswordChange,
   onSubmit,
-  onDiscordSuccess,
-  onDiscordError,
 }) => {
   return (
     <div className="bg-[#121212] border-2 border-[#191919] rounded-2xl w-full p-8 flex flex-col items-center">
@@ -63,17 +58,6 @@ const LoginForm: React.FC<LoginFormProps> = ({
           {loading ? "Logging in..." : "Login"}
         </button>
       </form>
-
-      <div className="w-full my-4 flex items-center gap-2">
-        <div className="flex-1 border-t border-gray-700"></div>
-        <span className="text-gray-500 text-sm">or</span>
-        <div className="flex-1 border-t border-gray-700"></div>
-      </div>
-
-      <DiscordLoginButton
-        onSuccess={onDiscordSuccess}
-        onError={onDiscordError}
-      />
 
       <p className="mt-4 text-gray-400 text-sm">
         Don't have an account?{" "}

@@ -1,7 +1,6 @@
 import type { JSX } from "react";
 import Home from "../modules/Home/Home";
 import ProfilePage from "../modules/Bio/Bio";
-import Discord from "../modules/Discord/RedirectToDiscord";
 import Register from "../modules/Auth/Register";
 import Login from "../modules/Auth/Login";
 
@@ -22,7 +21,6 @@ const publicRoutes: Route[] = [
     element: <ProfilePage />,
     auth: false,
   },
-  { path: "/discord", element: <Discord />, auth: false },
 ];
 
 export { publicRoutes };

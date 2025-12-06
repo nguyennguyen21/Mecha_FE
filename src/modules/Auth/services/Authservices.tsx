@@ -95,24 +95,3 @@ export const login = async (
     throw error;
   }
 };
-
-
-// modules/Auth/services/Authservices.ts
-export interface DiscordLoginResponse {
-  token: string;
-  user: {
-    idUser: number;
-    username: string;
-    email: string;
-    phone: string;
-    roles: string;
-  };
-}
-
-export const discordLogin = async (): Promise<DiscordLoginResponse> => {
-  const res = await fetch(`${API_CONFIG.BASE_URL}/api/discordauth/callback`, {
-    credentials: "include" 
-  });
-  if (!res.ok) throw new Error("Discord login failed");
-  return res.json();
-};

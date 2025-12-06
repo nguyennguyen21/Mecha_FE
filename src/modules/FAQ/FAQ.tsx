@@ -31,7 +31,7 @@ const FAQ: React.FC = () => {
     {
       id: 2,
       question: "Làm thế nào để đăng ký tài khoản?",
-      answer: "Bạn có thể đăng ký bằng cách click vào nút 'Start' ở trang chủ và chọn đăng nhập bằng Discord. Sau khi xác thực với Discord, tài khoản của bạn sẽ được tạo tự động.",
+      answer: "Bạn có thể đăng ký bằng cách click vào nút 'Start' ở trang chủ và chọn 'Register' để tạo tài khoản mới. Điền thông tin username, email và password để hoàn tất đăng ký.",
       icon: "bi-person-plus",
     },
     {
@@ -97,20 +97,14 @@ const FAQ: React.FC = () => {
     {
       id: 13,
       question: "Tài khoản của tôi có bị mất không?",
-      answer: "Không, dữ liệu của bạn được lưu trữ an toàn trên server. Tuy nhiên, bạn nên đảm bảo đã liên kết tài khoản với Discord để có thể đăng nhập lại dễ dàng.",
+      answer: "Không, dữ liệu của bạn được lưu trữ an toàn trên server. Hãy đảm bảo lưu giữ thông tin đăng nhập của bạn để có thể truy cập lại tài khoản.",
       icon: "bi-shield-check",
-    },
-    {
-      id: 14,
-      question: "Tôi gặp lỗi khi đăng nhập bằng Discord, phải làm sao?",
-      answer: "Nếu bạn gặp lỗi khi đăng nhập bằng Discord, vui lòng liên hệ hỗ trợ qua Discord server của chúng tôi để được hỗ trợ nhanh chóng.",
-      icon: "bi-exclamation-triangle",
     },
     {
       id: 16,
       question: "Làm thế nào để kiếm Coins miễn phí?",
-      answer: "Bạn có thể kiếm Coins miễn phí bằng cách tham gia Discord server của chúng tôi và chơi các trò chơi với bot Discord! Bot sẽ thưởng Coins cho các hoạt động và thành tích của bạn. Tham gia ngay để bắt đầu kiếm Coins!",
-      icon: "bi-discord",
+      answer: "Hiện tại, bạn có thể nhận Coins thông qua các hoạt động trong hệ thống hoặc mua từ shop. Chúng tôi đang phát triển thêm nhiều cách để kiếm Coins miễn phí.",
+      icon: "bi-coin",
     },
     {
       id: 15,
@@ -184,15 +178,6 @@ const FAQ: React.FC = () => {
           <p className="text-gray-300 mb-4">
             Liên hệ với chúng tôi qua Discord hoặc email để được hỗ trợ
           </p>
-          <div className="flex items-center justify-center gap-4">
-            <a
-              href="/discord"
-              className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 flex items-center gap-2"
-            >
-              <i className="bi bi-discord"></i>
-              <span>Discord Support</span>
-            </a>
-          </div>
         </div>
       </div>
     </div>

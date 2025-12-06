@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import "bootstrap-icons/font/bootstrap-icons.css";
-import ConnectDiscord from './components/ConnectDiscord';
 
 interface AccountInfo {
   idUser: number;
@@ -247,15 +246,6 @@ const AccountManagement: React.FC = () => {
                   className="w-full px-4 py-3 bg-gray-700/70 text-white rounded-lg border border-gray-600/50 focus:border-purple-400/50 focus:outline-none focus:ring-2 focus:ring-purple-400/20 disabled:opacity-50"
                 />
               </div>
-
-              {/* Discord Connection */}
-              {account && (
-                <ConnectDiscord 
-                  userId={userId} 
-                  discordId={account.discordId}
-                  onSuccess={() => fetchAccount()}
-                />
-              )}
 
               <div className="flex gap-4">
                 {!editing ? (
